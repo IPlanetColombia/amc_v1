@@ -128,27 +128,47 @@ class AuthController extends BaseController
 
     public function resetPassword()
     {
-        return view('auth\reset_password');
+        return view('auth/reset_password');
     }
 
     public function forgotPassword()
     {
         $request = Services::request();
         $user = new User();
-        $data = $user->where('email', $request->getPost('email'))->get()->getResult();
-        if (count($data) > 0) {
+        $data = $user->where('usr_usuario', $request->getPost('username'))->get()->getResult();
+        if (!isset($data[0])) {
+            $user = new Usuarios();
+            $data = $user->where('username', $request->getPost('username'))->get()->getResult();
+            if (!isset($data[0])) {
+                return redirect()->to(base_url().'/reset_password')
+                    ->with('danger', 'Las credenciales no coinciden con los datos ingresados.');
+            }else{
+                // Usuario cliente
+                $email = new EmailController();
+                $password = $this->encript();
+                $user->set(['password' => md5($password) ]);
+                $user->where('id', $data[0]->id);
+                $user->update();
+                $email->send('wabox324@gmail.com', 'wabox', $request->getPost('email'), 'Recuperacion de contraseña', password($password));
+                return redirect()->to('/reset_password')
+                    ->with('success', 'Valida el correo te enviamos una nueva contraseña');
+            }
+        } else{
+            // Usuario Funcionario
             $email = new EmailController();
             $password = $this->encript();
-            $user->set(['password' => password_hash($password, PASSWORD_DEFAULT)]);
+            $user->set(['usr_clave' => $password ]);
             $user->where('id', $data[0]->id);
             $user->update();
             $email->send('wabox324@gmail.com', 'wabox', $request->getPost('email'), 'Recuperacion de contraseña', password($password));
             return redirect()->to('/reset_password')
                 ->with('success', 'Valida el correo te enviamos una nueva contraseña');
-        } else {
-            return redirect()->to(base_url().'/reset_password')
-                ->with('danger', 'Las credenciales no coinciden con los datos ingresados.');
         }
+        // if (count($data) > 0) {
+        // } else {
+        //     return redirect()->to(base_url().'/reset_password')
+        //         ->with('danger', 'Las credenciales no coinciden con los datos ingresados.');
+        // }
     }
 
     public function logout()

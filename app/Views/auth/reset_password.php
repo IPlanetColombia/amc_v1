@@ -77,8 +77,8 @@
                         <div class="row">
                             <div class="input-field col s12">
                                 <i class="material-icons prefix pt-2">person_outline</i>
-                                <input id="email" type="email" name="email">
-                                <label for="email" class="center-align">Correo Electronico</label>
+                                <input id="username" type="text" name="username">
+                                <label for="username" class="center-align">Nombre de usuario</label>
                             </div>
                         </div>
                         <div class="row">

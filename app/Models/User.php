@@ -10,6 +10,6 @@ class User extends Model
 {
     protected $table            = 'cms_users';
     protected $primaryKey       = 'id';
-    protected $allowedFields    = ['name', 'username', 'email', 'password', 'status', 'role_id', 'photo', 'id'];
+    protected $allowedFields    = ['usr_usuario', 'usr_clave', 'usr_correo', 'usr_estado', 'usr_rol', 'nombre', 'cargo', 'firma'];
 
 }
