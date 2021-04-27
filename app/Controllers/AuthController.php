@@ -146,7 +146,7 @@ class AuthController extends BaseController
                 // Usuario cliente
                 $email = new EmailController();
                 $password = $this->encript();
-                $user->set(['password' => md5($password) ]);
+                $user->set(['password' => md5($password)]);
                 $user->where('id', $data[0]->id);
                 $user->update();
                 $email->send('wabox324@gmail.com', 'wabox', $request->getPost('email'), 'Recuperacion de contraseña', password($password));
