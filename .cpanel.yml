@@ -2,4 +2,5 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home4/amclaboratorios/public_html/
-    - /bin/cp -R app $DEPLOYPATH
+    - /bin/rm -Rf $DEPLOYPATH
+    - /bin/mkdir $DEPLOYPATH
