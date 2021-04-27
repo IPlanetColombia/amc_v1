@@ -4,3 +4,9 @@ deployment:
     - export DEPLOYPATH=/home4/amclaboratorios/public_html/
     - /bin/rm -Rf $DEPLOYPATH
     - /bin/mkdir $DEPLOYPATH
+    - /bin/cp -R app/. $DEPLOYPATH
+    - /bin/cp -R bs/. $DEPLOYPATH
+    - /bin/cp -R public/. $DEPLOYPATH
+    - /bin/cp -R tests/. $DEPLOYPATH
+    - /bin/cp -R writable/. $DEPLOYPATH
+    - /bin/cp -R /. $DEPLOYPATH
