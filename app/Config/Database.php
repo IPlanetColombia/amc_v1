@@ -32,9 +32,9 @@ class Database extends \CodeIgniter\Database\Config
 	public $default = [
 		'DSN'      => '',
 		'hostname' => 'localhost',
-		'username' => 'amclaboratorios_prueba_v1',
-		'password' => 'amclaboratorios_userAMC',
-		'database' => 'A49bx3kk!!',
+		'username' => 'amclaboratorios_userAMC',
+		'password' => 'A49bx3kk!!',
+		'database' => 'amclaboratorios_prueba_v1',
 		// 'username' => 'williamAdmin',
 		// 'password' => 'admin',
 		// 'database' => 'amc_v4',
