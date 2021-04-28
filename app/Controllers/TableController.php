@@ -32,7 +32,7 @@ class TableController extends BaseController
                     $this->crud->displayAs([
                         'name'                  => 'Nombre',
                         'username'              => 'Usuario',
-                        'email'                 => 'Correo',
+                        'email'                 => 'Email',
                         'usertype'              => 'Rol',
                         'registerDate'          => 'Registro',
                         'lastvisitDate'         => 'Ultima visita',
