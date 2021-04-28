@@ -40,7 +40,7 @@ error_reporting(E_ALL);
 
 $db_server   = 'localhost';
 $db_name     = 'amclaboratorios_prueba_v1';
-$db_username = 'userAMC';
+$db_username = 'amclaboratorios_userAMC';
 $db_password = 'A49bx3kk!!'; 
 
 // Connection charset should be the same as the dump file charset (utf8, latin1, cp1251, koi8r etc.)
