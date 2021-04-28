@@ -21,7 +21,8 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL = 'http://localhost:8081/public';
+	// public $baseURL = 'http://localhost:8081';
+	public $baseURL = 'https://amc-laboratorios.xyz/public';
 
 	/*
 	|--------------------------------------------------------------------------
