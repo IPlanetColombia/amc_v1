@@ -1,6 +1,6 @@
 <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-light navbar-full sidenav-active-rounded">
     <div class="brand-sidebar">
-        <h1 class="logo-wrapper"><a class="brand-logo darken-1" href="/home" style="vertical-align: center;">
+        <h1 class="logo-wrapper"><a class="brand-logo darken-1" href="/amc-laboratorio/home" style="vertical-align: center;">
                 <i class="material-icons"><?= isset(configInfo()['icon_app']) ? configInfo()['icon_app'] : '' ?> </i>
                 <span class="logo-text hide-on-med-and-down"
                       style="padding-top: 10px !important; display: block; "><?= isset(configInfo()['name_app']) ? configInfo()['name_app'] : 'IPLANET' ?></span></a><a
@@ -23,7 +23,7 @@
         </li>
         <li class="bold <?= base_url(uri_string()) == base_url() . '/home' ? 'active' : '' ?>"><a
                     class="waves-effect waves-cyan <?= base_url(uri_string()) == base_url() . '/home' ? 'active' : '' ?> "
-                    href="<?= base_url() ?>/home"><i
+                    href="<?= base_url() ?>/amc-laboratorio/home"><i
                         class="material-icons">settings_input_svideo</i><span class="menu-title" data-i18n="Calendar"> Home</span></a>
         </li>
         <?php foreach (menu() as $item): ?>

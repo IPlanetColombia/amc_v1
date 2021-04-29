@@ -43,9 +43,9 @@ class TableController extends BaseController
                         'use_direccion'         => 'Dirección',
                     ]);
                     $this->crud->where(['usuario.id = ?' => session('user')->id ]);
-                    $this->crud->columns(['name', 'username', 'email', 'usertype', 'registerDate', 'lastvisitDate', 'use_cargo','use_nombre_encargado','use_telefono','use_fax','use_direccion']);
-                    $this->crud->editFields(['name', 'username', 'email', 'usertype', 'registerDate', 'lastvisitDate', 'use_cargo','use_nombre_encargado','use_telefono','use_fax','use_direccion']);                
+                    $this->crud->columns(['name', 'username', 'email', 'usertype', 'registerDate', 'lastvisitDate', 'use_cargo','use_nombre_encargado','use_telefono','use_fax','use_direccion']);                
                     $this->crud->unsetDelete();
+                    $this->crud->unsetEdit();
                     $this->crud->unsetAdd();
                     break;
                 

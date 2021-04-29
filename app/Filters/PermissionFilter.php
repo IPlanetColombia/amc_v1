@@ -33,7 +33,7 @@ class PermissionFilter implements FilterInterface
                exit;
             }
         } else {
-            if($url != 'home') {
+            if($url != 'amc-laboratorio') {
 
                 $data = $permission->select('*')
                     ->join('menus', 'menus.id = permissions.menu_id')

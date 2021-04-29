@@ -31,17 +31,19 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'AuthController::login');
-$routes->get('/register', 'AuthController::register');
-$routes->post('/create', 'AuthController::create');
 $routes->get('/reset_password', 'AuthController::resetPassword');
-$routes->post('/forgot_password', 'AuthController::forgotPassword');
-$routes->post('/validation', 'AuthController::validation');
 $routes->get('/logout', 'AuthController::logout');
-$routes->get('/home', 'HomeController::index');
-$routes->get('/about', 'HomeController::about');
-$routes->get('/perfile', 'UserController::perfile');
-$routes->post('/update_photo', 'UserController::updatePhoto');
-$routes->post('/update_user', 'UserController::updateUser');
+$routes->post('/validation', 'AuthController::validation');
+$routes->post('/forgot_password', 'AuthController::forgotPassword');
+// ----------------------- Fin de login --------------
+$routes->post('/amc-laboratorio/password/password_update', 'HomeController::password_update');
+// $routes->get('/amc-laboratorio/password/password_update', 'HomeController::password_update');
+$routes->get('/amc-laboratorio/home', 'HomeController::index');
+$routes->get('/amc-laboratorio/about', 'HomeController::about');
+$routes->get('/amc-laboratorio/password', 'HomeController::password');
+$routes->get('/amc-laboratorio/perfile', 'UserController::perfile');
+$routes->post('/amc-laboratorio/update_photo', 'UserController::updatePhoto');
+$routes->post('/amc-laboratorio/update_user', 'UserController::updateUser');
 $routes->post('/config/(:segment)', 'ConfigController::index/$1');
 $routes->get('/config/(:segment)', 'ConfigController::index/$1');
 $routes->post('/table/(:segment)', 'TableController::index/$1');

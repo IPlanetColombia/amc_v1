@@ -40,6 +40,7 @@ class Filters extends BaseConfig
         'auth' => [
             'before' => [
                 'home',
+                'amc-laboratorio/*',
                 'table/*',
                 'config/*'
             ]
@@ -47,6 +48,7 @@ class Filters extends BaseConfig
         'permission' => [
             'before' => [
                 'home',
+                'amc-laboratorio/*',
                 'table/*',
                 'config/*'
             ]
