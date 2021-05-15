@@ -131,14 +131,14 @@
         <div class="row">
             <div class="col s12 l12 m12 x13 tabla_certificados">
                 <?php session() ?>
-                <form action="<?= base_url(['amc-laboratorio/certificado/paginar'])?>" method="POST">
+                <form action="<?= route_to('certificado_download') ?>" method="POST">
                     <div id="tabla"></div>
                     <?= $certificados ?>
                     <button class="waves-effect waves-light btn" type="submit">Descargar</button>
                 </form>
             </div>
             <div class="col s12">
-                <form action="<?= route_to('filtrar_paginar') ?>" method="POST" id="form_pagina">
+                <form action="<?= base_url(['amc-laboratorio/certificado/paginar']) ?>" method="POST" id="form_pagina">
                     <div class="input-field col s12 l6 m6 x13">
                         <div class="botones_paginador">
                             <a data-pagina="start" class="enviar start deep-purple darken-1" data-page="0" style="display: none;"><i class="fas fa-angle-double-left"></i></a>
@@ -190,68 +190,69 @@
               showConfirmButton: false,
               allowOutsideClick: false,
             })
-            $.ajax({
-                url: url,
-                headers: {'X-Requested-With': 'XMLHttpRequest'},
-                type: 'POST',
-                data: data,
-                success: function(resultado){
-                    var resultado = JSON.parse(resultado);
-                    $('.responsive-table').remove();
-                    $('#tabla').append(resultado['certificados']);
-                    $('#r_total').text('Mostrando: '+resultado['total_2']+' de '+resultado['total']);
-                    $('.pagina_text').html('Pagina '+1);
-                    for (var i = 0; i < resultado['count']; i++) {
-                        $('.enviar.finish').attr('data-page', i );
-                    }
-                    $('.enviar.next').attr('data-page', 1);
-                    if ( $('.enviar.finish').attr('data-page') == resultado['pagina'])
-                        $('.enviar.next').fadeOut();
-                    else
-                        $('.enviar.next').fadeIn();
+            // $.post()
+            // $.ajax({
+            //     url: url,
+            //     headers: {'X-Requested-With': 'XMLHttpRequest'},
+            //     type: 'POST',
+            //     data: data,
+            //     success: function(resultado){
+            //         var resultado = JSON.parse(resultado);
+            //         $('.responsive-table').remove();
+            //         $('#tabla').append(resultado['certificados']);
+            //         $('#r_total').text('Mostrando: '+resultado['total_2']+' de '+resultado['total']);
+            //         $('.pagina_text').html('Pagina '+1);
+            //         for (var i = 0; i < resultado['count']; i++) {
+            //             $('.enviar.finish').attr('data-page', i );
+            //         }
+            //         $('.enviar.next').attr('data-page', 1);
+            //         if ( $('.enviar.finish').attr('data-page') == resultado['pagina'])
+            //             $('.enviar.next').fadeOut();
+            //         else
+            //             $('.enviar.next').fadeIn();
 
-                    if( (parseInt(resultado['pagina'])+1) >= $('.enviar.finish').attr('data-page')){
-                        $('.enviar.finish').fadeOut();
-                    }else
-                        $('.enviar.finish').fadeIn();
+            //         if( (parseInt(resultado['pagina'])+1) >= $('.enviar.finish').attr('data-page')){
+            //             $('.enviar.finish').fadeOut();
+            //         }else
+            //             $('.enviar.finish').fadeIn();
 
-                    $('.enviar.back').fadeOut();
-                    $('.enviar.start').fadeOut();
-                    console.log(resultado);
-                    Swal.close();
-                },
-                error: function(){
-                    Swal.close();
-                }
-            });
-            // $.post(url, data, function(resultado) {
-            //     var resultado = JSON.parse(resultado);
-            //     $('.responsive-table').remove();
-            //     $('#tabla').append(resultado['certificados']);
-            //     $('#r_total').text('Mostrando: '+resultado['total_2']+' de '+resultado['total']);
-            //     $('.pagina_text').html('Pagina '+1);
-            //     for (var i = 0; i < resultado['count']; i++) {
-            //         $('.enviar.finish').attr('data-page', i );
+            //         $('.enviar.back').fadeOut();
+            //         $('.enviar.start').fadeOut();
+            //         console.log(resultado);
+            //         Swal.close();
+            //     },
+            //     error: function(){
+            //         Swal.close();
             //     }
-            //     $('.enviar.next').attr('data-page', 1);
-            //     if ( $('.enviar.finish').attr('data-page') == resultado['pagina'])
-            //         $('.enviar.next').fadeOut();
-            //     else
-            //         $('.enviar.next').fadeIn();
+            // });
+            $.post(url, data, function(resultado) {
+                var resultado = JSON.parse(resultado);
+                $('.responsive-table').remove();
+                $('#tabla').append(resultado['certificados']);
+                $('#r_total').text('Mostrando: '+resultado['total_2']+' de '+resultado['total']);
+                $('.pagina_text').html('Pagina '+1);
+                for (var i = 0; i < resultado['count']; i++) {
+                    $('.enviar.finish').attr('data-page', i );
+                }
+                $('.enviar.next').attr('data-page', 1);
+                if ( $('.enviar.finish').attr('data-page') == resultado['pagina'])
+                    $('.enviar.next').fadeOut();
+                else
+                    $('.enviar.next').fadeIn();
 
-            //     if( (parseInt(resultado['pagina'])+1) >= $('.enviar.finish').attr('data-page')){
-            //         $('.enviar.finish').fadeOut();
-            //     }else
-            //         $('.enviar.finish').fadeIn();
+                if( (parseInt(resultado['pagina'])+1) >= $('.enviar.finish').attr('data-page')){
+                    $('.enviar.finish').fadeOut();
+                }else
+                    $('.enviar.finish').fadeIn();
 
-            //     $('.enviar.back').fadeOut();
-            //     $('.enviar.start').fadeOut();
-            //     console.log(resultado);
-            //     Swal.close();
-            // }).fail(function() {
-            //     Swal.close();
-            //     $('.responsive-table').fadeIn();
-            // })
+                $('.enviar.back').fadeOut();
+                $('.enviar.start').fadeOut();
+                console.log(resultado);
+                Swal.close();
+            }).fail(function() {
+                Swal.close();
+                $('.responsive-table').fadeIn();
+            })
         });
         $('.enviar').click(function (e) {
             e.preventDefault();
