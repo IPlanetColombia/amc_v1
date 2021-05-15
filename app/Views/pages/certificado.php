@@ -57,7 +57,7 @@
                                             </h4>
         <div class="row">
             <div class="col s12">
-                <form autocomplete="off" id="form_filtrar" action="<?= route_to('filtrar_certificado')?>"method="POST">
+                <form autocomplete="off" id="form_filtrar" action="<?= base_url(['amc-laboratorio/certificado/filtrar'])?>"method="POST">
                     <!-- <div class="input-field col s12 l3 m6 x13">
                         <select name="limite">
                             <option value="10">10</option>
@@ -131,7 +131,7 @@
         <div class="row">
             <div class="col s12 l12 m12 x13 tabla_certificados">
                 <?php session() ?>
-                <form action="<?= route_to('certificado_download') ?>" method="POST">
+                <form action="<?= base_url(['amc-laboratorio/certificado/paginar'])?>" method="POST">
                     <div id="tabla"></div>
                     <?= $certificados ?>
                     <button class="waves-effect waves-light btn" type="submit">Descargar</button>
@@ -178,47 +178,80 @@
 <script>
     $(document).ready(function () {
         $('#filtrar').click(function (e) {
-            e.preventDefault();
+            // e.preventDefault();
             var form    = $('#form_filtrar');
             var form_filtro = $('#form_filtrar').serialize();
             var form_pagina = $('#form_pagina').serialize();
             var data        = form_filtro+'&'+form_pagina+"&pagina=0";
-            var url     = form.attr('action');
+            var url     = 'algo'+form.attr('action');
             var total   = $('#pagina').data('total');
             Swal.fire({
-              position: 'top-center',
               html:'<div class="card-content redo"><div class="preloader-wrapper big active"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div><div class="card-action"><p class="load">Cargando...</p></div>',
               showConfirmButton: false,
               allowOutsideClick: false,
             })
-            $.post(url, data, function(resultado) {
-                var resultado = JSON.parse(resultado);
-                $('.responsive-table').remove();
-                $('#tabla').append(resultado['certificados']);
-                $('#r_total').text('Mostrando: '+resultado['total_2']+' de '+resultado['total']);
-                $('.pagina_text').html('Pagina '+1);
-                for (var i = 0; i < resultado['count']; i++) {
-                    $('.enviar.finish').attr('data-page', i );
+            $.ajax({
+                url: url,
+                headers: {'X-Requested-With': 'XMLHttpRequest'},
+                type: 'POST',
+                data: data,
+                success: function(resultado){
+                    var resultado = JSON.parse(resultado);
+                    $('.responsive-table').remove();
+                    $('#tabla').append(resultado['certificados']);
+                    $('#r_total').text('Mostrando: '+resultado['total_2']+' de '+resultado['total']);
+                    $('.pagina_text').html('Pagina '+1);
+                    for (var i = 0; i < resultado['count']; i++) {
+                        $('.enviar.finish').attr('data-page', i );
+                    }
+                    $('.enviar.next').attr('data-page', 1);
+                    if ( $('.enviar.finish').attr('data-page') == resultado['pagina'])
+                        $('.enviar.next').fadeOut();
+                    else
+                        $('.enviar.next').fadeIn();
+
+                    if( (parseInt(resultado['pagina'])+1) >= $('.enviar.finish').attr('data-page')){
+                        $('.enviar.finish').fadeOut();
+                    }else
+                        $('.enviar.finish').fadeIn();
+
+                    $('.enviar.back').fadeOut();
+                    $('.enviar.start').fadeOut();
+                    console.log(resultado);
+                    Swal.close();
+                },
+                error: function(){
+                    Swal.close();
                 }
-                $('.enviar.next').attr('data-page', 1);
-                if ( $('.enviar.finish').attr('data-page') == resultado['pagina'])
-                    $('.enviar.next').fadeOut();
-                else
-                    $('.enviar.next').fadeIn();
+            });
+            // $.post(url, data, function(resultado) {
+            //     var resultado = JSON.parse(resultado);
+            //     $('.responsive-table').remove();
+            //     $('#tabla').append(resultado['certificados']);
+            //     $('#r_total').text('Mostrando: '+resultado['total_2']+' de '+resultado['total']);
+            //     $('.pagina_text').html('Pagina '+1);
+            //     for (var i = 0; i < resultado['count']; i++) {
+            //         $('.enviar.finish').attr('data-page', i );
+            //     }
+            //     $('.enviar.next').attr('data-page', 1);
+            //     if ( $('.enviar.finish').attr('data-page') == resultado['pagina'])
+            //         $('.enviar.next').fadeOut();
+            //     else
+            //         $('.enviar.next').fadeIn();
 
-                if( (parseInt(resultado['pagina'])+1) >= $('.enviar.finish').attr('data-page')){
-                    $('.enviar.finish').fadeOut();
-                }else
-                    $('.enviar.finish').fadeIn();
+            //     if( (parseInt(resultado['pagina'])+1) >= $('.enviar.finish').attr('data-page')){
+            //         $('.enviar.finish').fadeOut();
+            //     }else
+            //         $('.enviar.finish').fadeIn();
 
-                $('.enviar.back').fadeOut();
-                $('.enviar.start').fadeOut();
-                console.log(resultado);
-                Swal.close();
-            }).fail(function() {
-                Swal.close();
-                $('.responsive-table').fadeIn();
-            })
+            //     $('.enviar.back').fadeOut();
+            //     $('.enviar.start').fadeOut();
+            //     console.log(resultado);
+            //     Swal.close();
+            // }).fail(function() {
+            //     Swal.close();
+            //     $('.responsive-table').fadeIn();
+            // })
         });
         $('.enviar').click(function (e) {
             e.preventDefault();
