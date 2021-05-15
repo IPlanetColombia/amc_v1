@@ -51,11 +51,8 @@
                                 <div class="col s12">
                                     <div id="revenue-chart" class="card animate fadeUp">
                                         <div class="card-content">
-                                            <h4 class="header mt-0">
+                                            <h4 class="card-title">
                                                 Cambiar clave
-                                                <span class="purple-text small text-darken-1 ml-1">
-                                                    <i class="material-icons">key</i>
-                                                </span>
                                             </h4>
                                             <hr>
                                             <p>Por favor ingrese la clave actual, la nueva clave y repitala, la clave debe tener minimo 4 caracteres y maximo 32</p>

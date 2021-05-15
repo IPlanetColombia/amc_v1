@@ -45,14 +45,14 @@
                     <?php  if(session()->get('user')->usertype == 'Registered'): ?>
                         <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/configurations"><i class="material-icons">settings</i>
                                 Configure</a></li>
-                        <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/roles"><i class="material-icons">face</i>
-                                Roles</a></li>
-                        <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/users"><i class="material-icons">peoples</i>
+                        <!-- <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/roles"><i class="material-icons">face</i>
+                                Roles</a></li> -->
+                        <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/usuario"><i class="material-icons">peoples</i>
                                 Usuarios</a></li>
                         <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/menus"><i class="material-icons">menu</i>
                                 Menu</a></li>
                         <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/permissions"><i class="material-icons">lock_outline</i>
-                                Permisos</a></li>
+                                Permisos</a><?php echo session()->get('user')->id; ?></li>
                         <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/notifications"><i class="material-icons">contact_mail</i>
                                 Notificar</a></li>
 

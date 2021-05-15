@@ -1,0 +1,39 @@
+.card{
+	margin-bottom: 80px;
+}
+table tbody tr td.option{
+	display: flex;
+	justify-content: space-between;
+}
+.redo .fas.fa-sync.fa-spin{
+	display: flex;
+	justify-content: center;
+	font-size: 50px;
+	padding: 20px;
+}
+.card-action .load{
+	display: flex;
+	justify-content: center;
+	font-size: 30px;
+}
+.botones_paginador{
+	display: flex;
+	align-items: center;
+}
+.botones_paginador .enviar{
+	color: #fff;
+	font-size: 20px;
+	cursor: pointer;
+	margin: 0 2px 0 2px;
+	padding: 2px 5px;
+	border-radius: 2px;
+	box-shadow: 0 0 3px #4527a0;
+	transition: all 500ms ease;
+}
+.botones_paginador .enviar:hover{
+	box-shadow: 0 0 7px #311b92;
+}
+.mostrar_text{
+	width: 100%;
+	text-align: right;
+}

@@ -9,6 +9,7 @@ function menu()
     $menu = new Menu();
     if (session()->get('user')->usertype == 'Super Administrator') {
         $data = $menu->where(['type' => 'primario', 'status' => 'active'])
+            ->orderBy('position', 'ASC')
             ->get()
             ->getResult();
     } else {
@@ -17,6 +18,7 @@ function menu()
             ->where('typeUser', session()->get('user')->usertype)
             ->where('menus.type', 'primario')
             ->join('menus', 'menus.id = permissions.menu_id')
+            ->orderBy('position', 'ASC')
             // ->join('roles', 'roles.id = permissions.role_id')
             ->get()
             ->getResult();
@@ -29,14 +31,16 @@ function submenu($refences)
     $menu = new Menu();
     if (session()->get('user')->usertype == 'Super Administrator') {
         $data = $menu->where(['type' => 'secundario', 'status' => 'active', 'references' => $refences])
+            ->orderBy('position', 'ASC')
             ->get()
-                ->getResult();
+            ->getResult();
     } else {
         $permission = new Permission();
         $data = $permission->select('menus.*')
             ->where('typeUser', session()->get('user')->usertype)
             ->where('menus.type', 'secundario')
             ->where('menus.references', $refences)
+            ->orderBy('position', 'ASC')
             ->join('menus', 'menus.id = permissions.menu_id')
             // ->join('roles', 'roles.id = permissions.role_id')
             ->get()

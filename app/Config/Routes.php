@@ -36,14 +36,23 @@ $routes->get('/logout', 'AuthController::logout');
 $routes->post('/validation', 'AuthController::validation');
 $routes->post('/forgot_password', 'AuthController::forgotPassword');
 // ----------------------- Fin de login --------------
-$routes->post('/amc-laboratorio/password/password_update', 'HomeController::password_update');
-// $routes->get('/amc-laboratorio/password/password_update', 'HomeController::password_update');
-$routes->get('/amc-laboratorio/home', 'HomeController::index');
-$routes->get('/amc-laboratorio/about', 'HomeController::about');
-$routes->get('/amc-laboratorio/password', 'HomeController::password');
-$routes->get('/amc-laboratorio/perfile', 'UserController::perfile');
-$routes->post('/amc-laboratorio/update_photo', 'UserController::updatePhoto');
-$routes->post('/amc-laboratorio/update_user', 'UserController::updateUser');
+$routes->group('amc-laboratorio', function ($routes){
+	$routes->get('password', 'ClienteController::password');
+	$routes->post('password/password_update', 'ClienteController::password_update');
+	$routes->get('certificado', 'ClienteController::certificado',['as' => 'certificado']);
+	$routes->get('certificado/(:segment)','ClienteController::certificado_detail/$1',['as'=>'certificado_detail']);
+	$routes->post('certificado/download','ClienteController::certificado_down',['as'=>'certificado_download']);
+	$routes->post('certificado/filtrar','ClienteController::certificado_filtrar',['as'=>'filtrar_certificado']);
+	$routes->post('certificado/paginar','ClienteController::certificado_paginar',['as'=>'filtrar_paginar']);
+	// $routes->get('/amc-laboratorio/password/password_update', 'HomeController::password_update');
+	// --------------------- Fin Controller Cliente ---------
+	$routes->get('home', 'HomeController::index');
+	$routes->get('about', 'HomeController::about');
+	$routes->get('perfile', 'UserController::perfile');
+	$routes->post('update_photo', 'UserController::updatePhoto');
+	$routes->post('update_user', 'UserController::updateUser');
+});
+
 $routes->post('/config/(:segment)', 'ConfigController::index/$1');
 $routes->get('/config/(:segment)', 'ConfigController::index/$1');
 $routes->post('/table/(:segment)', 'TableController::index/$1');

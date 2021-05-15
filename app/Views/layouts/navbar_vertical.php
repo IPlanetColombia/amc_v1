@@ -18,7 +18,7 @@
                 </div>
                 <a href="#user" style="margin-right: 0px;"><img class="circle"  style="width: 50px; height:50px;" src="<?= session('user') && session('user')->photo ? base_url().'/assets/upload/images/'.session('user')->photo : base_url().'/assets/img/'.'user.png' ?>"></a>
                 <a href="#name" style="margin-right: 0px;"><small class="white-text name" style=" font-size: 12px !important;"><?= session('user')->name ?></small></a>
-                <a href="#email"><small class="white-text email"><?= session('user')->id  ?></small></a>
+                <a href="#email"><small class="white-text email"><?= session('user')->usertype  ?></small></a>
             </div>
         </li>
         <li class="bold <?= base_url(uri_string()) == base_url() . '/home' ? 'active' : '' ?>"><a
