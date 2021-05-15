@@ -298,14 +298,14 @@ class ClienteController extends BaseController
                 <h3 class="responsive-table">No hay coincidencias</h3>
             ';
         }
-        $resultado = json_encode([
+        $resultado = array(
             'certificados'  => $certificados,
             'count'         => ($count[0]->total/$limite),
             'total'         => $count[0]->total,
             'pagina'        => $data['pagina'],
             'total_2'       => count($result)
-        ]);
-        return $resultado;
+        );
+        return json_encode($resultado);
 	}
     public function tabla($data){
         $certificados = '
