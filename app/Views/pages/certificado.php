@@ -78,9 +78,9 @@
                     </div> -->
                     <div class="input-field col s12 l3 m12 x13">
                         <select name="parametros">
-                            <option value="0">Sin filtrar</option>
+                            <!-- <option value="0">Sin filtrar</option> -->
                             <?php foreach ($resultado_parametros as $value):?>
-                                <option value="<?=$value->id_parametro?>"><?= $value->par_nombre ?></option>
+                                <option value="<?=$value->id_parametro?>"><?= $value->par_nombre ? $value->par_nombre:'Sin filtrar' ?></option>
                             <?php endforeach ?>
                         </select>
                         <label>Parametros</label>
@@ -183,7 +183,7 @@
             var form_filtro = $('#form_filtrar').serialize();
             var form_pagina = $('#form_pagina').serialize();
             var data        = form_filtro+'&'+form_pagina+"&pagina=0";
-            var url     = 'algo'+form.attr('action');
+            var url     = form.attr('action');
             var total   = $('#pagina').data('total');
             Swal.fire({
               html:'<div class="card-content redo"><div class="preloader-wrapper big active"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div><div class="card-action"><p class="load">Cargando...</p></div>',

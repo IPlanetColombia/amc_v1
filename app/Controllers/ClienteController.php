@@ -179,13 +179,14 @@ class ClienteController extends BaseController
     	";
     	$parametros_resultado   ="
     		SELECT
-    			distinct pa.id_parametro as id_parametro,
-    			pa.par_nombre as par_nombre
+    			distinct pa.id_parametro,
+    			pa.par_nombre
     		FROM
     			muestreo m
                 $join_p
-    			left join ensayo e on p.id_producto = e.id_producto
-    			left join parametro pa on e.id_parametro = pa.id_parametro
+    			left join ensayo_vs_muestra em on em.id_muestra = m.id_muestreo
+                left join ensayo e on e.id_ensayo = em.id_ensayo
+                left join parametro pa on e.id_parametro = pa.id_parametro
             WHERE
                 m.id_cliente = $id
 			ORDER BY
@@ -222,7 +223,7 @@ class ClienteController extends BaseController
     	$resultado_muestra 		= $db->query($analisis_resultado)->getResult();
     	$resultado_parametros 	= $db->query($parametros_resultado)->getResult();
     	$resultado_productos 	= $db->query($productos_resultado)->getResult();
-    	// var_dump($resultado_muestra);
+    	// var_dump($resultado_parametros);
         $certificados_tabla     = $this->tabla($certificados);
     	return view('pages/certificado',[
     		'certificados' 			=> $certificados_tabla,
