@@ -44,6 +44,8 @@ $routes->group('amc-laboratorio', function ($routes){
 	$routes->post('certificado/download','ClienteController::certificado_down',['as'=>'certificado_download']);
 	$routes->post('certificado/filtrar','ClienteController::certificado_filtrar',['as'=>'filtrar_certificado']);
 	$routes->post('certificado/paginar','ClienteController::certificado_paginar',['as'=>'filtrar_paginar']);
+	$routes->get('reporte', 'ClienteController::reporte');
+	$routes->post('reporte', 'ClienteController::reporte_post');
 	// $routes->get('/amc-laboratorio/password/password_update', 'HomeController::password_update');
 	// --------------------- Fin Controller Cliente ---------
 	$routes->get('home', 'HomeController::index');

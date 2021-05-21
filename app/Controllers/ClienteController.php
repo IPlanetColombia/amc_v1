@@ -132,12 +132,10 @@ class ClienteController extends BaseController
                     $aux_filter
 				WHERE
                     m.id_cliente = $id
-					-- v.certificado_nro = ce.certificado_nro
 					$aux_concepto
 					$aux_tipo_analisis
 					$aux_producto
                     $aux_parametro
-                    -- and pa.id_parametro = 86
 					and m.mue_fecha_muestreo BETWEEN '$aux_date_start' and '$aux_date_finish'
 				order by c.certificado_nro desc";
     	return $sql;
@@ -159,78 +157,16 @@ class ClienteController extends BaseController
     	$sql_2 = $this->certificacion($data);
     	$count = $db->query($sql_2)->getResult();
 
-        $id = session('user')->id;
-        $join_p = "
-                left join certificacion c on m.id_muestreo = c.id_muestreo
-                left join muestreo_detalle md on c.id_muestreo_detalle = md.id_muestra_detalle
-                left join producto p on md.id_producto = p.id_producto";
-    	$mensaje_resultado      = "
-    		SELECT
-    			distinct mr.mensaje_titulo as mensaje_titulo,
-    			mr.id_mensaje as id_mensaje
-    		FROM
-    			muestreo m
-    			left join certificacion c on m.id_muestreo = c.id_muestreo
-                left join mensaje_resultado mr on c.id_mensaje = mr.id_mensaje
-            WHERE
-                m.id_cliente = $id
-            ORDER BY
-                mr.mensaje_titulo ASC
-    	";
-    	$parametros_resultado   ="
-    		SELECT
-    			distinct pa.id_parametro,
-    			pa.par_nombre
-    		FROM
-    			muestreo m
-                $join_p
-    			left join ensayo_vs_muestra em on em.id_muestra = m.id_muestreo
-                left join ensayo e on e.id_ensayo = em.id_ensayo
-                left join parametro pa on e.id_parametro = pa.id_parametro
-            WHERE
-                m.id_cliente = $id
-			ORDER BY
-				pa.par_nombre ASC
-    	";
-
-    	$productos_resultado    ="
-    		SELECT
-    			distinct p.pro_nombre as producto,
-    			p.id_producto as id_producto
-    		FROM
-    			muestreo m
-                $join_p
-    		WHERE
-				m.id_cliente = $id
-            ORDER BY
-                p.pro_nombre ASC
-    	";
-        $analisis_resultado     ="
-            SELECT
-                distinct md.id_tipo_analisis as id_muestra_tipo_analsis,
-                ma.mue_nombre as mue_nombre
-            FROM
-                muestreo m
-                left join certificacion c on m.id_muestreo = c.id_muestreo
-                left join muestreo_detalle md on c.id_muestreo_detalle = md.id_muestra_detalle
-                left join muestra_tipo_analisis ma on md.id_tipo_analisis = ma.id_muestra_tipo_analsis
-            WHERE
-                m.id_cliente = $id
-        ";
-
-    	$certificados 			= $db->query($sql.' LIMIT 0, 10')->getResult();
-    	$resultado_concepto 	= $db->query($mensaje_resultado)->getResult();
-    	$resultado_muestra 		= $db->query($analisis_resultado)->getResult();
-    	$resultado_parametros 	= $db->query($parametros_resultado)->getResult();
-    	$resultado_productos 	= $db->query($productos_resultado)->getResult();
+    	$certificados 	= $db->query($sql.' LIMIT 0, 10')->getResult();
+        $filtros        = $this->filtros();
     	// var_dump($resultado_parametros);
         $certificados_tabla     = $this->tabla($certificados);
     	return view('pages/certificado',[
     		'certificados' 			=> $certificados_tabla,
-    		'resultado_concepto' 	=> $resultado_concepto,
-    		'resultado_muestra' 	=> $resultado_muestra,
-    		'resultado_parametros'	=> $resultado_parametros,
-    		'resultado_productos'	=> $resultado_productos,
+    		'resultado_concepto' 	=> $filtros['resultado_concepto'],
+    		'resultado_muestra' 	=> $filtros['resultado_muestra'],
+    		'resultado_parametros'	=> $filtros['resultado_parametros'],
+    		'resultado_productos'	=> $filtros['resultado_productos'],
     		'count'					=> ($count[0]->total/$data['limite']),
     		'total'					=> $count[0]->total,
             'total_2'               => count($certificados)
@@ -387,5 +323,136 @@ class ClienteController extends BaseController
     	}else{
     		return redirect()->back();
     	}
+    }
+    // Reportes
+    public function reporte(){
+        $filtros        = $this->filtros();
+        // var_dump($filtros);
+        return view('pages/reporte', [
+            'filtros' => $filtros
+        ]);
+    }
+    public function reporte_post()
+    {
+        $db = \Config\Database::connect();
+        $data = [
+            'parametro'        => $this->request->getPost('parametros'),
+            'tipo_analisis'    => $this->request->getPost('tipo_analisis'),
+            'producto'         => $this->request->getPost('producto'),
+            'concepto'         => $this->request->getPost('concepto'),
+            'date_start'       => $this->request->getPost('date_start'),
+            'date_finish'      => $this->request->getPost('date_finish'),
+            'select'           => true
+        ];
+        $aux_date_finish = $data['date_finish'] == null ? date("Y-m-t") : $data['date_finish'];
+        $aux_date_firts = $data['date_start'] == null ? date("Y-m-01", strtotime($aux_date_finish)) : $data['date_start'];
+        $result = [];
+        $result_aux = [];
+        $contador = 0;
+        while (strtotime($aux_date_firts) <= strtotime($aux_date_finish) ) {
+            $data['date_start'] = $aux_date_firts;
+            $data['date_finish'] = date("Y-m-t",strtotime($aux_date_firts));
+            $sql_2 = $this->certificacion($data);
+            $count = $db->query($sql_2)->getResult();
+            if (empty($this->request->getPost('date_start'))) {
+                $aux_date_firts = date("Y-m-d",strtotime($aux_date_firts."-1 month"));
+                if($count[0]->total >= 1){
+                    $count[0]->mes = date("Y-F", strtotime($data['date_start']));
+                    array_push($result, $count);
+                    array_push($result_aux, $count);
+                    $contador++;
+                    $i = $contador;
+                    foreach ($result as $key => $value) {
+                        $i--;
+                        $result[$key] = $result_aux[$i];
+                    }
+                }
+            }else{
+                $aux_date_firts = date("Y-m-d",strtotime($aux_date_firts."+1 month"));
+                if($count[0]->total >= 1){
+                    $count[0]->mes = date("Y-F", strtotime($data['date_start']));
+                    array_push($result, $count);
+                }
+            }
+            if (strtotime('2010-01-01') == strtotime($aux_date_firts)) {
+                break;
+            }
+        }
+        return json_encode([
+            'data' => $result
+        ]);
+    }
+    // Filtros
+    public function filtros()
+    {
+        $db = \Config\Database::connect();
+        $id = session('user')->id;
+        $join_p = "
+                left join certificacion c on m.id_muestreo = c.id_muestreo
+                left join muestreo_detalle md on c.id_muestreo_detalle = md.id_muestra_detalle
+                left join producto p on md.id_producto = p.id_producto";
+        $mensaje_resultado      = "
+            SELECT
+                distinct mr.mensaje_titulo as mensaje_titulo,
+                mr.id_mensaje as id_mensaje
+            FROM
+                muestreo m
+                left join certificacion c on m.id_muestreo = c.id_muestreo
+                left join mensaje_resultado mr on c.id_mensaje = mr.id_mensaje
+            WHERE
+                m.id_cliente = $id
+            ORDER BY
+                mr.mensaje_titulo ASC
+        ";
+        $parametros_resultado   ="
+            SELECT
+                distinct pa.id_parametro,
+                pa.par_nombre
+            FROM
+                muestreo m
+                $join_p
+                left join ensayo_vs_muestra em on em.id_muestra = m.id_muestreo
+                left join ensayo e on e.id_ensayo = em.id_ensayo
+                left join parametro pa on e.id_parametro = pa.id_parametro
+            WHERE
+                m.id_cliente = $id
+            ORDER BY
+                pa.par_nombre ASC
+        ";
+
+        $productos_resultado    ="
+            SELECT
+                distinct p.pro_nombre as producto,
+                p.id_producto as id_producto
+            FROM
+                muestreo m
+                $join_p
+            WHERE
+                m.id_cliente = $id
+            ORDER BY
+                p.pro_nombre ASC
+        ";
+        $analisis_resultado     ="
+            SELECT
+                distinct md.id_tipo_analisis as id_muestra_tipo_analsis,
+                ma.mue_nombre as mue_nombre
+            FROM
+                muestreo m
+                left join certificacion c on m.id_muestreo = c.id_muestreo
+                left join muestreo_detalle md on c.id_muestreo_detalle = md.id_muestra_detalle
+                left join muestra_tipo_analisis ma on md.id_tipo_analisis = ma.id_muestra_tipo_analsis
+            WHERE
+                m.id_cliente = $id
+        ";
+        $resultado_concepto     = $db->query($mensaje_resultado)->getResult();
+        $resultado_muestra      = $db->query($analisis_resultado)->getResult();
+        $resultado_parametros   = $db->query($parametros_resultado)->getResult();
+        $resultado_productos    = $db->query($productos_resultado)->getResult();
+        return [
+            'resultado_concepto'    => $resultado_concepto,
+            'resultado_muestra'     => $resultado_muestra,
+            'resultado_parametros'  => $resultado_parametros,
+            'resultado_productos'   => $resultado_productos
+        ];
     }
 }

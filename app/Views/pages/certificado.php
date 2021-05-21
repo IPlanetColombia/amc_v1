@@ -186,7 +186,7 @@
             var url     = form.attr('action');
             var total   = $('#pagina').data('total');
             Swal.fire({
-              html:'<div class="card-content redo"><div class="preloader-wrapper big active"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div><div class="card-action"><p class="load">Cargando...</p></div>',
+              html:'<div class="card-content redo"><div class="preloader-wrapper big active"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>',
               showConfirmButton: false,
               allowOutsideClick: false,
             })
