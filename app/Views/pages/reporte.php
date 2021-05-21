@@ -86,7 +86,7 @@
                                                     <div class="row">
                                                         <div class="col s12">
                                                             <div class="yearly-revenue-chart">
-                                                                <canvas id="thisYearRevenue" class="firstShadow"
+                                                                <canvas id="miCanvas" class="firstShadow"
                                                                         height="350"></canvas>
                                                                 <canvas id="lastYearRevenue" height="350"></canvas>
                                                             </div>
