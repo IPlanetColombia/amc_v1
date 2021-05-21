@@ -148,9 +148,9 @@
                 o+=5;
                 t++;
             }
-            $('#thisYearRevenue').remove();
-            $('.yearly-revenue-chart').append('<canvas id="thisYearRevenue" class="firstShadow" height="350"></canvas>');
-            var thisYearctx = document.getElementById("thisYearRevenue").getContext("2d");
+            $('#miCanvas').remove();
+            $('.yearly-revenue-chart').append('<canvas id="miCanvas" class="firstShadow" height="350"></canvas>');
+            var thisYearctx = document.getElementById("miCanvas").getContext("2d");
 
             var thisYearData = {
                 labels: mes,
