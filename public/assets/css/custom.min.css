@@ -1,6 +1,9 @@
 .s12 .container{
 	margin-bottom: 80px;
 }
+.s12.login .container{
+	margin-bottom: 0px;
+}
 table tbody tr td.option{
 	display: flex;
 	justify-content: space-between;

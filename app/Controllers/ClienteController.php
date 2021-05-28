@@ -317,9 +317,32 @@ class ClienteController extends BaseController
     }
     public function certificado_down(){
     	if (isset($_POST['certificado_down'])) {
-    		foreach ($_POST['certificado_down'] as $key => $value) {
-    			echo $value.'<br>';
-    		}
+            $zip = new \ZipArchive();
+            $count = count($_POST['certificado_down']);
+            $archivo = 'certificados_amc.zip';
+            if($zip->open($archivo, \ZIPARCHIVE::CREATE) == true){
+        		foreach ($_POST['certificado_down'] as $key => $value) {
+                    $zip->open($archivo, \ZIPARCHIVE::CREATE);
+                    $mpdf = new \Mpdf\Mpdf([]);
+                    $html = view('pages/generate_pdf',['value' => $value]);
+                    $css  = file_get_contents('assets/css/styles.css');
+                    $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
+                    $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+                    $name = 'certificado_'.$value.'.pdf';
+                    if($count == 1 ){
+                        $mpdf->Output($name,'D');
+                        exit;
+                    }
+                    $mpdf->Output($name,'F');
+                    $zip->addfile($name);
+                    $zip->close();
+                    unlink($name);
+        		}
+                header("Content-type: application/octet-stream");
+                header("Content-disposition: attachment; filename=$archivo");
+                readfile($archivo);
+                unlink($archivo);
+            }
     	}else{
     		return redirect()->back();
     	}

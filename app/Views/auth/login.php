@@ -5,11 +5,11 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
     <body>
-        <form action="http://www.amc-laboratorios.com/amc_analisis/index.php/Verifylogin" method="POST">
+        <form action="http://localhost:8080/amc_v1/amc_analisis/index.php/Verifylogin" method="POST">
             <input type="hidden" name="frm_user" value="<?php echo session('success')['frm_user'] ?>">
             <input type="hidden" name="frm_pwd" value="<?php echo session('success')['frm_pwd'] ?>">
             <input type="hidden" name="frm_tipo" value="<?php echo session('success')['frm_tipo'] ?>">
-            <button type="submit" style="" id="funcionario"></button>
+            <button type="submit" style="display:none;" id="funcionario"></button>
         </form>
         <script>
             let button = $('#funcionario');
@@ -62,7 +62,7 @@
 <body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 1-column login-bg   blank-page blank-page"
       data-open="click" data-menu="vertical-dark-menu" data-col="1-column">
 <div class="row">
-    <div class="col s12">
+    <div class="col s12 login">
         <div class="container">
             <div id="login-page" class="row">
                 <div class="col s12 m6 l4 z-depth-4 card-panel border-radius-6 login-card bg-opacity-8">

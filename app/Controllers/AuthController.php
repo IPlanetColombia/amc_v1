@@ -48,7 +48,8 @@ class AuthController extends BaseController
                                 'frm_pwd' => $password,
                                 'frm_tipo' => $rol
                             );
-                            return redirect()->to(base_url().'/')->with('success', $array );
+                            $_SESSION['logged_in'] = $array;
+                            return redirect()->to(base_url().'/')->with('success', $array);
                         } else {
                             return redirect()->to(base_url().'/')->with('errors', 'Las credenciales no concuerdan.');
                         }
