@@ -40,3 +40,19 @@ table tbody tr td.option{
 	width: 100%;
 	text-align: right;
 }
+
+.card-content.reports{
+	border-bottom: 1px solid lightgray;
+}
+.card-content.reports .col.s12{
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin: 10px 0;
+}
+.card-content.reports .col.s12>div{
+	margin-left: 5px;
+}
+.card-content.reports .col.s12>div span{
+	font-size: 12px;
+}

@@ -131,7 +131,7 @@
         <div class="row">
             <div class="col s12 l12 m12 x13 tabla_certificados">
                 <?php session() ?>
-                <form action="<?= route_to('certificado_download') ?>" method="POST">
+                <form action="<?= base_url(['amc-laboratorio/certificado/download']) ?>" method="POST">
                     <div id="tabla"></div>
                     <?= $certificados ?>
                     <button class="waves-effect waves-light btn" type="submit">Descargar</button>
