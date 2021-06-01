@@ -38,7 +38,7 @@
                                                     <span class="white-text"><?=$solicitudes->total?></span>
                                                 </div>
                                                 <div class="card-action light-blue darken-1 center-aling">
-                                                    <span>Este mes: <?= $historial[0]->total ?></span>
+                                                    <span>Este mes: <?= $historial[11]->total ?></span>
                                                 </div>
                                     </div>
                                 </div>
