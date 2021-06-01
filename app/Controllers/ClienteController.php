@@ -71,13 +71,7 @@ class ClienteController extends BaseController
     }
 
     //  Certificados
-    public function certificacion($data)
-    {
-    	// $tabla = 'view_certificados'.session('user')->id;
-    	// $filter = "	left join certificacion ce on v.id_muestreo = ce.id_muestreo
-    	// 			left join muestreo_detalle md on ce.id_muestreo_detalle = md.id_muestra_detalle
-    	// 			left join producto p on md.id_producto = p.id_producto
-    	// ";
+    public function certificacion($data){
         if ($data['select']) {
             $aux_select = 'count(*) total';
         }else{
@@ -169,7 +163,8 @@ class ClienteController extends BaseController
     		'resultado_productos'	=> $filtros['resultado_productos'],
     		'count'					=> ($count[0]->total/$data['limite']),
     		'total'					=> $count[0]->total,
-            'total_2'               => count($certificados)
+            'total_2'               => count($certificados),
+            'result'                => $result
     	]);
     }
     public function certificado_filtrar(){
@@ -185,12 +180,13 @@ class ClienteController extends BaseController
         	'parametro'        => $this->request->getPost('parametros'),
             'select'           => false,
         ];
-
     	$sql = $this->certificacion($data);
         $data['select'] = true;
     	$sql_2 = $this->certificacion($data);
-    	$result = $db->query($sql.' LIMIT 0, '.$data['limite'])->getResult();
+        $aux_limite = $data['limite'] == null ? '':' LIMIT '.($data['pagina']*$data['limite']).' ,'.$data['limite'];
+    	$result = $db->query($sql.$aux_limite)->getResult();
     	$count = $db->query($sql_2)->getResult();
+        $limite = $data['limite'] == null ? $count[0]->total:$data['limite'];
     	if ($result != null) {
 	    	$certificados = $certificados = $this->tabla($result);
     	}else{
@@ -200,120 +196,22 @@ class ClienteController extends BaseController
     	}
     	$resultado = array(
     		'certificados' 	=> $certificados,
-    		'count'			=> ($count[0]->total/$data['limite']),
+    		'count'         => ($count[0]->total/$limite),
     		'total'			=> $count[0]->total,
             'pagina'        => $data['pagina'],
-            'total_2'       => count($result)
+            'total_2'       => count($result),
+            'result'        => $result
     	);
     	return json_encode($resultado);
     }
-    public function certificado_paginar(){
-        $db = \Config\Database::connect();
-        $data = [
-            'concepto'       => $this->request->getPost('concepto'),
-            'tipo_analisis'  => $this->request->getPost('tipo_analisis'),
-            'date_start'     => $this->request->getPost('date_start'),
-            'date_finish'    => $this->request->getPost('date_finish'),
-            'producto'       => $this->request->getPost('producto'),
-            'limite'         => $this->request->getPost('limite'),
-            'pagina'         => $this->request->getPost('pagina'),
-            'parametro'      => $this->request->getPost('parametros'),
-            'select'         => false,
-        ];
-
-        $sql = $this->certificacion($data);
-        $data['select'] = true;
-        $sql_2 = $this->certificacion($data);
-        $aux_limite = $data['limite'] == null ? '':' LIMIT '.($data['pagina']*$data['limite']).' ,'.$data['limite'];
-        $result = $db->query($sql.$aux_limite)->getResult();
-        $count = $db->query($sql_2)->getResult();
-        $limite = $data['limite'] == null ? $count[0]->total:$data['limite'];
-        if ($result != null) {
-            $certificados = $this->tabla($result);
-        }else{
-            $certificados = '
-                <h3 class="responsive-table">No hay coincidencias</h3>
-            ';
-        }
-        $resultado = array(
-            'certificados'  => $certificados,
-            'count'         => ($count[0]->total/$limite),
-            'total'         => $count[0]->total,
-            'pagina'        => $data['pagina'],
-            'total_2'       => count($result)
-        );
-        return json_encode($resultado);
-	}
-    public function tabla($data){
-        $certificados = '
-                <table class="responsive-table striped">
-                    <thead class="highlight">
-                        <tr>
-                            <th>Fecha de registro</th>
-                            <th>Cert Nro.</th>
-                            <th>Lote</th>
-                            <th>Seccional</th>
-                            <th>Producto</th>
-                            <th>Resultado</th>
-                            <th>Archivo</th>
-                        </tr>
-                    </thead>
-                    <tbody class="centered">';
-                        foreach ($data as $key => $value) {
-                            $certificados.='
-                                <tr>
-                                    <td>'. $value->mue_fecha_muestreo.'</td>
-                                    <td>'. $value->certificado_nro.'</td>
-                                    <td>'. $value->mue_lote.'</td>
-                                    <td>'. $value->parametro.'</td>
-                                    <td>'. $value->producto.'</td>
-                                    <td>'. $value->mensaje.'</td>
-                                    <td class="option">';
-                                        if ($value->preinforme === '0000-00-00 00:00:00' ){
-                                            $certificados.='
-                                            <label>
-                                                <input type="checkbox" disabled="disable" />
-                                                <span></span>
-                                            </label>';
-                                        }
-                                        else{
-                                            $certificados.='
-                                                <label>
-                                                    <input type="checkbox" name="certificado_down[]" value="'. $value->certificado_nro.'" />
-                                                    <span></span>
-                                                </label>';
-
-                                        }
-                                        if ($value->fecha_publicacion == NULL ){
-                                            $certificados.='
-                                            <label>
-                                                <input type="checkbox" disabled="disable" />
-                                                <span></span>
-                                            </label>';
-                                        }
-                                        else{
-                                            $certificados.='
-                                                <label>
-                                                    <input type="checkbox" name="certificado_down[]" value="'. $value->certificado_nro.'" />
-                                                    <span></span>
-                                                </label>';
-
-                                        }
-                                        $certificados.='
-                                    </td>
-                                </tr>
-                            ';
-                        }
-                $certificados.='
-                    </tbody>
-                </table>
-            ';
-        return $certificados;
-    }
-    public function certificado_detail($id_muestreo){
-    	return view('pages/certificado_view',[
-    		'id' => $id_muestreo,
-    	]);
+    public function certificado_download($certificado){
+            $mpdf = new \Mpdf\Mpdf([]);
+            $html = view('pages/generate_pdf',['value' => $certificado]);
+            $css  = file_get_contents('assets/css/styles.css');
+            $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
+            $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+            $name = 'certificado_'.$certificado.'.pdf';
+            $mpdf->Output($name,'D');
     }
     public function certificado_down(){
     	if (isset($_POST['certificado_down'])) {
@@ -347,14 +245,39 @@ class ClienteController extends BaseController
     }
     // Reportes
     public function reporte(){
+        $db             = \Config\Database::connect();
         $filtros        = $this->filtros();
-        // var_dump($filtros);
+        $date_finish    = date('Y-m-t');
+        $data = [
+            'concepto'      => '-1',
+            'tipo_analisis' => 0,
+            'date_start'    => null,
+            'date_finish'   => null,
+            'producto'      => 0,
+            'parametro'     => 0,
+            'limite'        => 10,
+            'select'        => true,
+        ];
+        $historial_array = [];
+        for ($i=0;$i<=11;$i++){ 
+            $aux_date_firts = date('Y-n-01', mktime(0, 0, 0, (date("n")-$i), 1, date("Y") ) );
+        }
+        $aux_date_finish = date('Y-m-t');
+        while (strtotime($aux_date_firts) <= strtotime($aux_date_finish) ) {
+            $data['date_start'] = $aux_date_firts;
+            $data['date_finish'] = date("Y-m-t",strtotime($aux_date_firts));
+            $sql_2 = $this->certificacion($data);
+            $count = $db->query($sql_2)->getResult();
+            $aux_date_firts = date("Y-m-d",strtotime($aux_date_firts."+1 month"));
+            $count[0]->mes = date("Y-F", strtotime($data['date_start']));
+            array_push($historial_array, $count[0]);
+        }
         return view('pages/reporte', [
-            'filtros' => $filtros
+            'filtros'   => $filtros,
+            'historial' => $historial_array
         ]);
     }
-    public function reporte_post()
-    {
+    public function reporte_post(){
         $db = \Config\Database::connect();
         $data = [
             'parametro'        => $this->request->getPost('parametros'),
@@ -366,10 +289,18 @@ class ClienteController extends BaseController
             'select'           => true
         ];
         $aux_date_finish = $data['date_finish'] == null ? date("Y-m-t") : $data['date_finish'];
+
         $aux_date_firts = $data['date_start'] == null ? date("Y-m-01", strtotime($aux_date_finish)) : $data['date_start'];
         $result = [];
         $result_aux = [];
         $contador = 0;
+        // if($data['date_start'] == null){
+        //     for ($i=0;$i<=23;$i++){ 
+        //         $aux_date_firts = date('Y-n-01', mktime(0, 0, 0, (date("n")-$i), 1, date("Y") ) );
+        //     }
+        // }else
+        //     $aux_date_firts = $data['date_start'];
+
         while (strtotime($aux_date_firts) <= strtotime($aux_date_finish) ) {
             $data['date_start'] = $aux_date_firts;
             $data['date_finish'] = date("Y-m-t",strtotime($aux_date_firts));
@@ -377,7 +308,7 @@ class ClienteController extends BaseController
             $count = $db->query($sql_2)->getResult();
             if (empty($this->request->getPost('date_start'))) {
                 $aux_date_firts = date("Y-m-d",strtotime($aux_date_firts."-1 month"));
-                if($count[0]->total >= 1){
+                if($count[0]->total != 0){
                     $count[0]->mes = date("Y-F", strtotime($data['date_start']));
                     array_push($result, $count);
                     array_push($result_aux, $count);
@@ -390,10 +321,8 @@ class ClienteController extends BaseController
                 }
             }else{
                 $aux_date_firts = date("Y-m-d",strtotime($aux_date_firts."+1 month"));
-                if($count[0]->total >= 1){
-                    $count[0]->mes = date("Y-F", strtotime($data['date_start']));
-                    array_push($result, $count);
-                }
+                $count[0]->mes = date("Y-F", strtotime($data['date_start']));
+                array_push($result, $count);
             }
             if (strtotime('2010-01-01') == strtotime($aux_date_firts)) {
                 break;
@@ -403,9 +332,8 @@ class ClienteController extends BaseController
             'data' => $result
         ]);
     }
-    // Filtros
-    public function filtros()
-    {
+    // Filtros y tablas
+    public function filtros(){
         $db = \Config\Database::connect();
         $id = session('user')->id;
         $join_p = "
@@ -475,5 +403,71 @@ class ClienteController extends BaseController
             'resultado_parametros'  => $resultado_parametros,
             'resultado_productos'   => $resultado_productos
         ];
+    }
+    public function tabla($data){
+        $certificados = '
+                <table class="responsive-table striped">
+                    <thead class="highlight">
+                        <tr>
+                            <th>Fecha de registro</th>
+                            <th>Cert Nro.</th>
+                            <th>Lote</th>
+                            <th>Seccional</th>
+                            <th>Producto</th>
+                            <th>Resultado</th>
+                            <th>Archivo</th>
+                        </tr>
+                    </thead>
+                    <tbody class="centered">';
+                        foreach ($data as $key => $value) {
+                            $certificados.='
+                                <tr>
+                                    <td>'. $value->mue_fecha_muestreo.'</td>
+                                    <td>'. $value->certificado_nro.'</td>
+                                    <td>'. $value->mue_lote.'</td>
+                                    <td>'. $value->parametro.'</td>
+                                    <td>'. $value->producto.'</td>
+                                    <td>'. $value->mensaje.'</td>
+                                    <td class="option">';
+                                        if ($value->preinforme === '0000-00-00 00:00:00' ){
+                                            $certificados.='
+                                            <label>
+                                                <input type="checkbox" disabled="disable" />
+                                                <span></span>
+                                            </label>';
+                                        }
+                                        else{
+                                            $certificados.='
+                                                <label>
+                                                    <input type="checkbox" name="certificado_down[]" value="'. $value->certificado_nro.'" />
+                                                    <span></span>
+                                                </label>';
+
+                                        }
+                                        if ($value->fecha_publicacion == NULL ){
+                                            $certificados.='
+                                            <label>
+                                                <input type="checkbox" disabled="disable" />
+                                                <span></span>
+                                            </label>';
+                                        }
+                                        else{
+                                            $certificados.='
+                                                <label>
+                                                    <input type="checkbox" name="certificado_down[]" value="'. $value->certificado_nro.'" />
+                                                    <span></span>
+                                                </label>';
+
+                                        }
+                                        $certificados.='
+                                    </td>
+                                </tr>
+                            ';
+                        }
+                $certificados.='
+                    </tbody>
+                </table>
+            ';
+        return $certificados;
     }
 }

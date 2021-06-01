@@ -26,27 +26,34 @@
                     <div class="section">
                         <!--card stats start-->
                         <div id="card-stats" class="pt-0">
+                            <h4 class="center-align">Portal de Clientes AMC</h4>
                             <div class="row">
                                 <div class="col s12 m6 l6">
-                                    <div class="card gradient-45deg-light-blue-cyan gradient-shadow min-height-100 white-text animate fadeLeft">
-                                        <div class="padding-4">
-                                            <div class="row">
-                                                <div class="col s12 m12 center-align">
-                                                    <p><i class="material-icons">account_circle</i>Solicitudes</p>
-                                                    <p class="mb-0 white-text"><?= $solicitudes->total ?></p>
+                                    <div class="card light-blue gradient-shadow white-text animate fadeLeft">
+                                                <div class="content_head">
+                                                    <div>
+                                                        <i class="fas fa-file-signature"></i>
+                                                        <span>Solicitudes</span>
+                                                    </div>
+                                                    <span class="white-text"><?=$solicitudes->total?></span>
                                                 </div>
-                                            </div>
-                                        </div>
+                                                <div class="card-action light-blue darken-1 center-aling">
+                                                    <span>Este mes: <?= $historial[0]->total ?></span>
+                                                </div>
                                     </div>
                                 </div>
                                 <div class="col s12 m6 l6">
-                                    <div class="card gradient-45deg-green-teal gradient-shadow min-height-100 white-text animate fadeRight">
+                                    <div class="card deep-orange lighten-1 gradient-shadow min-height-100 white-text animate fadeRight">
                                         <div class="padding-4">
                                             <div class="row">
-                                                <div class="col s12 m12 center-align">
-                                                    
-                                                    <p><i class="material-icons">timeline</i>En proceso</p>
-                                                    <p class="mb-0 white-text">$890</p>
+                                                <div class="col s12 m12">
+                                                    <div class="content_head">
+                                                        <div>
+                                                            <i class="fas fa-project-diagram"></i>
+                                                            <span>En proceso</span>
+                                                        </div>
+                                                        <span class="mb-0 white-text">3</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -63,7 +70,7 @@
                                         <div class="card-content">
                                             <h4 class="header mt-0">
                                                 Historial de solicitudes
-                                                <a class="waves-effect waves-light btn gradient-45deg-purple-deep-orange gradient-shadow right">Details</a>
+                                                <a href="<?= base_url(['amc-laboratorio/reporte']) ?>" class="waves-effect waves-light btn gradient-45deg-purple-deep-orange gradient-shadow right">Más</a>
                                             </h4>
                                             <div class="row">
                                                 <div class="col s12">
@@ -87,15 +94,11 @@
                                                     <div class="col s12  card-content reports">
                                                         <div class="row">
                                                             <div class="col s12">
-                                                                <?php if($value->fecha_publicacion == NULL ): ?>
-                                                                    <i class="material-icons">close</i>
-                                                                <?php else: ?>
-                                                                    <i class="material-icons">done</i>
-                                                                <?php endif ?>
                                                                 <div>
                                                                     <p>Certificado #<?= $value->certificado_nro ?></p>
                                                                     <span class=""><?= $value->producto ?></span>
                                                                 </div>
+                                                                <a href="<?= base_url(['amc-laboratorio/certificado/',$value->certificado_nro]) ?>" class="tooltipped" data-position="left" data-tooltip="Descargar"><i class="far fa-file-pdf"></i></a>
                                                             </div>    
                                                         </div>
                                                     </div>
@@ -167,6 +170,7 @@
 <?= view('layouts/footer') ?>
 <script>
     $(document).ready(function(){
+        $('.tooltipped').tooltip();
         var historial = <?php echo json_encode($historial,JSON_FORCE_OBJECT); ?>;
         var total_historial = <?php echo json_encode(count($historial),JSON_FORCE_OBJECT); ?>;
         var total = [];

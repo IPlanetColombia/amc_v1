@@ -46,7 +46,7 @@ table tbody tr td.option{
 }
 .card-content.reports .col.s12{
 	display: flex;
-	justify-content: flex-start;
+	justify-content: space-between;
 	align-items: center;
 	margin: 10px 0;
 }
@@ -54,5 +54,38 @@ table tbody tr td.option{
 	margin-left: 5px;
 }
 .card-content.reports .col.s12>div span{
-	font-size: 12px;
+	font-size: 11px;
+}
+.card-content.reports .col.s12 i{
+	color: #f44336;
+	font-size: 25px;
+}
+.col.s12 .content_head{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 25px;
+}
+
+.col.s12 .content_head>div{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.col.s12 .content_head span{
+	font-size: 45px;
+}
+.col.s12 .content_head>div i{
+	font-size: 40px;
+	padding: 10px 0 5px 0;
+}
+.col.s12 .content_head>div span{
+	width: 100%;
+	font-size: 20px;
+	text-align: center;
+}
+h2.card-title{
+	font-size: 35px !important;
+	margin-bottom: 20px;
 }

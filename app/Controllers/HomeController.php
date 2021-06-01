@@ -30,6 +30,7 @@ class HomeController extends BaseController
                	left join producto p on md.id_producto = p.id_producto
 			WHERE
 				m.id_cliente = $id
+				and c.cer_fecha_publicacion != '0000-00-00 00:00:00'
 			ORDER BY c.certificado_nro DESC
 		";
 		$sql_solicitues = "
@@ -49,9 +50,11 @@ class HomeController extends BaseController
 			m.id_cliente = $id
 		";
 
-		$date_init = date('Y-m-01', strtotime('-11 month'));
 		$date_finish = date('Y-m-t');
 		$historial_array = [];
+	    for ($i=0;$i<= 11;$i++){ 
+	       	$date_init = date('Y-n-01', mktime(0, 0, 0, (date("n")-$i), 1, date("Y") ) );
+	    }
 		while(strtotime($date_init) <= strtotime($date_finish)){
 			$aux_date_finish = date('Y-m-t', strtotime($date_init));
 			$sql_historial = "
