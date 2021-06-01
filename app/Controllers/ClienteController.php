@@ -183,10 +183,11 @@ class ClienteController extends BaseController
     	$sql = $this->certificacion($data);
         $data['select'] = true;
     	$sql_2 = $this->certificacion($data);
-        $aux_limite = $data['limite'] == null ? '':' LIMIT '.($data['pagina']*$data['limite']).' ,'.$data['limite'];
+        $aux_limite = $data['limite'] == null ? ' ':' LIMIT '.($data['pagina']*$data['limite']).' ,'.$data['limite'];
     	$result = $db->query($sql.$aux_limite)->getResult();
     	$count = $db->query($sql_2)->getResult();
         $limite = $data['limite'] == null ? $count[0]->total:$data['limite'];
+        $count_1 = $limite == 0 ? '0' : ($count[0]->total/$limite);
     	if ($result != null) {
 	    	$certificados = $certificados = $this->tabla($result);
     	}else{
@@ -196,7 +197,7 @@ class ClienteController extends BaseController
     	}
     	$resultado = array(
     		'certificados' 	=> $certificados,
-    		'count'         => ($count[0]->total/$limite),
+    		'count'         => $count_1,
     		'total'			=> $count[0]->total,
             'pagina'        => $data['pagina'],
             'total_2'       => count($result),
