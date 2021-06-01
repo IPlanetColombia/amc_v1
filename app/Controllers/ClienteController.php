@@ -206,7 +206,7 @@ class ClienteController extends BaseController
     	return json_encode($resultado);
     }
     public function certificado_download($certificado){
-            $mpdf = new \Mpdf\Mpdf([]);
+            $mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'Legal']);
             $html = view('pages/generate_pdf',['value' => $certificado]);
             $css  = file_get_contents('assets/css/styles.css');
             $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
