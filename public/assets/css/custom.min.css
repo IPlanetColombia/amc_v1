@@ -50,13 +50,20 @@ table tbody tr td.option{
 	align-items: center;
 	margin: 10px 0;
 }
-.card-content.reports .col.s12>div{
-	margin-left: 5px;
+.card-content.reports .col.s12 .left{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
-.card-content.reports .col.s12>div span{
+.card-content.reports .col.s12 .left i{
+	color: #81c784;
+	font-size: 23px;
+	margin-right: 10px;
+}
+.card-content.reports .col.s12 .left div span{
 	font-size: 11px;
 }
-.card-content.reports .col.s12 i{
+.card-content.reports .col.s12>a i{
 	color: #f44336;
 	font-size: 25px;
 }

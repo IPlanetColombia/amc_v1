@@ -211,6 +211,8 @@ class ClienteController extends BaseController
             $css  = file_get_contents('assets/css/styles.css');
             $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
             $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+            // $this->response->setHeader('Content-Type', 'application/pdf');
+            // $mpdf->Output('arjun.pdf','I');
             $name = 'certificado_'.$certificado.'.pdf';
             $mpdf->Output($name,'D');
     }

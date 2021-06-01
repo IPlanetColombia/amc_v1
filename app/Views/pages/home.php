@@ -94,9 +94,12 @@
                                                     <div class="col s12  card-content reports">
                                                         <div class="row">
                                                             <div class="col s12">
-                                                                <div>
-                                                                    <p>Certificado #<?= $value->certificado_nro ?></p>
-                                                                    <span class=""><?= $value->producto ?></span>
+                                                                <div class="left">
+                                                                    <i class="far fa-check-circle"></i>
+                                                                    <div>
+                                                                        <p>Certificado #<?=$value->certificado_nro?></p>
+                                                                        <span class=""><?= $value->producto ?></span>
+                                                                    </div>
                                                                 </div>
                                                                 <a href="<?= base_url(['amc-laboratorio/certificado/',$value->certificado_nro]) ?>" class="tooltipped" data-position="left" data-tooltip="Descargar"><i class="far fa-file-pdf"></i></a>
                                                             </div>    
