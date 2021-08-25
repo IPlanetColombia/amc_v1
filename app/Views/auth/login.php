@@ -1,23 +1,3 @@
-<?php if (session('success')): ?>
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    </head>
-    <body>
-        <form action="http://localhost:8080/amc_v1/amc_analisis/index.php/Verifylogin" method="POST">
-            <input type="hidden" name="frm_user" value="<?php echo session('success')['frm_user'] ?>">
-            <input type="hidden" name="frm_pwd" value="<?php echo session('success')['frm_pwd'] ?>">
-            <input type="hidden" name="frm_tipo" value="<?php echo session('success')['frm_tipo'] ?>">
-            <button type="submit" style="display:none;" id="funcionario"></button>
-        </form>
-        <script>
-            let button = $('#funcionario');
-            button.click();
-        </script>
-    </body>
-    </html>
-<?php endif; ?>
 <!DOCTYPE html>
 <html class="loading" lang="en" data-textdirection="ltr">
 <!-- BEGIN: Head-->
@@ -42,6 +22,9 @@
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>/assets/css/materialize.min.css">
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>/assets/css/style.min.css">
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>/assets/css/login.css">
+
+    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>/assets/sweetAlert/dist/sweetalert2.min.css">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- END: Page Level CSS-->
 
@@ -51,7 +34,7 @@
     <style>
         .login-bg
         {
-            background-image: url(  <?= !isset(configInfo()['background_image']) ||  empty(configInfo()['background_image'])  ? 'https://image.freepik.com/foto-gratis/imagen-paisaje-urbano-parque-benchakitti-al-amanecer-bangkok-tailandia_29505-853.jpg' : base_url().'/assets/img/'.configInfo()['background_image'] ?>);
+            background-image: url(  <?= !isset(configInfo()['background_image']) ||  empty(configInfo()['background_image'])  ? '' : base_url().'/assets/img/'.configInfo()['background_image'] ?>);
             background-repeat: no-repeat;
             background-size: cover;
         }
@@ -105,8 +88,8 @@
                             <div class="input-field col s12">
                                 <i class="material-icons prefix pt-2">radio_button_unchecked</i>
                                 <select name="rol">
-                                    <option value="1">Funcionarios AMC</option>
                                     <option value="2">Clientes</option>
+                                    <option value="1">Funcionarios AMC</option>
                                 </select>
                             </div>
                         </div>
@@ -122,7 +105,7 @@
                         </div>-->
                         <div class="row">
                             <div class="input-field col s12">
-                                <button class="btn waves-effect waves-light border-round gradient-45deg-purple-deep-orange col s12">
+                                <button class="btn gradient-45deg-purple-deep-orange border-round col s12" id="login" >
                                     Inicio de Sesion
                                 </button>
                             </div>
@@ -146,6 +129,9 @@
 <script src="<?= base_url() ?>/assets/js/custom-script.min.js"></script>
 <script src="<?= base_url() ?>/assets/js/ui-alerts.js"></script>
 <script src="<?= base_url() ?>/assets/js/sweetalert2.all.min.js"></script>
+
+<script src="<?= base_url() ?>/assets/js/login.js"></script>
+<script src="<?= base_url() ?>/assets/sweetAlert/dist/sweetalert2.all.min.js"></script>
 </body>
 
 </html>

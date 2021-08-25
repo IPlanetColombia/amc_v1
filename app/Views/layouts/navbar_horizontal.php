@@ -10,14 +10,15 @@
                                     <small class="notification-badge"><?= countNotification() ?></small>
                                 <?php endif; ?>
                             </i></a></li>
-                    <li><a class="waves-effect waves-block waves-light profile-button" href="javascript:void(0);"
-                           data-target="profile-dropdown"><?= session('users')['name'] ?><span class="avatar-status avatar-online"><img  style="height: 29px !important;"
-                                        src="<?= session('user') && session('user')->photo ? base_url().'/assets/upload/images/'.session('user')->photo : base_url().'/assets/img/'.'user.png' ?>" alt="avatar">
+                    <li><a class="waves-effect waves-block waves-light profile-button" href="javascript:void(0);"data-target="profile-dropdown">
+                        <span class="avatar-status avatar-online">
+                            <img  style="height: 29px !important;" src="<?= session('user') && session('user')->photo ? base_url().'/assets/upload/images/'.session('user')->photo : base_url().'/assets/img/'.'user.png' ?>" alt="avatar">
                                 <i></i>
-
                             </span>
                             <small style="float: right; padding-left: 10px; font-size: 16px;"
-                                   class="new badge"><?= session('user')->username ?></small>
+                                   class="new badge">
+                                <?= session('user')->username ? session('user')->username : session('user')->usr_usuario ?>     
+                            </small>
 
                           </a>
                     </li>
@@ -42,18 +43,30 @@
                     <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/amc-laboratorio/perfile"><i class="material-icons">person_outline</i>
                             Perfil</a></li>
                     <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/amc-laboratorio/about"><i class="material-icons">help_outline</i> About</a></li>
-                    <?php  if(session()->get('user')->usertype == 'Registered'): ?>
-                        <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/configurations"><i class="material-icons">settings</i>
-                                Configure</a></li>
-                        <!-- <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/roles"><i class="material-icons">face</i>
-                                Roles</a></li> -->
-                        <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/usuario"><i class="material-icons">peoples</i>
+                    <?php  if(session('user')->usertype == 'Administrador' || session('user')->usr_rol == 1): ?>
+
+                        <?php if (session('user')->usr_usuario): ?>
+                            <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/configurations"><i class="material-icons">settings</i>
+                                    Configure</a></li>
+                            <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/cms_rol"><i class="material-icons">face</i>
+                                Roles</a></li>
+                        <?php endif ?>
+
+                        <li><a class="grey-text text-darken-1"
+                            href="<?= base_url() ?>/config/<?= session('user')->usr_usuario ? 'cms_users' : 'usuario' ?>">
+                            <i class="material-icons">peoples</i>
                                 Usuarios</a></li>
-                        <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/menus"><i class="material-icons">menu</i>
+                        <li><a class="grey-text text-darken-1"
+                            href="<?= base_url() ?>/config/<?= session('user')->usr_usuario ? 'menus_funcionarios' : 'menus_cliente' ?>">
+                            <i class="material-icons">menu</i>
                                 Menu</a></li>
-                        <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/permissions"><i class="material-icons">lock_outline</i>
-                                Permisos</a><?php echo session()->get('user')->id; ?></li>
-                        <li><a class="grey-text text-darken-1" href="<?= base_url() ?>/config/notifications"><i class="material-icons">contact_mail</i>
+                        <li><a class="grey-text text-darken-1"
+                            href="<?= base_url() ?>/config/<?= session('user')->usr_usuario ? 'permissions_funcionarios' : 'permissions_cliente' ?>">
+                            <i class="material-icons">lock_outline</i>
+                                Permisos</a></li>
+                        <li><a class="grey-text text-darken-1"
+                            href="<?= base_url() ?>/config/<?= session('user')->usr_usuario ? 'notifications_funcionarios' : 'notifications_cliente' ?>">
+                            <i class="material-icons">contact_mail</i>
                                 Notificar</a></li>
 
                         <li class="divider"></li>

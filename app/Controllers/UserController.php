@@ -13,13 +13,14 @@ class UserController extends BaseController
     public function perfile()
     {
         $validation = Services::validation();
-        $user = new User();
-        $data = $user->select('*, roles.name as role_name, users.name as name')
-            ->join('roles', 'users.role_id = roles.id')
-            ->where('users.id', session('user')->id)
-            ->get()->getResult()[0];
+        // $user = new User();
+        // $data = $user->select('*, roles.name as role_name, users.name as name')
+        //     ->join('roles', 'users.role_id = roles.id')
+        //     ->where('users.id', session('user')->id)
+        //     ->get()->getResult()[0];
+        $data = session('user');
 
-        echo view('users/perfile',[ 'data' => $data, 'validation' => $validation]);
+        return view('users/perfile',[ 'data' => $data, 'validation' => $validation]);
     }
 
     public function updateUser()
@@ -30,15 +31,15 @@ class UserController extends BaseController
             'email'             => 'required|valid_email|max_length[100]',
         ], [
             'name' => [
-                'required'      => 'El campo Nombres y Apellidos es obrigatorio.',
-                'max_length'    => 'El campo Nombres Y Apellidos no debe terner mas de 45 caracteres.'
+                'required'      => 'El campo Nombres y Apellidos es obligatorio.',
+                'max_length'    => 'El campo Nombres Y Apellidos no debe tener mas de 45 caracteres.'
             ],
             'username' => [
                 'required'      => 'El campo Nombre de Usuario es obligatorio',
                 'max_length'    => 'El campo Nombre de Usuario no puede superar mas de 20 caracteres.'
             ],
             'email' => [
-                'required'      => 'El campo Correo Electronico es obrigatorio.',
+                'required'      => 'El campo Correo Electronico es obligatorio.',
             ]
 
         ])) {
@@ -46,15 +47,30 @@ class UserController extends BaseController
                 'name'          => $this->request->getPost('name'),
                 'username'      => $this->request->getPost('username'),
                 'email'         => $this->request->getPost('email'),
+                'phone'         => $this->request->getPost('phone'),
+                'direction'     => $this->request->getPost('direction'),
+                'id'            => session('user')->id,
             ];
 
+            $url = API('perfile');
 
+            $result = API_POST( $url, $data);
 
-            $user = new User();
-            $user->set($data)->where(['id' => session('user')->id])->update();
-            return redirect()->to('/perfile')->with('success', 'Datos guardado correctamente.');
+            // var_dump($result->success);
+
+            if($result->success){
+                $session = session();
+                $session->set('user', $result->user);
+                return redirect()->back()->with('success', 'Datos guardado correctamente.');
+            }else{
+                return redirect()->back()->with('error_username', 'El nombre de usuario ya existe.');
+            }
+
+            // $user = new User();
+            // $user->set($data)->where(['id' => session('user')->id])->update();
+            // return redirect()->back()->with('success', 'Datos guardado correctamente.');
         } else {
-            return redirect()->to('/perfile')->withInput();
+            return redirect()->back()->withInput();
         }
     }
 

@@ -1,17 +1,24 @@
 <?php
 
-use App\Models\Notification;
+use App\Models\NotificationCliente;
+use App\Models\NotificationFuncionario;
 
 function notification()
 {
-    $notification = new Notification();
+    if(session('user')->usr_usuario)
+        $notification = new NotificationFuncionario();
+    else
+        $notification = new NotificationCliente();
     $data =  $notification->findAll();
     return $data;
 }
 
 function countNotification()
 {
-    $notification = new Notification();
+    if(session('user')->usr_usuario)
+        $notification = new NotificationFuncionario();
+    else
+        $notification = new NotificationCliente();
     $data =  $notification->findAll();
     return  count($data);
 }

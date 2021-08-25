@@ -5,7 +5,8 @@ namespace App\Controllers;
 
 
 use App\Traits\Grocery;
-use App\Models\Menu;
+use App\Models\MenuCliente;
+use App\Models\MenuFuncionarios;
 use CodeIgniter\Exceptions\PageNotFoundException;
 
 class TableController extends BaseController
@@ -23,7 +24,8 @@ class TableController extends BaseController
 
     public function index($data)
     {
-        $menu = new Menu();
+        if (session('user')->funcionario) $menu = new MenuFuncionarios();
+        else $menu = new MenuCliente();
         $component = $menu->where(['table' => $data, 'component' => 'table'])->get()->getResult();
         if($component) {
             $this->crud->setTable($component[0]->table);
@@ -42,11 +44,11 @@ class TableController extends BaseController
                         'use_fax'               => 'Fax',
                         'use_direccion'         => 'Dirección',
                     ]);
-                    $this->crud->where(['usuario.id = ?' => session('user')->id ]);
                     $this->crud->columns(['name', 'username', 'email', 'usertype', 'registerDate', 'lastvisitDate', 'use_cargo','use_nombre_encargado','use_telefono','use_fax','use_direccion']);                
-                    $this->crud->unsetDelete();
-                    $this->crud->unsetEdit();
-                    $this->crud->unsetAdd();
+                    if (session('user')->username){
+                        $this->crud->where(['usuario.id = ?' => session('user')->id ]);
+                        $this->crud->unsetOperations();
+                    }
                     break;
                 
                 default:

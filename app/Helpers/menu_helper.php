@@ -1,48 +1,77 @@
 <?php
 
-use App\Models\Menu;
-use App\Models\Permission;
+use App\Models\MenuCliente;
+use App\Models\MenuFuncionarios;
+use App\Models\PermissionCliente;
+use App\Models\PermissionFuncionarios;
 
 
 function menu()
 {
-    $menu = new Menu();
-    if (session()->get('user')->usertype == 'Super Administrator') {
+    if (session('user')->usr_usuario){
+        $menu = new MenuFuncionarios();
+        $permission = new PermissionFuncionarios();
+        $aux_menu = 'menus_funcionarios';
+        $aux_perm = 'permissions_funcionarios';
+    }
+    else{
+        $menu = new MenuCliente();
+        $permission = new PermissionCliente();
+        $aux_menu = 'menus_cliente';
+        $aux_perm = 'permissions_cliente';
+    }
+
+    if (session('user')->usertype == 'Administrador' || session('user')->usr_rol == 1) {
         $data = $menu->where(['type' => 'primario', 'status' => 'active'])
             ->orderBy('position', 'ASC')
             ->get()
             ->getResult();
     } else {
-        $permission = new Permission();
-        $data = $permission->select('menus.*')
-            ->where('typeUser', session()->get('user')->usertype)
-            ->where('menus.type', 'primario')
-            ->join('menus', 'menus.id = permissions.menu_id')
+        $permission->select($aux_menu.'.*');
+        if(session('user')->usr_usuario)
+            $permission->where('usr_rol', session()->get('user')->usr_rol);
+        else
+            $permission->where('typeUser', session()->get('user')->usertype);
+        $data = $permission->where($aux_menu.'.type', 'primario')
+            ->join($aux_menu, $aux_menu.'.id = '.$aux_perm.'.menu_id')
             ->orderBy('position', 'ASC')
             // ->join('roles', 'roles.id = permissions.role_id')
-            ->get()
-            ->getResult();
+        ->get()->getResult();
     }
     return $data;
 }
 
 function submenu($refences)
 {
-    $menu = new Menu();
-    if (session()->get('user')->usertype == 'Super Administrator') {
+    if (session('user')->usr_usuario){
+        $menu = new MenuFuncionarios();
+        $permission = new PermissionFuncionarios();
+        $aux_menu = 'menus_funcionarios';
+        $aux_perm = 'permissions_funcionarios';
+    }
+    else{
+        $menu = new MenuCliente();
+        $permission = new PermissionCliente();
+        $aux_menu = 'menus_cliente';
+        $aux_perm = 'permissions_cliente';
+    }
+
+    if (session('user')->usertype == 'Administrador' || session('user')->usr_rol == 1) {
         $data = $menu->where(['type' => 'secundario', 'status' => 'active', 'references' => $refences])
             ->orderBy('position', 'ASC')
             ->get()
             ->getResult();
     } else {
-        $permission = new Permission();
-        $data = $permission->select('menus.*')
-            ->where('typeUser', session()->get('user')->usertype)
-            ->where('menus.type', 'secundario')
-            ->where('menus.references', $refences)
+        $permission->select($aux_menu.'.*');
+        if(session('user')->usr_usuario)
+            $permission->where('usr_rol', session()->get('user')->usr_rol);
+        else
+            $permission->where('typeUser', session()->get('user')->usertype);
+        $data = $permission
+            ->where($aux_menu.'.type', 'secundario')
+            ->where($aux_menu.'.references', $refences)
             ->orderBy('position', 'ASC')
-            ->join('menus', 'menus.id = permissions.menu_id')
-            // ->join('roles', 'roles.id = permissions.role_id')
+            ->join($aux_menu, $aux_menu.'.id = '.$aux_perm.'.menu_id')
             ->get()
             ->getResult();
     }
@@ -51,7 +80,8 @@ function submenu($refences)
 
 function countMenu($references)
 {
-    $menu = new Menu();
+    if (session('user')->usr_usuario) $menu = new MenuFuncionarios();
+    else $menu = new MenuCliente();
     $data = $menu->where(['type' => 'secundario', 'status' => 'active', 'references' => $references])
         ->get()
         ->getResult();
@@ -64,12 +94,16 @@ function countMenu($references)
 function urlOption($references = null)
 {
     if ($references) {
-        $menu = new Menu();
+        if (session('user')->usr_usuario) $menu = new MenuFuncionarios();
+        else $menu = new MenuCliente();
         $data = $menu->find($references);
         if ($data['component'] == 'table') {
             return base_url().'/table/' . $data['url'];
         } else if ($data['component'] == 'controller') {
-            return base_url().'/' . $data['url'];
+            if(session('user')->funcionario)
+                return base_url(['funcionario']).'/' . $data['url'];
+            else
+                return base_url(['cliente']).'/' . $data['url'];
         }
     } else {
         return 'JavaScript:void(0)';

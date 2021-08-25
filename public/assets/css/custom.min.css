@@ -4,10 +4,36 @@
 .s12.login .container{
 	margin-bottom: 0px;
 }
-table tbody tr td.option{
-	display: flex;
-	justify-content: space-between;
+
+table thead tr th{
+	text-align: center;
 }
+table tbody tr td.action,
+table tbody tr td.estado{
+	text-align: center !important;
+}
+table tbody tr .estado span i{
+	text-align: center !important;
+	font-size: 25px !important;
+	cursor: pointer;
+}
+table tbody tr .estado .check i{
+	color: #3FBA45;
+}
+table tbody tr .estado .error i{
+	color: rgba(244,67,54, .7);
+}
+/*[type=checkbox]+span:not(.lever):before {
+	border: 2px solid #3FBA45;
+}
+[type=checkbox]:not(:checked):disabled+span:not(.lever):before{
+	background-color: rgba(244,67,54, .7) !important;
+}
+[type=checkbox]:checked+span:not(.lever):before{
+	border-right: 2px solid #3FBA45;
+    border-bottom: 2px solid #3FBA45;
+}*/
+
 .redo .fas.fa-sync.fa-spin{
 	display: flex;
 	justify-content: center;
@@ -56,12 +82,13 @@ table tbody tr td.option{
 	align-items: center;
 }
 .card-content.reports .col.s12 .left i{
-	color: #81c784;
+	color: #3FBA45;
 	font-size: 23px;
 	margin-right: 10px;
 }
 .card-content.reports .col.s12 .left div span{
-	font-size: 11px;
+	font-size: 12px;
+	cursor: pointer;
 }
 .card-content.reports .col.s12>a i{
 	color: #f44336;

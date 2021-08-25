@@ -41,6 +41,8 @@ class Filters extends BaseConfig
             'before' => [
                 'home',
                 'amc-laboratorio/*',
+                'cliente/*',
+                'funcionario/*',
                 'table/*',
                 'config/*'
             ]
@@ -49,6 +51,8 @@ class Filters extends BaseConfig
             'before' => [
                 'home',
                 'amc-laboratorio/*',
+                'cliente/*',
+                'funcionario/*',
                 'table/*',
                 'config/*'
             ]

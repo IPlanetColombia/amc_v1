@@ -4,8 +4,6 @@
     </div>
 </footer>
 
-
-
 <script src="<?= base_url() ?>/assets/js/vendors.min.js"></script>
 <script src="<?= base_url() ?>/assets/js/plugins.min.js"></script>
 <script src="<?= base_url() ?>/assets/js/search.min.js"></script>

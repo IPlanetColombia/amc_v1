@@ -25,6 +25,20 @@ class ConfigController extends BaseController
 
         $this->crud->setTable($data);
         switch ($data) {
+            case 'cms_users':
+                $title = 'Usuarios';
+                $subtitle = 'Listado de usuarios.';
+                $this->crud->unsetColumns(['usr_clave']);
+                $this->crud->fieldType('usr_clave', 'password');
+                $this->crud->setRelation('usr_rol', 'cms_rol', 'nombre');
+                $this->crud->displayAs([
+                    'usr_usuario'   => 'Usuario',
+                    'usr_correo'    => 'Email',
+                    'usr_rol'       => 'Rol',
+                    'usr_estado'    => 'Estado',
+                    'usr_foto'      => 'Foto',
+                ]);
+                break;
             case 'usuario':
                 $title = 'Usuarios';
                 $subtitle = 'Listado de usuarios.';
@@ -44,19 +58,35 @@ class ConfigController extends BaseController
                 $this->crud->setFieldUpload('photo', 'assets/upload/images', '/assets/upload/images');
 
                 break;
-            case 'permissions':
+            case 'permissions_cliente':
                 $title = 'Permisos';
                 $subtitle = 'Listado de permisos.';
-                // $this->crud->setRelation('role_id', 'roles', 'name');
-                $this->crud->setRelation('menu_id', 'menus', '{option} - {type}');
+                //$this->crud->setRelation('role_id', 'roles', 'name');
+                $this->crud->setRelation('menu_id', 'menus_cliente', '{option} - {type}');
                 break;
-            case 'menus':
+            case 'permissions_funcionarios':
+                $title = 'Permisos';
+                $subtitle = 'Listado de permisos.';
+                //$this->crud->setRelation('role_id', 'roles', 'name');
+                $this->crud->setRelation('menu_id', 'menus_funcionarios', '{option} - {type}');
+                break;
+            case 'menus_cliente':
                 $title = 'Opciones del Menu';
                 $subtitle = 'Listado de opciones de menu.';
                 $this->crud->setTexteditor(['description']);
-                $this->crud->setRelation('references', 'menus', 'option');
+                $this->crud->setRelation('references', 'menus_cliente', 'option');
+                break;
+            case 'menus_funcionarios':
+                $title = 'Opciones del Menu';
+                $subtitle = 'Listado de opciones de menu.';
+                $this->crud->setTexteditor(['description']);
+                $this->crud->setRelation('references', 'menus_funcionarios', 'option');
                 break;
             case 'roles':
+                $title = 'Roles';
+                $subtitle = 'Listado de roles.';
+                break;
+            case 'cms_rol':
                 $title = 'Roles';
                 $subtitle = 'Listado de roles.';
                 break;

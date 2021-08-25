@@ -1,5 +1,6 @@
 <?= view('layouts/header') ?>
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
 <?= view('layouts/navbar_vertical') ?>
 <?= view('layouts/navbar_horizontal') ?>
     <!-- BEGIN: Page Main-->
@@ -61,6 +62,7 @@
                     <div class="input-field col s12 l6 m12 x1">
                         <select name="concepto">
                             <option value="-1">Sin filtrar</option>
+                            <!-- <option value="">Concepto vacio</option> -->
                             <?php foreach ($resultado_concepto as $key => $value):?>
                                 <option value="<?=$value->id_mensaje?>"><?= $value->mensaje_titulo ? $value->mensaje_titulo:'Concepto vacio' ?></option>
                             <?php endforeach ?>
@@ -75,8 +77,8 @@
                         <input name="date_finish" autocomplete="off" type="date">
                         <label>Fecha final</label>
                     </div>
-                    
-                    <div class="input-field col s12 l6 m12 x13">
+
+                    <div class="input-field col s12 l3 m12 x13">
                         <select name="producto">
                             <option value="0">Sin filtrar</option>
                             <?php foreach ($resultado_productos as $value):?>
@@ -85,9 +87,20 @@
                         </select>
                         <label>Productos</label>
                     </div>
+
+                    <div class="input-field col s12 l3 m12 x13">
+                        <select name="seccional">
+                            <option value="0">Sin filtrar</option>
+                            <?php foreach ($resultado_seccional as $value):?>
+                                <option value="<?= $value ? $value: 1 ?>"><?= $value ? $value: 'Seccional vacio' ?></option>
+                            <?php endforeach ?>
+                        </select>
+                        <label>Seccional</label>
+                    </div>
+                    
                     <div class="input-field col s12 l3 m12 x13">
                         <select name="parametros">
-                            <!-- <option value="0">Sin filtrar</option> -->
+                            <!-- <option value="">Sin filtrar</option> -->
                             <?php foreach ($resultado_parametros as $value):?>
                                 <option value="<?=$value->id_parametro?>"><?= $value->par_nombre ? $value->par_nombre:'Sin filtrar' ?></option>
                             <?php endforeach ?>
@@ -105,6 +118,7 @@
                     </div>
                     
                     <a id="filtrar" class="waves-effect waves-light btn">Buscar</a>
+                    <!-- <button id="filtrar" class="waves-effect waves-light btn">Buscar</button> -->
                     <button type="reset" class="btn red accent-3 reset_btn">Reiniciar</button>
                 </form>
             </div>
@@ -158,145 +172,6 @@
 <?php endif; ?>
 
 <?= view('layouts/footer') ?>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-<script>
-    $(document).ready(function () {
-        $('#filtrar').click(function (e) {
-            var form        = $('#form_filtrar');
-            var form_filtro = $('#form_filtrar').serialize();
-            var form_pagina = $('#form_pagina').serialize();
-            var data        = form_filtro+'&'+form_pagina+"&pagina=0";
-            var url         = form.attr('action');
-            var total       = $('#pagina').data('total');
-            Swal.fire({
-              html:'<div class="card-content redo"><div class="preloader-wrapper big active"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>',
-              showConfirmButton: false,
-              allowOutsideClick: false,
-            });
-            $.post(url, data, function(resultado) {
-                var resultado = JSON.parse(resultado);
-                $('.responsive-table').remove();
-                $('#tabla').append(resultado['certificados']);
-                $('#r_total').text('Mostrando: '+resultado['total_2']+' de '+resultado['total']);
-                if(resultado['result'].length == 0){
-                    $('.paginator').fadeOut();
-                    $('.btn.download').fadeOut();
-                }else{
-                    $('.pagina_text').html('Pagina '+1);
-                    for (var i = 0; i < resultado['count']; i++) {
-                        $('.enviar.finish').attr('data-page', i );
-                    }
-                    $('.enviar.next').attr('data-page', 1);
-                    if ( $('.enviar.finish').attr('data-page') == resultado['pagina'])
-                        $('.enviar.next').fadeOut();
-                    else
-                        $('.enviar.next').fadeIn();
-
-                    if( (parseInt(resultado['pagina'])+1) >= $('.enviar.finish').attr('data-page')){
-                        $('.enviar.finish').fadeOut();
-                    }else
-                        $('.enviar.finish').fadeIn();
-
-                    $('.paginator').fadeIn();
-                    $('.btn.download').fadeIn();
-                    $('.enviar.back').fadeOut();
-                    $('.enviar.start').fadeOut();
-                }
-                Swal.close();
-            }).fail(function() {
-                Swal.close();
-                $('.responsive-table').fadeIn();
-            })
-        });
-        $('.enviar').click(function (e) {
-            e.preventDefault();
-            var form_filtro = $('#form_filtrar').serialize();
-            var form_pagina = $('#form_pagina').serialize();
-            var url         = $('#form_pagina').attr('action');
-            var data        = form_filtro+'&'+form_pagina+"&pagina="+$(this).attr('data-page');
-            console.log(data);
-            Swal.fire({
-              html:'<div class="card-content redo"><div class="preloader-wrapper big active"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div><div class="card-action"><p class="load">Cargando...</p></div>',
-              showConfirmButton: false,
-              allowOutsideClick: false,
-            });
-            $.post(url, data, function(resultado){
-                var resultado = JSON.parse(resultado);
-                $('.responsive-table').remove();
-                $('#tabla').append(resultado['certificados']);
-                $('#r_total').text('Mostrando: '+resultado['total_2']+' de '+resultado['total']);
-                if(resultado['result'].length == 0){
-                    $('.paginator').fadeOut();
-                    $('.btn.download').fadeOut();
-                }else{
-                    $('.pagina_text').html('Pagina '+(parseInt(resultado['pagina'])+parseInt(1)));
-                    $('.enviar.next').attr('data-page', (parseInt(resultado['pagina'])+parseInt(1)));
-                    $('.enviar.back').attr('data-page', (parseInt(resultado['pagina'])-parseInt(1)));
-                    if( resultado['pagina'] < 2)
-                        $('.enviar.start').fadeOut();
-                    else
-                        $('.enviar.start').fadeIn();
-                    if( resultado['pagina'] < 1)
-                        $('.enviar.back').fadeOut();
-                    else
-                        $('.enviar.back').fadeIn();
-
-                    if ( $('.enviar.finish').attr('data-page') <= resultado['pagina'])
-                        $('.enviar.next').fadeOut();
-                    else
-                        $('.enviar.next').fadeIn();
-
-                    if( (parseInt(resultado['pagina'])+1) >= $('.enviar.finish').attr('data-page')){
-                        $('.enviar.finish').fadeOut();
-                    }else
-                        $('.enviar.finish').fadeIn();
-                }
-                Swal.close();
-            });
-        });
-        var id_selct = $('.paginador_select .select-wrapper .select-dropdown.dropdown-trigger').data('target')
-        $('.paginador_select .dropdown-content.select-dropdown li').click(function(e) {
-            var form_filtro = $('#form_filtrar').serialize();
-            var form_pagina = $('#form_pagina').serialize();
-            var data        = form_filtro+'&'+form_pagina+"&pagina=0";
-            var url         = $('#form_pagina').attr('action');
-            Swal.fire({
-                html:'<div class="card-content redo"><div class="preloader-wrapper big active"><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div><div class="card-action"><p class="load">Cargando...</p></div>',
-                showConfirmButton: false,
-                allowOutsideClick: false,
-            })
-            $.post(url, data, function(resultado){
-                var resultado = JSON.parse(resultado);
-                $('.responsive-table').remove();
-                $('#tabla').append(resultado['certificados']);
-                $('#r_total').text('Mostrando: '+resultado['total_2']+' de '+resultado['total']);
-                if(resultado['result'].length == 0){
-                    $('.paginator').fadeOut();
-                    $('.btn.download').fadeOut();
-                }else{
-                    $('.pagina_text').html('Pagina '+1);
-                    for (var i = 0; i < resultado['count']; i++) {
-                        $('.enviar.finish').attr('data-page', i );
-                    }
-
-                    if ( $('.enviar.finish').attr('data-page') <= resultado['pagina'])
-                        $('.enviar.next').fadeOut();
-                    else
-                        $('.enviar.next').fadeIn();
-
-                    if( (parseInt(resultado['pagina'])+1) >= $('.enviar.finish').attr('data-page')){
-                        $('.enviar.finish').fadeOut();
-                    }else
-                        $('.enviar.finish').fadeIn();
-                    $('.enviar.next').attr('data-page', 1);
-                    $('.enviar.back').fadeOut();
-                    $('.enviar.start').fadeOut();
-                }
-                Swal.close();
-            });
-        });
-        $('.reset_btn').click(function () {
-           $('#form_pagina')[0].reset();
-        });
-    });
-</script>
+<script src="<?= base_url() ?>/assets/js/filtrar.js"></script>

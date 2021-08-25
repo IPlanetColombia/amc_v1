@@ -4,8 +4,8 @@
 namespace App\Controllers;
 
 
-use App\Models\User;
-use App\Models\Usuarios;
+use App\Models\Cliente;
+use App\Models\Funcionario;
 use Config\Services;
 
 
@@ -23,55 +23,42 @@ class AuthController extends BaseController
             'username' => 'required|min_length[1]',
             'password' => 'required|max_length[20]'
         ]);
-
         if ($errors) {
-            $username   = $this->request->getPost('username');
-            $password   = $this->request->getPost('password');
-            $rol        = $this->request->getPost('rol');
-            if ($rol == 1) {
-                $user = new User();
-                $data = $user
-                    // ->select('usuario.*, roles.name as role_name')
-                    // ->join('roles', 'roles.id = users.role_id')
-                    ->where('usr_usuario', $username)->get()->getResult();
-            }else{
-                $user = new Usuarios();
-                $data = $user
-                    ->where('username', $username)->get()->getResult();
-            }
-            if ($data) {
-                if ($rol == 1) {
-                    if ($data[0]->usr_estado == 'ACTIVO') {
-                        if ( $password === $data[0]->usr_clave ) {
-                            $array = array(
-                                'frm_user' => $username,
-                                'frm_pwd' => $password,
-                                'frm_tipo' => $rol
-                            );
-                            $_SESSION['logged_in'] = $array;
-                            return redirect()->to(base_url().'/')->with('success', $array);
-                        } else {
-                            return redirect()->to(base_url().'/')->with('errors', 'Las credenciales no concuerdan.');
-                        }
-                    }else{
-                        return redirect()->to(base_url().'/')->with('errors', 'La cuenta no se encuentra activa.');
-                    }
-                }else{
-                    if (md5($password) == $data[0]->password) {
-                        $session = session();
-                        $session->set('user', $data[0]);
-                        return redirect()->to(base_url().'/amc-laboratorio/home');
-                    } else {
-                        return redirect()->to(base_url().'/')->with('errors', 'Las credenciales no concuerdan.');
-                    }
-                }
-            } else {
-                return redirect()->to(base_url().'/')->with('errors', 'Las credenciales no concuerdan.');
-            }
-        } else {
-            return redirect()->to(base_url().'/')->with('errors', 'Las credenciales no concuerdan.');
-        }
 
+            $username  = $this->request->getPost('username');
+            $password  = $this->request->getPost('password');
+            $rol       = $this->request->getPost('rol');
+
+            if($rol == 1){
+                $user = new Funcionario();
+                $result = $user
+                ->select('cms_users.*,
+                        cms_rol.nombre as cms_rol
+                    ')
+                ->join('cms_rol', 'cms_rol.usr_rol = cms_users.usr_rol')
+                ->where(['usr_usuario' => $username])->get()->getResult();
+            }else{
+                $user = new Cliente();
+                $result = $user->where(['username' => $username])->get()->getResult();
+            }
+            if(!empty($result[0])){
+                if($rol == 1){
+                    if($result[0]->usr_clave != $password)
+                        return json_encode(['errors' => 'Las credenciales no concuerdan.']);
+                    else if($result[0]->usr_estado !== 'ACTIVO')
+                        return json_encode(['errors' => 'La cuenta no se encuentra activa.']);
+                }else{
+                    if(md5($password) != $result[0]->password)
+                        return json_encode(['errors' => 'Las credenciales no concuerdan.']);                }
+                $session = session();
+                $result[0]->funcionario = $rol == 1 ? true : false;
+                $session->set('user', $result[0]);
+                return json_encode(['login' => base_url().'/amc-laboratorio/home']);
+            }
+            return json_encode(['errors' => 'Las credenciales no concuerdan.']);
+        } else {
+            return json_encode(['errors' => 'Las credenciales no concuerdan.']);
+        }
 
     }
 

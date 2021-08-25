@@ -35,10 +35,10 @@
                                                         <i class="fas fa-file-signature"></i>
                                                         <span>Solicitudes</span>
                                                     </div>
-                                                    <span class="white-text"><?=$solicitudes->total?></span>
+                                                    <span class="white-text"><?=$solicitudes?></span>
                                                 </div>
                                                 <div class="card-action light-blue darken-1 center-aling">
-                                                    <span>Este mes: <?= $historial[11]->total ?></span>
+                                                    <span>Este mes: <?= $total_mes ?></span>
                                                 </div>
                                     </div>
                                 </div>
@@ -52,7 +52,7 @@
                                                             <i class="fas fa-project-diagram"></i>
                                                             <span>En proceso</span>
                                                         </div>
-                                                        <span class="mb-0 white-text">3</span>
+                                                        <span class="mb-0 white-text"><?= $pendientes ?></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -65,7 +65,7 @@
                         <!--yearly & weekly revenue chart start-->
                         <div id="sales-chart">
                             <div class="row">
-                                <div class="col s12 m8 l8">
+                                <div class="col s12 m12 l8">
                                     <div id="revenue-chart" class="card animate fadeUp">
                                         <div class="card-content">
                                             <h4 class="header mt-0">
@@ -84,7 +84,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col s12 m4 l4">
+                                <div class="col s12 m12 l4">
                                     <div id="weekly-earning" class="card animate fadeUp">
                                         <div class="card-content">
                                             <h4 class="header m-0">Ensayos recientes
@@ -98,7 +98,11 @@
                                                                     <i class="far fa-check-circle"></i>
                                                                     <div>
                                                                         <p>Certificado #<?=$value->certificado_nro?></p>
-                                                                        <span class=""><?= $value->producto ?></span>
+                                                                        <span class="<?= (strlen($value->producto) > 32) ? 'tooltipped' : '' ?>" data-position="left" data-tooltip="<?= (strlen($value->producto) > 32) ? $value->producto : ''?>">
+                                                                            <?= (strlen($value->producto) > 32) ? substr($value->producto,0,32).'...' : $value->producto ?>
+                                                                            </span>
+                                                                        <br>
+                                                                        <span class=""><?= (strlen($value->lote) > 32) ? substr($value->lote,0,32).'...' : $value->lote ?></span>
                                                                     </div>
                                                                 </div>
                                                                 <a href="<?= base_url(['amc-laboratorio/certificado/',$value->certificado_nro]) ?>" class="tooltipped" data-position="left" data-tooltip="Descargar"><i class="far fa-file-pdf"></i></a>

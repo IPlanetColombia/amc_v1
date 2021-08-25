@@ -37,6 +37,7 @@
                                                 <div class="input-field col s12 l6 m12 x1">
                                                     <select name="concepto">
                                                         <option value="-1">Sin filtrar</option>
+                                                        <!-- <option value="">Concepto vacio</option> -->
                                                         <?php foreach ($filtros['resultado_concepto'] as $key => $value):?>
                                                             <option value="<?=$value->id_mensaje?>"><?= $value->mensaje_titulo ? $value->mensaje_titulo:'Concepto vacio' ?></option>
                                                         <?php endforeach ?>
@@ -52,7 +53,7 @@
                                                     <label>Fecha final</label>
                                                 </div>
 
-                                                <div class="input-field col s12 l6 m12 x13">
+                                                <div class="input-field col s12 l3 m12 x13">
                                                     <select name="producto">
                                                         <option value="0">Sin filtrar</option>
                                                         <?php foreach ($filtros['resultado_productos'] as $value):?>
@@ -62,8 +63,17 @@
                                                     <label>Productos</label>
                                                 </div>
                                                 <div class="input-field col s12 l3 m12 x13">
+                                                    <select name="seccional">
+                                                        <option value="0">Sin filtrar</option>
+                                                        <?php foreach ($filtros['resultado_seccional'] as $value):?>
+                                                            <option value="<?= $value ? $value : 1 ?>"><?= $value ? $value: 'Seccional vacio' ?></option>
+                                                        <?php endforeach ?>
+                                                    </select>
+                                                    <label>Seccional</label>
+                                                </div>
+                                                <div class="input-field col s12 l3 m12 x13">
                                                     <select name="parametros">
-                                                        <!-- <option value="0">Sin filtrar</option> -->
+                                                        <option value="">Sin filtrar</option>
                                                         <?php foreach ($filtros['resultado_parametros'] as $value):?>
                                                             <option value="<?=$value->id_parametro?>"><?= $value->par_nombre ? $value->par_nombre:'Sin filtrar' ?></option>
                                                         <?php endforeach ?>
@@ -79,6 +89,8 @@
                                                     </select>
                                                     <label>Tipo de análisis</label>
                                                 </div>
+                                                <!-- <button id="filtrar" class="waves-effect waves-light btn">Buscar</button> -->
+                                                <!-- <button id="filtrar" class="waves-effect waves-light btn">Buscar</button> -->
                                                 <a id="filtrar" class="waves-effect waves-light btn">Buscar</a>
                                                 <button type="reset" class="btn red accent-3 reset_btn">Reiniciar</button>
                                             </form>
@@ -223,10 +235,10 @@
             var mes    = [];
             var y = 0;
             for (var i = 0; i < resultado['data'].length ; i++) {
-                total[i]  = parseInt(resultado['data'][i][0]['total']);
-                mes[i]     = resultado['data'][i][0]['mes'];
-                if(parseInt(resultado['data'][i][0]['total']) >= y ){
-                    y = parseInt(resultado['data'][i][0]['total']);
+                total[i]  = parseInt(resultado['data'][i]['total']);
+                mes[i]     = resultado['data'][i]['mes'];
+                if(parseInt(resultado['data'][i]['total']) >= y ){
+                    y = parseInt(resultado['data'][i]['total']);
                 }
             }
             if(parseInt(y%10) >= 5){
@@ -312,9 +324,5 @@
             });
             Swal.close();
         })
-    })
-    $(document).ready(function() {
-            // Line chart with color shadow: Revenue for 2018 Chart
-           
     });
 </script>

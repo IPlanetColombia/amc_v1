@@ -17,12 +17,21 @@
                 <img src="<?= isset(configInfo()['background_img_vertical']) ||  !empty(configInfo()['background_img_vertical'])? base_url().'/assets/img/'.configInfo()['background_img_vertical']: base_url().'/assets/img/fondo1.jpg' ; ?>" style="width: 100%;">
                 </div>
                 <a href="#user" style="margin-right: 0px;"><img class="circle"  style="width: 50px; height:50px;" src="<?= session('user') && session('user')->photo ? base_url().'/assets/upload/images/'.session('user')->photo : base_url().'/assets/img/'.'user.png' ?>"></a>
-                <a href="#name" style="margin-right: 0px;"><small class="white-text name" style=" font-size: 12px !important;"><?= session('user')->name ?></small></a>
-                <a href="#email"><small class="white-text email"><?= session('user')->usertype  ?></small></a>
+
+                <a href="#name" style="margin-right: 0px;">
+                    <small class="white-text name" style=" font-size: 12px !important;">
+                    <?= session('user')->name ? session('user')->name : session('user')->nombre ?>   
+                    </small>
+                </a>
+                <a href="#email">
+                    <small class="white-text email">
+                        <?= session('user')->usertype ? session('user')->usertype : session('user')->cms_rol  ?>
+                    </small>
+                </a>
             </div>
         </li>
-        <li class="bold <?= base_url(uri_string()) == base_url() . '/home' ? 'active' : '' ?>"><a
-                    class="waves-effect waves-cyan <?= base_url(uri_string()) == base_url() . '/home' ? 'active' : '' ?> "
+        <li class="bold"><a
+                    class="waves-effect waves-cyan <?= base_url(uri_string()) == base_url() . '/amc-laboratorio/home' ? 'active' : '' ?> "
                     href="<?= base_url() ?>/amc-laboratorio/home"><i
                         class="material-icons">settings_input_svideo</i><span class="menu-title" data-i18n="Calendar"> Home</span></a>
         </li>
