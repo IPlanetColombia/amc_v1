@@ -12,7 +12,10 @@ boton.on('click', e => {
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded', Authentication: 'secret'},
 		body: form.serialize()
 	})
-	.then(response => response.json())
+	.then(response => {
+	    if (!response.ok) throw Error(response.status);
+	    return response.json();
+	 })
 	.then( result => {
 		if(result.errors){
 			Swal.fire({
@@ -26,5 +29,14 @@ boton.on('click', e => {
 		}
 		else if(result.login)
 			location.href = result.login;
+	}).catch( error => {
+		Swal.fire({
+			position: 'top-end',
+		  	icon: 'warning',
+		  	text: 'Problemas de conectividad',
+		});
+		boton.addClass('gradient-45deg-purple-deep-orange');
+		boton.removeClass('blue-grey darken-3');
+		boton.prop('disabled', false);
 	});
 });

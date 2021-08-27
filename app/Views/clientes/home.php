@@ -87,7 +87,7 @@
                                                             <form action="http://localhost:8080/Wilfredo/mpdf_AMC/app/index.php" method="POST">
                                                                 <input type="hidden" name="certificado[]" value="<?= $value->certificado_nro ?>">
                                                                 <input type="hidden" name="plantilla" value="1" >
-                                                                <button  class="tooltipped" data-position="left" data-tooltip="Descargar"><i class="far fa-file-pdf"></i></button>
+                                                                <button class="tooltipped download_home" data-position="left" data-tooltip="Descargar"><i class="far fa-file-pdf"></i></button>
                                                             </form>
                                                         </div>    
                                                     </div>
