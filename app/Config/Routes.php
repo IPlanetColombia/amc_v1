@@ -52,6 +52,8 @@ $routes->group('cliente', function ($routes){
 
 $routes->group('funcionario', function ($routes){
     $routes->get('remiciones', 'FuncionarioController::remicion');
+    $routes->post('remiciones/empresa', 'FuncionarioController::remicion_empresa');
+    $routes->post('remiciones/muestra', 'FuncionarioController::remicion_muestra');
 });
     // -------------------- Fin Controller Funcionario ------
 

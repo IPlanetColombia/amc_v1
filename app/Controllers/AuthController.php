@@ -49,7 +49,8 @@ class AuthController extends BaseController
                         return json_encode(['errors' => 'La cuenta no se encuentra activa.']);
                 }else{
                     if(md5($password) != $result[0]->password)
-                        return json_encode(['errors' => 'Las credenciales no concuerdan.']);                }
+                        return json_encode(['errors' => 'Las credenciales no concuerdan.']);
+                }
                 $session = session();
                 $result[0]->funcionario = $rol == 1 ? true : false;
                 $session->set('user', $result[0]);

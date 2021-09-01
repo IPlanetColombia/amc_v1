@@ -30,6 +30,7 @@ boton.on('click', e => {
 		else if(result.login)
 			location.href = result.login;
 	}).catch( error => {
+		console.log(error);
 		Swal.fire({
 			position: 'top-end',
 		  	icon: 'warning',

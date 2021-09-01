@@ -50,9 +50,46 @@ class TableController extends BaseController
                         $this->crud->unsetOperations();
                     }
                     break;
+                case 'tecnica':
+                    $this->crud->displayAs([
+                        'nor_nombre'        => 'Nombre',
+                        'nor_descripcion'   => 'Descripción'
+                    ]);
+                    break;
+                case 'norma':
+                    $this->crud->displayAs([
+                        'nor_nombre'        => 'Nombre',
+                        'nor_descripcion'   => 'Descripción'
+                    ]);
+                    break;
+                case 'producto':
+                    $this->crud->displayAs([
+                        'pro_nombre'        => 'Nombre',
+                        'pro_descripcion'   => 'Descripción',
+                        'id_norma'          => 'Norma'
+                    ]);
+                    $this->crud->setRelation('id_norma', 'norma', 'nor_nombre');
+                    break;
+                case 'parametro':
+                    $this->crud->displayAs([
+                        'par_nombre'        => 'Nombre',
+                        'par_descripcion'   => 'Descripción',
+                        'par_estado'        => 'Estado',
+                        'par_irca'          => 'Irca',
+                    ]);
+                    $this->crud->setRelation('id_tecnica', 'tecnica', 'nor_nombre');
+                    break;
+                case 'ensayo':
+                    $this->crud->displayAs([
+                        'id_producto'   => 'Producto',
+                        'id_parametro'  => 'Parametro',
+                        'refe_bibl'     => 'Referencia Bibliografica'
+                    ]);
+                    $this->crud->setRelation('id_producto', 'producto', 'pro_nombre');
+                    $this->crud->setRelation('id_parametro', 'parametro', 'par_nombre');
+                    break;
                 
                 default:
-                    # code...
                     break;
             }
             $output = $this->crud->render();
