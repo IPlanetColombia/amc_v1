@@ -83,8 +83,8 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="input-field col s12">
-                                    <button class="btn gradient-45deg-purple-deep-orange border-round col s12" id="btn-empresa">
+                                <div class="input-field col s12 centrar_button">
+                                    <button class="btn gradient-45deg-purple-deep-orange border-round" id="btn-empresa">
                                         Guardar empresa
                                     </button>
                                 </div>
@@ -104,71 +104,71 @@
                         <form action="<?= base_url(['funcionario','remiciones','muestra']) ?>" method="POST" id="muestra-form" autocomplete="off">
                             <div class="row">
                                 <div class="input-field col l4 s12">
-                                    <input id="id_muestra" type="text" class="validate">
+                                    <input id="id_muestra" name="id_muestra" type="text" class="validate">
                                     <label for="id_muestra">Identificación de la muestra</label>
                                 </div>
-                                <div class="input-field col l8 s12">
-                                    <input id="producto" type="text" class="validate producto">
+                                <div class="input-field col l8 s12 producto">
+                                    <input id="producto" name="producto" type="text" class="validate autocomplete producto">
                                     <label for="producto">Producto</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="lote" type="text" class="validate">
+                                    <input id="lote" name="lote" type="text" class="validate">
                                     <label for="lote">Número de lote</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="fecha_produccion" type="date" class="validate">
+                                    <input id="fecha_produccion" name="fecha_produccion" type="date" class="validate">
                                     <label for="fecha_produccion">Fecha de producción</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="fecha_vencimiento" type="date" class="validate">
+                                    <input id="fecha_vencimiento" name="fecha_vencimiento" type="date" class="validate">
                                     <label for="fecha_vencimiento">Fecha de vencimiento</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="temperatura" type="text" class="validate">
+                                    <input id="temperatura" name="Temperatura" type="text" class="validate">
                                     <label for="temperatura">Temperatura</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="momento" type="text" class="validate">
+                                    <input id="momento" name="momento" type="text" class="validate">
                                     <label for="momento">Momento del muestreo</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="temperatura_recepcion" type="text" class="validate">
+                                    <input id="temperatura_recepcion" name="temperatura_recepcion" type="text" class="validate">
                                     <label for="temperatura_recepcion">Temperatura de recepción</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="condiciones" type="text" class="validate">
+                                    <input id="condiciones" name="condiciones" type="text" class="validate">
                                     <label for="condiciones">Condiciones de recibido</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="cantidad" type="text" class="validate">
+                                    <input id="cantidad" name="cantidad" type="text" class="validate" value="1">
                                     <label for="cantidad">Cantidad</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="procedencia" type="text" class="validate">
+                                    <input id="procedencia" name="procedencia" type="text" class="validate">
                                     <label for="procedencia">Procedencia</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="tipo" type="text" class="validate">
+                                    <input id="tipo" name="tipo" type="text" class="validate">
                                     <label for="tipo">Tipo de muestra</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="area" type="text" class="validate">
+                                    <input id="area" name="area" type="text" class="validate">
                                     <label for="area">Area / Función</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="tipo_muestreo" type="text" class="validate">
+                                    <input id="tipo_muestreo" name="tipo_muestreo" type="text" class="validate">
                                     <label for="tipo_muestreo">Tipo de muestreo</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="adicional" type="text" class="validate">
+                                    <input id="adicional" name="adicional" type="text" class="validate">
                                     <label for="adicional">Adicional para muestra</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <input id="medida" type="text" class="validate">
+                                    <input id="medida" type="text" name="medidad" class="validate">
                                     <label for="medida">Medida para muestra</label>
                                 </div>
                                 <div class="input-field col l4 s12">
-                                    <select>
+                                    <select name="tipo_analisis">
                                         <option value="">Seleccione analisis</option>
                                         <?php foreach ($analisis as $key => $value): ?>
                                             <option value="<?= $value->id_muestra_tipo_analsis ?>"><?= $value->mue_nombre ?> / <?= $value->mue_sigla ?></option>

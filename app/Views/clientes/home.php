@@ -73,15 +73,15 @@
                                                 <div class="col s12  card-content reports">
                                                     <div class="row">
                                                         <div class="col s12">
-                                                            <div class="left">
+                                                            <div class="left truncate">
                                                                 <i class="far fa-check-circle"></i>
-                                                                <div>
+                                                                <div class="truncate">
                                                                     <p>Certificado #<?=$value->certificado_nro?></p>
-                                                                    <span class="<?= (strlen($value->producto) > 32) ? 'tooltipped' : '' ?>" data-position="left" data-tooltip="<?= (strlen($value->producto) > 32) ? $value->producto : ''?>">
-                                                                        <?= (strlen($value->producto) > 32) ? substr($value->producto,0,32).'...' : $value->producto ?>
+                                                                    <span class="truncate <?= (strlen($value->producto) > 32) ? 'tooltipped' : '' ?>" data-position="left" data-tooltip="<?= (strlen($value->producto) > 32) ? $value->producto : ''?>">
+                                                                        <?= $value->producto ?>
                                                                         </span>
                                                                     <br>
-                                                                    <span class=""><?= (strlen($value->lote) > 32) ? substr($value->lote,0,32).'...' : $value->lote ?></span>
+                                                                    <span class=""><?= $value->lote ?></span>
                                                                 </div>
                                                             </div>
                                                             <form action="http://localhost:8080/Wilfredo/mpdf_AMC/app/index.php" method="POST">

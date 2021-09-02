@@ -100,9 +100,9 @@ class FuncionarioController extends BaseController
             $empresas[0]->hora  = date('H:i:s', strtotime($empresas[0]->registerDate));
             return json_encode($empresas[0]);
         }else if($buscar == 3){ // Creamos empresa
+            $rules['username']  = 'required|max_length[30]|is_unique[usuario.username]';
+            $rules['email']     = 'required|valid_email|is_unique[usuario.email]|max_length[100]';
             if ($this->validate($rules, $message)){
-
-                $rules['username']      = 'required|max_length[30]|is_unique[usuario.username]';
                 $data = [
                     'id' => $this->request->getPost('nit'),
                     'name' => $this->request->getPost('empresa'),
@@ -126,7 +126,7 @@ class FuncionarioController extends BaseController
             } else {
                 return json_encode($validation->getErrors());
             }
-        }else if($buscar == 4){
+        }else if($buscar == 4){ //Editamos empresa
             $id = $this->request->getPost('nit');
             $rules['nit']       = 'required|max_length[100]|is_unique[usuario.id, id, '.$id.']';
             $rules['empresa']   = 'required|max_length[100]|is_unique[usuario.name, id, '.$id.']';
@@ -158,11 +158,14 @@ class FuncionarioController extends BaseController
         $buscar = $this->request->getPost('buscar');
         if($buscar == 1){
             $tabla = new Producto();
-            $productos = $tabla->like('pro_nombre', $producto)->select('pro_nombre')->orderBy('pro_nombre', 'ASC')->get()->getResult();
-            $data = array();
+            $productos = $tabla->like('pro_nombre', $producto)->select('pro_nombre')->get()->getResult();
+            $data = [];
             foreach($productos as $key => $producto){
                 $data[$producto->pro_nombre] = null;
             }
+            return json_encode($data);
+        }else if($buscar == 2){
+            $data = muestra_tabla($producto);
             return json_encode($data);
         }
     }

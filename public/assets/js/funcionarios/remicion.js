@@ -72,15 +72,14 @@ $(document).ready(function(){
 		 	$('#date').val(empresa.fecha);
 		 	$('#hora').val(empresa.hora);
 		 	$(".empresa_row label").addClass('active');
-
 		 }).catch(error => {
 		 	$('#empresa').focus();
 		 	$('#empresa').next().focus(); 
 		 });
 	});
-	$('.autocomplete-content').click(function(e){
+	$('.empresa .autocomplete-content').click(function(e){
 		$('#empresa').focus();
-		$('#empresa').next().focus(); 
+		$('#empresa').next().focus();
 	});
 
 	var boton_empresa = $('#btn-empresa');
@@ -105,7 +104,7 @@ $(document).ready(function(){
 		    return response.json();
 		 }).then(result => {
 		 	if(result.success){
-		 		$('#remicion-form')[0].reset();
+		 		// $('#remicion-form')[0].reset();
 		 		$(".empresa_row .hora label").addClass('active');
 		 		$('.empresa_row small').html('');
 		 		Swal.fire({
@@ -118,6 +117,7 @@ $(document).ready(function(){
 		 		mensajes.forEach(([key, value])=> {
 		 			$('small#'+key).html(value);
 		 		});
+		 		console.log(mensajes);
 		 	}
 		 	boton_empresa.addClass('gradient-45deg-purple-deep-orange');
 			boton_empresa.removeClass('blue-grey darken-3');
@@ -151,8 +151,33 @@ $(document).ready(function(){
 			    return response.json();
 			 }).then(lista => {
 				$('.autocomplete.producto').autocomplete('updateData', lista);
-				if(producto.length == 1)
-					$('.autocomplete.producto').autocomplete('open');
+				$('.autocomplete.producto').autocomplete('open');
+			 });
+		}
+	});
+	$('.producto .autocomplete-content').click(function(e){
+		$('#producto').focus();
+		$('#producto').next().focus();
+	});
+	$('#producto').blur(function(e){
+		$('#lote').focus();
+		var producto = $('#producto').val();
+		var form = $('#muestra-form');
+		var url = form.attr('action');
+		var tecla = e.which;
+		var data = form.serialize();
+		if(producto != "" && tecla != 37 && tecla != 38 && tecla != 39 && tecla != 40){
+			data += "&buscar=2";
+			fetch(url, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded', Authentication: 'secret'},
+				body: data
+			}).then(response => {
+			    if (!response.ok) throw Error(response.status);
+			    return response.json();
+			 }).then(tabla => {
+			 	$('.tabla-productos').remove();
+			 	$('#muestra-form .row').after(tabla);
 			 });
 		}
 	});

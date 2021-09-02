@@ -98,6 +98,10 @@ table tbody tr .estado .error i{
 .card-content.reports .col.s12 .left div span{
 	font-size: 12px;
 	cursor: pointer;
+	display: initial !important;
+}
+.card-content.reports .col.s12 .left div span.mouse{
+	cursor: pointer;
 }
 .card-content.reports .col.s12>a i{
 	color: #f44336;
@@ -132,27 +136,8 @@ h2.card-title{
 	font-size: 35px !important;
 	margin-bottom: 20px;
 }
-
-.empresa{
-	position: relative;
+.centrar_button{
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
-.empresa .listado{
-	z-index: 2;
-	position: absolute;
-}
-.empresa .listado .listado{
-	position: relative;
-}
-.empresa .listado .listado a{
-	margin: 5px;
-}
-/*.empresa .listado .dropdown-content.select-dropdown{
-	display: block;
-	width: 100%;
-	left: 0px;
-	top: 0px;
-	max-height: 150px;
-	transform-origin: 0px 0px;
-	opacity: 1;
-	transform: scaleX(1) scaleY(1);
-}*/
