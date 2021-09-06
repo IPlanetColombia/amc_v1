@@ -124,7 +124,7 @@ use App\Models\MuestreoDetalle;
                                 	<td>'.$fila_detalle[0]->mue_cantidad.'</td>
                                 	<td>'.$fila_detalle[0]->mue_unidad_medida.'</td>
                                 	<td class="action_detail">                                    
-                                    	<a href="#" onclick="quitar_detalle('.$recordSet->id_certificacion.')" class="delete_detail_list tooltipped" data-position="left" data-tooltip="Eliminar detalle" data-detalle=""><i class="far fa-trash-alt"></i></a>
+                                    	<a href="#!" onclick="quitar_detalle('.$recordSet->id_certificacion.')" class="delete_detail_list tooltipped" data-position="left" data-tooltip="Eliminar detalle" data-detalle=""><i class="far fa-trash-alt"></i></a>
                                     	<a class="imprimir_ticket tooltipped" data-position="left" data-tooltip="Imprimir detalle"><i class="fas fa-print"></i></a>
                                     </td>
                     			</tr>
@@ -145,7 +145,7 @@ use App\Models\MuestreoDetalle;
 		                </table>
 		            </div>';
 		$button = '	<div class="input-field col s12 centrar_button">
-                    	<button id="btn-remicion-guardar" class="btn gradient-45deg-purple-deep-orange border-round">Guardar remición</button>
+                    	<a href="#!" onclick="btn_remicion_guardar()" id="btn-remicion-guardar" class="btn gradient-45deg-purple-deep-orange border-round">Guardar remición</a>
                     </div>';
 		return ['tabla' => $tabla, 'boton' => $button];
 	}

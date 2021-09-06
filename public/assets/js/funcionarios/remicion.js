@@ -245,8 +245,9 @@ $(document).ready(function(){
 		 });
 	};
 
-	$('#btn-remicion-guardar').click(function(e){
-		e.preventDefault();
+
+});
+	function btn_remicion_guardar(){
 		var data = $('#frm_form_pie').serialize();
 		data += data+'&buscar=4';
 		var url = $('#frm_form_pie').attr('action');
@@ -270,9 +271,7 @@ $(document).ready(function(){
     		$('form').find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
     		$('.tooltipped').tooltip();
 		});
-	});
-
-});
+	};
 	function quitar_detalle(certificado){
 		// e.preventDefault();
 		var data = 'id_certificacion='+certificado+"&buscar=5";
@@ -286,8 +285,6 @@ $(document).ready(function(){
 		    if (!response.ok) throw Error(response.status);
 		    return response.json();
 		}).then(tabla => {
-			console.log(tabla);
-			console.log('algo');
 			$('#campo_detalle_muestras').remove();
 		 	$('#tabla_detalles_muestras').after(tabla);
 			$('#frm_form_muestra').find('input:text, input:password, input:file, select, textarea').val('');
