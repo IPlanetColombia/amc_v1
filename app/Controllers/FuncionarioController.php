@@ -14,23 +14,26 @@ class FuncionarioController extends BaseController
 {
     public function remicion(){
         $analisis = new Analisis();
+        $muestreo = new Muestreo();
+        $muestreo_verifica = $muestreo->where(['mue_estado' => 0])->get()->getResult();
         $analisis = $analisis->get()->getResult(); 
         $validation = Services::validation();
         return view('funcionarios/remicion', [
             'analisis' => $analisis,
-            'validation' => $validation
+            'validation' => $validation,
+            'muestreo_verifica' => $muestreo_verifica
         ]);
     }
 
     public function remicion_empresa(){
         $validation = Services::validation();
         $message = [
-                'nit' => [
+                'frm_nit' => [
                     'required'      => 'Campo obligatorio.',
                     'max_length'    => 'La identificación no debe tener mas de 30 caracteres.',
                     'is_unique'     => 'La identificación ya se encuentra registrada.'
                 ],
-                'empresa' => [
+                'frm_nombre_empresa' => [
                     'required'      => 'Campo obligatorio.',
                     'max_length'    => 'El nombre de la empresa no debe tener mas de 100 caracteres.',
                     'is_unique'     => 'La empresa ya se encuentra registrada.'
@@ -40,36 +43,36 @@ class FuncionarioController extends BaseController
                     'max_length'    => 'El nombre de la empresa no debe tener mas de 100 caracteres.',
                     'is_unique'     => 'El usuario ya se encuentra registrado.'
                 ],
-                'email' => [
+                'frm_correo' => [
                     'required'  => 'Campo obligatorio.',
                     'is_unique' => 'El correo ya se encuentra registrado.'
                 ],
-                'cargo' => [
+                'frm_contacto_cargo' => [
                     'required' => 'Campo obligatorio.'
                 ],
-                'name_contact'      => [
+                'frm_contacto_nombre'      => [
                     'required'      => 'Campo obligatorio.',
                     'max_length'    => 'El nombre del contacto no debe tener mas de 100 caracteres.'
                 ],
-                'phone' => [
+                'frm_telefono' => [
                     'required'      => 'Campo obligatorio.',
                     'max_length'    => 'El telefono no debe tener mas de 20 caracteres.'
                 ],
-                'direction' => [
+                'frm_direccion' => [
                     'required'      => 'Campo obligatorio.',
                     'max_length'    => 'La dirección no debe tener mas de 100 caracteres.'
                 ]
             ];
         $rules = [
-                'nit'           => 'required|max_length[30]|is_unique[usuario.id]',
-                'empresa'       => 'required|max_length[30]|is_unique[usuario.name]',
-                'cargo'         => 'required',
-                'name_contact'  => 'required|max_length[100]',
-                'phone'         => 'required|max_length[20]',
-                'direction'     => 'required|max_length[100]',
+                'frm_nit'               => 'required|max_length[30]|is_unique[usuario.id]',
+                'frm_nombre_empresa'    => 'required|max_length[30]|is_unique[usuario.name]',
+                'frm_contacto_cargo'    => 'required',
+                'frm_contacto_nombre'   => 'required|max_length[100]',
+                'frm_telefono'          => 'required|max_length[20]',
+                'frm_direccion'         => 'required|max_length[100]',
             ];
 
-        $empresa = $this->request->getPost('empresa');
+        $empresa = $this->request->getPost('frm_nombre_empresa');
         $buscar = $this->request->getPost('buscar');
         if($buscar == 1){
             $data = new Cliente();
@@ -81,7 +84,7 @@ class FuncionarioController extends BaseController
             return json_encode($data);
         }else if($buscar == 2){
             $data = new Cliente();
-            $empresas = $data->where(['name' => $empresa])->get()->getResult();
+            $empresas = $data->like(['name' => $empresa])->get()->getResult();
             if( empty($empresas[0]) ){
                 $empresas['sucursal']                  = '';
                 $empresas['id']                        = '';
@@ -101,23 +104,23 @@ class FuncionarioController extends BaseController
             return json_encode($empresas[0]);
         }else if($buscar == 3){ // Creamos empresa
             $rules['username']  = 'required|max_length[30]|is_unique[usuario.username]';
-            $rules['email']     = 'required|valid_email|is_unique[usuario.email]|max_length[100]';
+            $rules['frm_correo']     = 'required|valid_email|is_unique[usuario.email]|max_length[100]';
             if ($this->validate($rules, $message)){
                 $data = [
-                    'id' => $this->request->getPost('nit'),
-                    'name' => $this->request->getPost('empresa'),
+                    'id' => $this->request->getPost('frm_nit'),
+                    'name' => $this->request->getPost('frm_nombre_empresa'),
                     'username' => $this->request->getPost('username'),
-                    'email' => $this->request->getPost('email'),
-                    'password' => md5( $this->request->getPost('nit') ),
+                    'email' => $this->request->getPost('frm_correo'),
+                    'password' => md5( $this->request->getPost('frm_nit') ),
                     'usertype' => 'Registered',
                     'block' => 1,
-                    'registerDate' => $this->request->getPost('date').' '.$this->request->getPost('hora'),
-                    'lastvisitDate' => '0000-00-00 00:00:00',
-                    'use_cargo' => $this->request->getPost('cargo'),
-                    'use_nombre_encargado' => $this->request->getPost('name_contact'),
-                    'use_telefono' => $this->request->getPost('phone'),
-                    'use_fax' => $this->request->getPost('fax'),
-                    'use_direccion' => $this->request->getPost('direction'),
+                    'registerDate' => $this->request->getPost('frm_fecha_muestra').' '.$this->request->getPost('frm_hora_muestra'),
+                    'lastvisitDate' => date('Y-m-d H:i:s'),
+                    'use_cargo' => $this->request->getPost('frm_contacto_cargo'),
+                    'use_nombre_encargado' => $this->request->getPost('frm_contacto_nombre'),
+                    'use_telefono' => $this->request->getPost('frm_telefono'),
+                    'use_fax' => $this->request->getPost('frm_fax'),
+                    'use_direccion' => $this->request->getPost('frm_direccion'),
                     'pyme' => 'No'
                 ];
                 $cliente = new Cliente();
@@ -127,24 +130,24 @@ class FuncionarioController extends BaseController
                 return json_encode($validation->getErrors());
             }
         }else if($buscar == 4){ //Editamos empresa
-            $id = $this->request->getPost('nit');
-            $rules['nit']       = 'required|max_length[100]|is_unique[usuario.id, id, '.$id.']';
-            $rules['empresa']   = 'required|max_length[100]|is_unique[usuario.name, id, '.$id.']';
-            $rules['email']     = 'required|valid_email|is_unique[usuario.email,id,'.$id.']|max_length[100]';
+            $id = $this->request->getPost('frm_nit');
+            $rules['frm_nit']       = 'required|max_length[100]|is_unique[usuario.id, id, '.$id.']';
+            $rules['frm_nombre_empresa']   = 'required|max_length[100]|is_unique[usuario.name, id, '.$id.']';
+            $rules['frm_correo']     = 'required|valid_email|is_unique[usuario.email,id,'.$id.']|max_length[100]';
             if ($this->validate($rules, $message)){
                 $data = [
-                    'name' => $this->request->getPost('empresa'),
-                    'email' => $this->request->getPost('email'),
-                    'use_cargo' => $this->request->getPost('cargo'),
-                    'use_nombre_encargado' => $this->request->getPost('name_contact'),
-                    'use_telefono' => $this->request->getPost('phone'),
-                    'use_fax' => $this->request->getPost('fax'),
-                    'use_direccion' => $this->request->getPost('direction'),
+                    'name' => $this->request->getPost('frm_nombre_empresa'),
+                    'email' => $this->request->getPost('frm_correo'),
+                    'use_cargo' => $this->request->getPost('frm_contacto_cargo'),
+                    'use_nombre_encargado' => $this->request->getPost('frm_contacto_nombre'),
+                    'use_telefono' => $this->request->getPost('frm_telefono'),
+                    'use_fax' => $this->request->getPost('frm_fax'),
+                    'use_direccion' => $this->request->getPost('frm_direccion'),
                 ];
                 $cliente = new Cliente();
                 $cliente
                     ->set($data)
-                    ->where(['id' => $this->request->getPost('nit')])
+                    ->where(['id' => $id])
                     ->update();
                 return json_encode(['success' => 'Empresa actualizada con exito']);
             } else {
@@ -154,7 +157,7 @@ class FuncionarioController extends BaseController
     }
 
     public function remicion_muestra(){
-        $producto = $this->request->getPost('producto');
+        $producto = $this->request->getPost('frm_producto');
         $buscar = $this->request->getPost('buscar');
         if($buscar == 1){
             $tabla = new Producto();
@@ -166,6 +169,18 @@ class FuncionarioController extends BaseController
             return json_encode($data);
         }else if($buscar == 2){
             $data = muestra_tabla($producto);
+            return json_encode($data);
+        }else if($buscar == 3){
+            $forms = $this->request->getPost();
+            $data = detalles_tabla($forms);
+            return json_encode($data);
+        }else if($buscar == 4){
+            $forms = $this->request->getPost();
+            $data = guardar_remicion($forms);
+            return json_encode($data);
+        }else if($buscar == 5){
+            $certificado = $this->request->getPost('id_certificacion');
+            $data = delete_detail_list($certificado);
             return json_encode($data);
         }
     }

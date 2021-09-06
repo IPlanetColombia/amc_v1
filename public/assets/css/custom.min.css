@@ -141,3 +141,35 @@ h2.card-title{
 	justify-content: center;
 	align-items: center;
 }
+.frm_analisis .select-wrapper input.select-dropdown:focus {
+    border-bottom: 1px solid #00bcd4 !important;
+}
+.frm_analisis.error label{
+	color: red;
+}
+.frm_analisis.error .select-dropdown.dropdown-trigger{
+	border-bottom: 1px solid red !important;
+}
+.action_detail{
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+.action_detail a{
+	font-size: 20px;
+	cursor: pointer;
+}
+.action_detail a.delete_detail_list{
+	color: #d32f2f;
+	transition: all 500ms ease;
+}
+.action_detail a.delete_detail_list:hover{
+	text-shadow: 0 0 1px #e57373;
+}
+.action_detail a.imprimir_ticket{
+	color: #0288d1   ;
+	transition: all 500ms ease;
+}
+.action_detail a.imprimir_ticket:hover{
+	text-shadow: 0 0 1px #01579b;
+}

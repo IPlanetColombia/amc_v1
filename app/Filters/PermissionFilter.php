@@ -51,9 +51,9 @@ class PermissionFilter implements FilterInterface
             if($method != 'home') {
                 $permission->select('*')->join($aux_menu, $aux_menu.'.id = '.$aux_perm.'.menu_id');
                 if( session('user')->funcionario )
-                    $permission->where([$aux_menu.'.url' => $url . '/' . $method, 'usr_rol' => session('user')->usr_rol ]);
+                    $permission->where([$aux_menu.'.url' => $method, 'usr_rol' => session('user')->usr_rol ]);
                 else
-                    $permission->where([$aux_menu.'.url' => $url . '/' . $method, 'typeUser' => session('user')->usertype ]);
+                    $permission->where([$aux_menu.'.url' => $method, 'typeUser' => session('user')->usertype ]);
                 $data = $permission->get()->getResult();
                 if( session('user')->funcionario ){
                     if(!$data && session('user')->usr_rol != 1){

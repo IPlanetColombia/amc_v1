@@ -15,6 +15,7 @@
 <script src="<?= base_url() ?>/grocery-crud/js/libraries/jquery-ui.js"></script>
 <script src="<?= base_url() ?>/grocery-crud/js/build/grocery-crud-v2.8.1.0659b25.js"></script>
 <script src="<?= base_url() ?>/grocery-crud/js/build/load-grocery-crud.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 </body>
 </html>
 
