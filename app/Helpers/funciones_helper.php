@@ -145,7 +145,7 @@ use App\Models\MuestreoDetalle;
 		                </table>
 		            </div>';
 		$button = '	<div class="input-field col s12 centrar_button">
-                    	<a href="#!" onclick="btn_remicion_guardar()" id="btn-remicion-guardar" class="btn gradient-45deg-purple-deep-orange border-round">Guardar remición</a>
+                    	<a href="#!" onclick="btn_remicion_guardar()" id="btn-remicion-guardar" class="btn gradient-45deg-purple-deep-orange border-round guardar_remicion">Guardar remición</a>
                     </div>';
 		return ['tabla' => $tabla, 'boton' => $button];
 	}

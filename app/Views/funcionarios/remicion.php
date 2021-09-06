@@ -192,7 +192,7 @@
                                     <small class="red-text text-darken-4" id="frm_analisis"></small>
                                 </div>
                                 <div class="input-field col l8 s12 frm_producto">
-                                    <input id="frm_producto" name="frm_producto" type="text" class="validate autocomplete frm_producto" placeholder="Area/Función">
+                                    <input onblur="producto_blur()" id="frm_producto" name="frm_producto" type="text" class="validate autocomplete frm_producto" placeholder="Area/Función">
                                     <label for="frm_producto">Norma</label>
                                 </div>
                             </div>

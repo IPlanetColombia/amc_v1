@@ -47,6 +47,25 @@ function empresa_blur(){
 	 	$('#frm_nombre_empresa').next().focus(); 
 	});
 };
+function producto_blur(){
+	$('#frm_producto').next().focus();
+	var producto = $('#frm_producto').val();
+	var form = $('#frm_form_muestra');
+	var url = form.attr('action');
+	var data = form.serialize();
+	data += "&buscar=2";
+	fetch(url, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded', Authentication: 'secret'},
+		body: data
+	}).then(response => {
+	    if (!response.ok) throw Error(response.status);
+	    return response.json();
+	 }).then(tabla => {
+	 	$('.tabla-productos').remove();
+	 	$('#frm_form_muestra .row.finish').after(tabla);
+	 });
+};
 $(document).ready(function(){
 	$('input.autocomplete').autocomplete({data: {}});
 	$('form').keypress(function(e) {
@@ -152,28 +171,6 @@ $(document).ready(function(){
 		$('#frm_producto').focus();
 		$('#frm_producto').next().focus();
 	});
-	$('#frm_producto').blur(function(e){
-		$('#frm_producto').next().focus();
-		var producto = $('#frm_producto').val();
-		var form = $('#frm_form_muestra');
-		var url = form.attr('action');
-		var tecla = e.which;
-		var data = form.serialize();
-		if(producto != "" && tecla != 37 && tecla != 38 && tecla != 39 && tecla != 40){
-			data += "&buscar=2";
-			fetch(url, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded', Authentication: 'secret'},
-				body: data
-			}).then(response => {
-			    if (!response.ok) throw Error(response.status);
-			    return response.json();
-			 }).then(tabla => {
-			 	$('.tabla-productos').remove();
-			 	$('#frm_form_muestra .row.finish').after(tabla);
-			 });
-		}
-	});
     $('#frm_form_muestra').validate({
 		rules: {
 			frm_identificacion: {required:true},
@@ -236,7 +233,7 @@ $(document).ready(function(){
 		 	$('#campo_detalle_muestras').remove();
 		 	$('#tabla_detalles_muestras').after(tabla.tabla);
 		 	$('.row.boton_guardar_remicion .centrar_button').remove();
-		 	$('.row.boton_guardar_remicion').after(tabla.boton);
+		 	$('.row.boton_guardar_remicion').append(tabla.boton);
 		 	$('#frm_form_muestra').find('input:text, input:password, input:file, select, textarea').val('');
     		$('#frm_form_muestra').find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
 		 	$('.tabla-productos').remove();
