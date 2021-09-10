@@ -51,9 +51,12 @@ $routes->group('cliente', function ($routes){
     // --------------------- Fin Controller Cliente ---------
 
 $routes->group('funcionario', function ($routes){
-    $routes->get('remiciones', 'FuncionarioController::remicion');
-    $routes->post('remiciones/empresa', 'FuncionarioController::remicion_empresa');
-    $routes->post('remiciones/muestra', 'FuncionarioController::remicion_muestra');
+    $routes->get('remisiones', 'FuncionarioController::remision');
+    $routes->post('remisiones/empresa', 'FuncionarioController::remision_empresa');
+    $routes->post('remisiones/muestra', 'FuncionarioController::remision_muestra');
+    $routes->get('remisiones/edit', 'FuncionarioController::remision_edit');
+    $routes->post('remisiones/edit/muestra', 'FuncionarioController::remision_edit_muestra');
+    $routes->get('remisiones/ticket/(:segment)', 'FuncionarioController::remision_ticket/$1');
 });
     // -------------------- Fin Controller Funcionario ------
 

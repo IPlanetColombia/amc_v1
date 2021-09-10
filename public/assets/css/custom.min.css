@@ -1,10 +1,15 @@
+/*--------------------- Cambios plantilla -----------------------------------------*/
+.btn-floating{
+	background: #01579b !important;
+}
+/*----------------------- Fin cambios --------------------------------------------*/
+
 .s12 .container{
 	margin-bottom: 80px;
 }
 .s12.login .container{
 	margin-bottom: 0px;
 }
-
 table thead tr th{
 	text-align: center;
 }
@@ -166,10 +171,17 @@ h2.card-title{
 .action_detail a.delete_detail_list:hover{
 	text-shadow: 0 0 1px #e57373;
 }
+.action_detail a.editar_detalle{
+	color: rgba(21, 101, 192, .7);
+	transition: all 500ms ease;
+}
+.action_detail a.editar_detalle:hover{
+	text-shadow: 0 0 1px rgba(21, 101, 192);
+}
 .action_detail a.imprimir_ticket{
-	color: #0288d1   ;
+	color: rgba(4,153,228, .7);
 	transition: all 500ms ease;
 }
 .action_detail a.imprimir_ticket:hover{
-	text-shadow: 0 0 1px #01579b;
+	text-shadow: 0 0 1px rgba(4,153,228);
 }

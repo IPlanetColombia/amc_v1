@@ -3,7 +3,7 @@
         <div class="container"><span><?= isset(configInfo()['footer']) ? configInfo()['footer'] : '' ?></span></div>
     </div>
 </footer>
-
+<script src="<?= base_url() ?>/assets/sweetAlert/dist/sweetalert2.min.js"></script>
 <script src="<?= base_url() ?>/assets/js/vendors.min.js"></script>
 <script src="<?= base_url() ?>/assets/js/plugins.min.js"></script>
 <script src="<?= base_url() ?>/assets/js/search.min.js"></script>

@@ -1,5 +1,5 @@
 <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-light navbar-full sidenav-active-rounded">
-    <div class="brand-sidebar">
+    <div class="brand-sidebar color_secundario_plantilla">
         <h1 class="logo-wrapper"><a class="brand-logo darken-1" href="/amc-laboratorio/home" style="vertical-align: center;">
                 <i class="material-icons"><?= isset(configInfo()['icon_app']) ? configInfo()['icon_app'] : '' ?> </i>
                 <span class="logo-text hide-on-med-and-down"

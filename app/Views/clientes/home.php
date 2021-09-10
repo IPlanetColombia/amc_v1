@@ -8,7 +8,7 @@
                         <h4 class="center-align">Portal de Clientes AMC</h4>
                         <div class="row">
                             <div class="col s12 m6 l6">
-                                <div class="card light-blue gradient-shadow white-text animate fadeLeft">
+                                <div class="card purple lighten-1 gradient-shadow white-text animate fadeLeft">
                                             <div class="content_head">
                                                 <div>
                                                     <i class="fas fa-file-signature"></i>
@@ -16,7 +16,7 @@
                                                 </div>
                                                 <span class="white-text"><?=$solicitudes?></span>
                                             </div>
-                                            <div class="card-action light-blue darken-1 center-aling">
+                                            <div class="card-action purple darken-1 center-aling">
                                                 <span>Este mes: <?= $total_mes ?></span>
                                             </div>
                                 </div>

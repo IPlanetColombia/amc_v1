@@ -58,7 +58,7 @@
                                             </h2>
         <div class="row">
             <div class="col s12">
-                <form autocomplete="off" id="form_filtrar" action="<?= base_url(['amc-laboratorio/certificado/filtrar'])?>"method="POST">
+                <form autocomplete="off" id="form_filtrar" action="<?= base_url(['cliente/certificado/filtrar'])?>"method="POST">
                     <div class="input-field col s12 l6 m12 x1">
                                                     <select name="concepto">
                                                         <option value="-1">Sin filtrar</option>
@@ -135,7 +135,7 @@
                 </form>
             </div>
             <div class="col s12 paginator">
-                <form action="<?= base_url(['amc-laboratorio/certificado/filtrar'])?>" method="POST" id="form_pagina">
+                <form action="<?= base_url(['cliente/certificado/filtrar'])?>" method="POST" id="form_pagina">
                     <div class="input-field col s12 l6 m6 x13">
                         <div class="botones_paginador">
                             <a data-pagina="start" class="enviar start deep-purple darken-1" data-page="0" style="display: none;"><i class="fas fa-angle-double-left"></i></a>

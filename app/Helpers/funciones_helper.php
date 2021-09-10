@@ -78,15 +78,14 @@ use App\Models\MuestreoDetalle;
 	    return $aux_codigo;                     
 	}
 
-	function imprime_detalle_muestras($id_muestreo, $tipo_salida=0){
+	function imprime_detalle_muestras($id_muestreo, $editar=0){
 		$certificados = new Certificacion();
 		$certificados = $certificados->where(['id_muestreo' => $id_muestreo])->get()->getResult();
-
 		$tabla = 	'<div id="campo_detalle_muestras">
 		                <table class="striped centered">
 		                    <thead>
 		                        <tr>
-		                            <th>#w</th>
+		                            <th>#</th>
 		                            <th>Certificado</th>
 		                            <th>Tipo de An&aacute;lisis</th>
 		                            <th>C&oacute;digo AMC</th>
@@ -98,8 +97,10 @@ use App\Models\MuestreoDetalle;
 		                        </tr>
 		                    </thead>
 		                    <tbody>';
+		                    	$count = 0;
 		                    	foreach($certificados as $key => $recordSet){
 		                    		$key++;
+		                    		$count = $key;
 		                    		//formateo de los detalles
 		                        	$fila_detalle = procesar_registro_fetch('muestreo_detalle', 'id_muestra_detalle', $recordSet->id_muestreo_detalle);
 		                 			//formateo del producto
@@ -114,7 +115,7 @@ use App\Models\MuestreoDetalle;
 		                             	$aux_codigo =$fila_analisis->mue_sigla.' '.$fila_detalle->id_codigo_amc;
 		                         	}*/
 		                         	$aux_codigo = construye_codigo_amc($recordSet->id_muestreo_detalle);
-                    $tabla .= '	<tr>
+                    $tabla .= '	<tr class="tr_'.$recordSet->id_certificacion.'">
                     				<td>'.$key.'</div></td>
                                 	<td>'.$recordSet->certificado_nro.'</td>
                                 	<td>'.$fila_analisis[0]->mue_nombre.'</td>
@@ -123,9 +124,13 @@ use App\Models\MuestreoDetalle;
                                 	<td>'.$fila_detalle[0]->mue_identificacion.'</td>
                                 	<td>'.$fila_detalle[0]->mue_cantidad.'</td>
                                 	<td>'.$fila_detalle[0]->mue_unidad_medida.'</td>
-                                	<td class="action_detail">                                    
-                                    	<a href="#!" onclick="quitar_detalle('.$recordSet->id_certificacion.')" class="delete_detail_list tooltipped" data-position="left" data-tooltip="Eliminar detalle" data-detalle=""><i class="far fa-trash-alt"></i></a>
-                                    	<a class="imprimir_ticket tooltipped" data-position="left" data-tooltip="Imprimir detalle"><i class="fas fa-print"></i></a>
+                                	<td class="action_detail">';
+                                	if($editar){
+                                $tabla .= '<a href="#!" onclick="buscar_detalle('.$recordSet->id_muestreo_detalle.')" class="editar_detalle tooltipped" data-position="bottom" data-tooltip="Editar detalle"><i class="far fa-edit"></i></i></a>';
+                                	}else{
+                                    	$tabla .= '<a href="#!" onclick="quitar_detalle('.$recordSet->id_certificacion.', '.$fila_detalle[0]->mue_identificacion.', `'.$fila_analisis[0]->mue_sigla.' '.$fila_detalle[0]->id_codigo_amc.'`)" class="delete_detail_list tooltipped" data-position="bottom" data-tooltip="Eliminar detalle" data-detalle=""><i class="far fa-trash-alt"></i></a>';
+                                	}                          
+                                    	$tabla .= '<a href="'.base_url(['funcionario', 'remisiones', 'ticket', $recordSet->id_certificacion]).'" class="imprimir_ticket tooltipped" data-position="bottom" data-tooltip="Imprimir detalle"><i class="fas fa-print"></i></a>
                                     </td>
                     			</tr>
                     ';
@@ -144,9 +149,13 @@ use App\Models\MuestreoDetalle;
                 			</tbody>
 		                </table>
 		            </div>';
-		$button = '	<div class="input-field col s12 centrar_button">
-                    	<a href="#!" onclick="btn_remicion_guardar()" id="btn-remicion-guardar" class="btn gradient-45deg-purple-deep-orange border-round guardar_remicion">Guardar remición</a>
-                    </div>';
+		if($count > 0){
+			$button = '	<div class="input-field col s12 centrar_button btn_remision">
+	                    	<a href="#!" onclick="btn_remision_guardar()" id="btn-remision-guardar" class="btn gradient-45deg-purple-deep-orange border-round guardar_remision">Guardar remisión</a>
+	                    </div>';
+		}else{
+			$button = '';
+		}
 		return ['tabla' => $tabla, 'boton' => $button];
 	}
 
@@ -169,6 +178,6 @@ use App\Models\MuestreoDetalle;
 
 		$tabla = imprime_detalle_muestras($fila_certificado[0]->id_muestreo);
 
-		return $tabla['tabla'];
+		return $tabla;
 
 	}

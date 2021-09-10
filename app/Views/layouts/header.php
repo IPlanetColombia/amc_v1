@@ -25,6 +25,7 @@
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>/assets/css/materialize.min.css">
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>/assets/css/style.min.css">
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>/assets/css/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>/assets/sweetAlert/dist/sweetalert2.min.css">
     <!-- END: Page Level CSS-->
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>/assets/css/custom.min.css">
