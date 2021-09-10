@@ -5,7 +5,7 @@
                 <div class="section">
                     <!--card stats start-->
                     <div id="card-stats" class="pt-0">
-                        <h4 class="center-align">Portal de Funcionarios AMC</h4>
+                        <h3 class="center-align">Portal de Funcionarios AMC</h3>
                     </div>
                 </div>
             </div>
