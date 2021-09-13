@@ -275,23 +275,19 @@
     </div>
 
 <?= view('layouts/footer') ?>
+<script src="<?= base_url() ?>/assets/js/funcionarios/funciones.js"></script>
 <script src="<?= base_url() ?>/assets/js/funcionarios/remision.js"></script>
 <?php if (isset($muestreo_verifica[0])): ?>
     <?php $fila_cliente_verifica = procesar_registro_fetch('usuario', 'id', $muestreo_verifica[0]->id_cliente); ?>
     <script type="text/javascript">
-        M.toast({
-            html: '<p><i class="fas fa-tasks"></i>&nbsp Remición en proceso. (Cargando datos)</p>',
-            classes: 'light-blue darken-2',
-            displayLength: 5000,
-        });
+        my_toast('<p><i class="fas fa-tasks"></i>&nbsp Remición en proceso. (Cargando datos)</p>','light-blue darken-2',5000);
         setTimeout(function(){
-            M.Toast.dismissAll();
+            // M.Toast.dismissAll();
             $('#frm_nombre_empresa').val("<?= $fila_cliente_verifica[0]->name ?>");
-            empresa_blur();
+            buscar_cliente();
             $('#frm_fecha_muestra').val("<?= date('Y/m/d', strtotime($muestreo_verifica[0]->mue_fecha_muestreo)) ?>");
             $('#frm_hora_muestra').val("<?= date('H:i:s', strtotime($muestreo_verifica[0]->mue_fecha_muestreo)) ?>");
             $('#frm_nombre_empresa_subtitulo').val("<?= $muestreo_verifica[0]->mue_subtitulo ?>");
-            $('#click').val(1);
             $('#frm_observaciones').val("<?= $muestreo_verifica[0]->mue_observaciones ?>");
             $('#frm_entrega').val("<?= $muestreo_verifica[0]->mue_entrega_muestra ?>");
             $('#frm_recibe').val("<?= $muestreo_verifica[0]->mue_recibe_muestra ?>");

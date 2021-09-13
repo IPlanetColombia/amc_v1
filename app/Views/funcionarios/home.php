@@ -10,7 +10,6 @@
                 </div>
             </div>
             <div class="content-overlay"></div>
-            
         </div>
     </div>
 </div>

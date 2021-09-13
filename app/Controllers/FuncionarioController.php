@@ -68,7 +68,6 @@ class FuncionarioController extends BaseController
                 'frm_contacto_nombre'   => 'required|max_length[100]',
                 'frm_telefono'          => 'required|max_length[20]',
             ];
-
         $empresa = $this->request->getPost('frm_nombre_empresa');
         $buscar = $this->request->getPost('buscar');
         $empresa_nueva = $this->request->getPost('empresa_nueva');
@@ -121,7 +120,7 @@ class FuncionarioController extends BaseController
             $rules['frm_nit']       = 'required|max_length[100]|is_unique[usuario.id, id, '.$id.']';
             $rules['frm_nombre_empresa2']       = 'required|max_length[100]|is_unique[usuario.id, id, '.$id.']';
             $rules['frm_nombre_empresa']   = 'required|max_length[100]|is_unique[usuario.name, id, '.$id.']';
-            $rules['frm_correo']     = 'required|valid_email|is_unique[usuario.email,id,'.$id.']|max_length[100]';
+            $rules['frm_correo']     = 'max_length[100]|required|is_unique[usuario.email, id, '.$id.']';
             if ($this->validate($rules, $message)){
                 $data = [
                     'name' => $this->request->getPost('frm_nombre_empresa'),
@@ -231,6 +230,7 @@ class FuncionarioController extends BaseController
         ]);
     }
     public function remision_edit_muestra(){
+        $db = \Config\Database::connect();
         $buscar = $this->request->getPost('buscar');
         $certificado = $this->request->getPost('frm_certificados_editar');
         $certificado = procesar_registro_fetch('certificacion', 'certificado_nro', $certificado);
@@ -241,17 +241,17 @@ class FuncionarioController extends BaseController
                 $certificado = $certificado[0];
                 $muestra = procesar_registro_fetch('muestreo', 'id_muestreo', $certificado->id_muestreo);
                 $cliente = procesar_registro_fetch('usuario', 'id', $muestra[0]->id_cliente);
+                $cliente[0]->fecha = date('Y-m-d', strtotime($muestra[0]->mue_fecha_muestreo));
+                $cliente[0]->hora = date('H:i:s', strtotime($muestra[0]->mue_fecha_muestreo));
                 $tabla = imprime_detalle_muestras($muestra[0]->id_muestreo, 1);
-                $fecha = date('Y-m-d', strtotime($muestra[0]->mue_fecha_muestreo));
-                $hora = date('H:i:s', strtotime($muestra[0]->mue_fecha_muestreo));
+                $conceptos = mensaje_resultado($certificado->certificado_nro);
                 return json_encode([
                     'result'            =>  true,
                     'certificado'       =>  $certificado,
                     'muestra'           =>  $muestra[0],
                     'cliente'           =>  $cliente[0],
                     'tabla'             =>  $tabla,
-                    'hora_muestreo'     =>  $hora,
-                    'fecha_muestreo'    =>  $fecha,
+                    'conceptos'         =>  $conceptos,
                 ]);
             }
         }else if($buscar == 1){ //Editamos empresa
@@ -276,7 +276,7 @@ class FuncionarioController extends BaseController
                 'use_direccion'         => $this->request->getPost('frm_direccion'),
             ];
             $cliente->set($data)->where(['id' => $id_cliente])->update();
-            return json_encode(['result' => true]);
+            return json_encode(['success' => true]);
         }else if($buscar == 2){ //Buscar detalle
             $idMuestraDetalle = $this->request->getPost('id_muestra_detalle');
             $detalle = procesar_registro_fetch('muestreo_detalle', 'id_muestra_detalle', $idMuestraDetalle);
@@ -285,7 +285,7 @@ class FuncionarioController extends BaseController
             return json_encode([
                 'detalle'   => $detalle[0],
                 'producto'  => $producto[0],
-                'tabla'     => $tabla
+                'tabla'     => $tabla,
             ]);
         }else if($buscar == 3){
             $forms = $this->request->getPost();
@@ -297,6 +297,23 @@ class FuncionarioController extends BaseController
             $idMuestraDetalle = $this->request->getPost('id_muestra_detalle');
             $data = muestra_tabla($producto, $idMuestraDetalle);
             return json_encode($data);
+        }else if($buscar == 5){
+            $data = [
+                'id_mensaje_resultado' => $this->request->getPost('frm_mensaje_resultado'),
+                'id_mensaje_comentario' => $this->request->getPost('frm_mensaje_observacion'),
+            ];
+            $id = $this->request->getPost('frm_id_certificado');
+            $db->table('certificacion_vs_mensaje')->set($data)->where(['id_certificacion' => $id])->update();
+            return json_encode('Mensaje actualizado.');
         }
+    }
+
+    // --------------------------------------- Resultados
+    public function resultados(){
+        $analisis = new Analisis();
+        $analisis = $analisis->get()->getResult(); 
+        return view('funcionarios/resultados',[
+            'analisis' => $analisis,
+        ]);
     }
 }

@@ -122,7 +122,7 @@ use App\Models\MuestreoDetalle;
 
             	$aux_checked_solido 	= 'checked';
             	$aux_checked_liquido 	= '';
-	            if($muestreoDetalle[0]->mue_unidad_medida === 'liquido'){
+	            if($muestreoDetalle[0]->mue_unidad_medida === 'liquida'){
 		            $aux_checked_solido 	= '';
 		            $aux_checked_liquido 	= 'checked';
 	            }
@@ -177,40 +177,6 @@ use App\Models\MuestreoDetalle;
 		$salida = '';
 		if($accion == 0){ // Creacion
 			$forms['frm_fecha_recepcion'] = $forms['frm_fecha_muestra'].' '.$forms['frm_hora_muestra'];
-			if ($forms['frm_id_remision'] == 0){
-				$data = [
-					'id_cliente' 			=> $forms['frm_nombre_empresa2'], 
-					'mue_estado' 			=> $forms['frm_estado_remision'], 
-					'mue_fecha_muestreo' 	=> $forms['frm_fecha_muestra'].' '.$forms['frm_hora_muestra'], 
-					'mue_fecha_recepcion' 	=> $forms['frm_fecha_recepcion'], 
-					'mue_fecha_analisis' 	=> $forms['frm_fecha_analisis'], 
-					'mue_fecha_informe' 	=> $forms['frm_fecha_informe'], 
-					'mue_entrega_muestra' 	=> $forms['frm_entrega'], 
-					'mue_recibe_muestra' 	=> $forms['frm_recibe'], 
-					'mue_responsable_op' 	=> $forms['frm_responsable'], 
-					'mue_observaciones' 	=> $forms['frm_observaciones'], 
-					'mue_subtitulo' 		=> $forms['frm_nombre_empresa_subtitulo'] 
-				];
-				$muestreo = new Muestreo();
-				$muestreo->insert($data);
-				$forms['frm_id_remision'] = $muestreo->getInsertID();
-			}else{
-				//ya existe x consiguiente se actualizan valores de encabezado
-				$data_update = [
-					'id_cliente' 			=> $forms['frm_nombre_empresa2'],
-					'mue_fecha_muestreo' 	=> $forms['frm_fecha_muestra'].' '.$forms['frm_hora_muestra'], 
-					'mue_fecha_recepcion' 	=> $forms['frm_fecha_recepcion'],
-					'mue_entrega_muestra' 	=> $forms['frm_entrega'], 
-					'mue_recibe_muestra' 	=> $forms['frm_recibe'],
-					'mue_observaciones' 	=> $forms['frm_observaciones'], 
-					'mue_subtitulo' 		=> $forms['frm_nombre_empresa_subtitulo'] 
-				];
-				$muestreo = new Muestreo();
-	            $muestreo->set($data_update)
-	            	->where(['id_muestreo' => $forms['frm_id_remision']])
-	            	->update();
-			}
-
 			$anio_= date("y");
 	        $tabla = 'muestreo_detalle where ano_codigo_amc='.$anio_;
 	        $aux_codigo_amc = auto_incrementar('id_codigo_amc',$tabla);
@@ -285,6 +251,41 @@ use App\Models\MuestreoDetalle;
         	//
             $forms['frm_id_remision'] = $forms['frm_id_muestreo'];
 		}
+
+		if ($forms['frm_id_remision'] == 0){
+			$data = [
+				'id_cliente' 			=> $forms['frm_nombre_empresa2'], 
+				'mue_estado' 			=> $forms['frm_estado_remision'], 
+				'mue_fecha_muestreo' 	=> $forms['frm_fecha_muestra'].' '.$forms['frm_hora_muestra'], 
+				'mue_fecha_recepcion' 	=> $forms['frm_fecha_recepcion'], 
+				'mue_fecha_analisis' 	=> $forms['frm_fecha_analisis'], 
+				'mue_fecha_informe' 	=> $forms['frm_fecha_informe'], 
+				'mue_entrega_muestra' 	=> $forms['frm_entrega'], 
+				'mue_recibe_muestra' 	=> $forms['frm_recibe'], 
+				'mue_responsable_op' 	=> $forms['frm_responsable'], 
+				'mue_observaciones' 	=> $forms['frm_observaciones'], 
+				'mue_subtitulo' 		=> $forms['frm_nombre_empresa_subtitulo'] 
+			];
+			$muestreo = new Muestreo();
+			$muestreo->insert($data);
+			$forms['frm_id_remision'] = $muestreo->getInsertID();
+		}else{
+			//ya existe x consiguiente se actualizan valores de encabezado
+			$data_update = [
+				'id_cliente' 			=> $forms['frm_nombre_empresa2'],
+				'mue_fecha_muestreo' 	=> $forms['frm_fecha_muestra'].' '.$forms['frm_hora_muestra'], 
+				'mue_fecha_recepcion' 	=> $forms['frm_fecha_recepcion'],
+				'mue_entrega_muestra' 	=> $forms['frm_entrega'], 
+				'mue_recibe_muestra' 	=> $forms['frm_recibe'],
+				'mue_observaciones' 	=> $forms['frm_observaciones'], 
+				'mue_subtitulo' 		=> $forms['frm_nombre_empresa_subtitulo'] 
+			];
+			$muestreo = new Muestreo();
+            $muestreo->set($data_update)
+            	->where(['id_muestreo' => $forms['frm_id_remision']])
+            	->update();
+		}
+
 
         $salida .= "<br><font color=red>sale 2</font>";
 
@@ -365,16 +366,57 @@ use App\Models\MuestreoDetalle;
 		return ['tabla' => $salida['tabla'], 'frm_id_remision' => $forms['frm_id_remision'], 'boton' => $salida['boton']];
 	}
 
+	function mensaje_resultado($certificado_nro){
+		$resultados = procesar_registro_fetch('mensaje_resultado',0,0);
+		$mensajes = procesar_registro_fetch('mensaje',0,0);
+		$consulta = procesar_registro_fetch('certificacion_vs_mensaje', 'id_certificacion', $certificado_nro);
+		$tabla = '';
+		if(!empty($consulta[0])){
+			$tabla = '<div class="concepto">
+						<hr>
+						<h4>Mensajes del resultado </h4>
+			            <div class="row">
+			            	<div class="col s12 l6">
+										<input type="hidden" name="buscar" value="5">
+										<input type="hidden" id="frm_id_certificado" name="frm_id_certificado" value="'.$certificado_nro.'">
+			            				<select id="frm_mensaje_resultado" name="frm_mensaje_resultado" class="validate">
+			            					<option value="">Seleccione mensaje</option>';
+			            			foreach($resultados as $key => $resultado){
+			            				$selected = ($resultado->id_mensaje == $consulta[0]->id_mensaje_resultado) ? 'selected' : '';
+			            		$tabla .= '	<option value="'.$resultado->id_mensaje.'"'.$selected.'>'.$resultado->mensaje_titulo.'</option>';
+			            			}
+			            		$tabla .='		</select>
+			            	</div>
+			            	<div class="col s12 l6">
+			            				<select id="frm_mensaje_observacion" name="frm_mensaje_observacion" class="validate">
+			            					<option value="">Seleccione observación</option>';
+			            				foreach($mensajes as $mensaje){
+			            					$selected = ($mensaje->id_mensaje == $consulta[0]->id_mensaje_comentario) ? 'selected':'';
+			            					$tabla.='<option value="'.$mensaje->id_mensaje.'" '.$selected.'>'.$mensaje->mensaje.'</option>';
+			            				}
+			            		$tabla .= '		</select>
+			            	</div>
+	        				<div class="input-field col s12 centrar_button">
+				                <button class="btn gradient-45deg-purple-deep-orange border-round">
+				                    Cambiar mensaje
+				                </button>
+				            </div>
+				        </div>
+				    </div>';
+		}
+		return $tabla;
+	}
+
 	function guardar_remision($form, $accion = 0){
 		$muestreo = new Muestreo();
 		$muestreo->set([
 			'mue_estado'			=> 1,
 			'mue_recibe_muestra'	=> $form['frm_recibe'],
-			'mue_responsable_op'	=> $form['frm_entrega'],
+			'mue_entrega_muestra'	=> $form['frm_entrega'],
 			'mue_observaciones' 	=> $form['frm_observaciones']
 		])->where(['id_muestreo' => $form['frm_id_remision']])->update();
 		return [
-			'mensaje' 	=> $accion == 0 ? 'Remision creada con exito.':'Remision editada con exito.',
+			'mensaje' 	=> 'Remisión guardada correctamente',
 			'fecha' 	=> date('Y-m-d'),
 			'hora' 		=> date('H:i:s')
 		];

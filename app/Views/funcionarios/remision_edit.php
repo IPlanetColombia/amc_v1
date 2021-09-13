@@ -39,11 +39,12 @@
         <input type='hidden' name='frm_nombre_empresa2' id='frm_nombre_empresa2' class='required'/>
         <input type="hidden" name="empresa_nueva" id="empresa_nueva" value="1">
         <input type="hidden" id="click" value="0">
+        <input type="hidden" name="buscar" value="1">
         <div class="row empresa_row">
             <div class="col s12">
                 <div class="row">
                     <div class="input-field col l4 s12 empresa">
-                        <input id="frm_nombre_empresa" name="frm_nombre_empresa" type="text" class="autocomplete frm_nombre_empresa">
+                        <input id="frm_nombre_empresa" name="frm_nombre_empresa" type="text" class="autocomplete frm_nombre_empresa validate">
                         <label for="frm_nombre_empresa">Empresa</label>
                         <small class=" red-text text-darken-4" id="frm_nombre_empresa"></small>
                     </div>
@@ -110,7 +111,7 @@
         <div class="row">
             <div class="input-field col s12 centrar_button">
                 <button class="btn gradient-45deg-purple-deep-orange border-round" id="btn-empresa">
-                    Editar empresa
+                    Actualizar empresa
                 </button>
             </div>
         </div>
@@ -274,6 +275,8 @@
                             <div class="row boton_guardar_remision">
                             </div>
                         </form>
+                        <form method="POST" id="mensajesform" autocomplete="off" action="<?= base_url(['funcionario', 'remisiones', 'edit', 'muestra']) ?>">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -289,6 +292,7 @@
     </div>
 
 <?= view('layouts/footer') ?>
+<script src="<?= base_url() ?>/assets/js/funcionarios/funciones.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
         var data = <?= json_encode($certificados,JSON_FORCE_OBJECT); ?>;
