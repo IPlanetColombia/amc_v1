@@ -210,7 +210,6 @@ class FuncionarioController extends BaseController
     }
 
 
-
     // ------------------------------------- EDITAR REMISIONES
     public function remision_edit(){
         $analisis = new Analisis();
@@ -306,14 +305,5 @@ class FuncionarioController extends BaseController
             $db->table('certificacion_vs_mensaje')->set($data)->where(['id_certificacion' => $id])->update();
             return json_encode('Mensaje actualizado.');
         }
-    }
-
-    // --------------------------------------- Resultados
-    public function resultados(){
-        $analisis = new Analisis();
-        $analisis = $analisis->get()->getResult(); 
-        return view('funcionarios/resultados',[
-            'analisis' => $analisis,
-        ]);
     }
 }

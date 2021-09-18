@@ -185,3 +185,23 @@ h2.card-title{
 .action_detail a.imprimir_ticket:hover{
 	text-shadow: 0 0 1px rgba(4,153,228);
 }
+.collapsible.expandable.popout li .collapsible-body{
+	width: 100% !important;
+	overflow: auto !important;
+}
+.collapsible.expandable.popout li .collapsible-body .table-content{
+	width: 100%;
+	overflow: auto !important;
+}
+.collapsible.expandable.popout li .collapsible-body .table-content table tr th{
+	min-width: 150px !important;
+}
+div.collapsible-header .list-muestras{
+	width: 100% !important;
+	display: flex !important;
+	flex-wrap: wrap;
+	align-items: center;
+}
+div.collapsible-header .list-muestras span b{
+	font-weight: 800;
+}

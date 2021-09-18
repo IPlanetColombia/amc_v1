@@ -70,11 +70,11 @@ use App\Models\MuestreoDetalle;
 
 	function construye_codigo_amc($id_muestreo_detalle){
 	    $fila_detalle = procesar_registro_fetch('muestreo_detalle', 'id_muestra_detalle', $id_muestreo_detalle);
-	    if($fila_detalle[0]->ano_codigo_amc> 0){
+	    if($fila_detalle[0]->ano_codigo_amc > 0){
 	        $aux_codigo =$fila_detalle[0]->ano_codigo_amc.'-'.str_pad($fila_detalle[0]->id_tipo_analisis,2,"0",STR_PAD_LEFT).'-'.str_pad($fila_detalle[0]->id_codigo_amc,4,"0",STR_PAD_LEFT);
 	    }else{
 	        $fila_analisis = procesar_registro_fetch('muestra_tipo_analisis', 'id_muestra_tipo_analsis', $fila_detalle[0]->id_tipo_analisis);
-	        $aux_codigo =$fila_analisis->mue_sigla.' '.$fila_detalle[0]->id_codigo_amc;
+	        $aux_codigo =$fila_analisis[0]->mue_sigla.' '.$fila_detalle[0]->id_codigo_amc;
 	    }
 	    return $aux_codigo;                     
 	}
@@ -181,4 +181,53 @@ use App\Models\MuestreoDetalle;
 
 		return $tabla;
 
+	}
+	function almacena_auditoria($id_ensayo_vs_muestra, $valor,$columna){
+		$db = \Config\Database::connect();
+    
+    	//para temas de pruebas no se almacena auditoria de id_muestra 4
+    
+        $fila = procesar_registro_fetch('ensayo_vs_muestra', 'id_ensayo_vs_muestra', $id_ensayo_vs_muestra );
+        if($fila[0]->id_muestra==4){
+            return;
+        }
+   
+    	//1 buscamos el cliente
+    	//2. verificamos si tiene privilegios 
+    	//3. si lo tiene preguntamos la auditoria de existe
+    	//4. si existe actualizamos
+    	//5. no existe los creamos
+    
+    	//1
+    	$texto="SELECT us.pyme FROM ensayo_vs_muestra em inner join certificacion ce on em.id_muestra=ce.id_certificacion 
+                inner join muestreo mu on mu.id_muestreo=ce.id_muestreo 
+                inner join usuario us on us.id=mu.id_cliente 
+                where em.id_ensayo_vs_muestra=".$id_ensayo_vs_muestra;
+    	$rs = $db->query($texto)->getResult();
+    	$fila = $rs[0];
+	    //2       
+	    if($fila->pyme == 'Si'){
+	        $fila_au = procesar_registro_fetch('au_ensa_vs_mues', 'id_ensayo_vs_muestra', $id_ensayo_vs_muestra, 'columna',$columna );
+	        //3
+	        if($fila_au[0]->id_auditoria){
+	            
+	            $texto ="update au_ensa_vs_mues set
+	                            valor = '$valor'
+	                            where id_ensayo_vs_muestra = $id_ensayo_vs_muestra
+	                            and columna = '$columna'";
+	            
+	        }else{
+	            $texto ="Insert into au_ensa_vs_mues (id_ensayo_vs_muestra, fecha, id, columna, valor)"
+	            . "values"
+	            . "($id_ensayo_vs_muestra, NOW(), ".session('user')->id.",'$columna',  '$valor')";   
+	        }
+	        
+	    }else{
+	         $texto ="Insert into au_ensa_vs_mues (id_ensayo_vs_muestra, fecha, id, columna, valor)"
+	            . "values"
+	            . "($id_ensayo_vs_muestra, NOW(), ".session('user')->id.",'$columna',  '$valor')";
+	     
+	    }
+    
+       $query = $db->query($texto);  
 	}

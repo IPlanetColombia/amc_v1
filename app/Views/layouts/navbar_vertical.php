@@ -39,8 +39,7 @@
             <li class="bold <?= isActive(urlOption($item->id)); ?>"><a
                         class="waves-effect waves-cyan  <?= isActive(urlOption($item->id)); ?> <?= countMenu($item->id) ? 'collapsible-header' : ''; ?>"
 
-                        href="<?= countMenu($item->id) ? urlOption() : urlOption($item->id) ?>"><i
-                            class="material-icons"><?= $item->icon ?></i><span class="menu-title"
+                        href="<?= countMenu($item->id) ? urlOption() : urlOption($item->id) ?>"><?= $item->icon ?> <span class="menu-title"
                                                                                data-i18n="Calendar"><?= $item->option ?></span></a>
 
                 <?php if (countMenu($item->id)): ?>

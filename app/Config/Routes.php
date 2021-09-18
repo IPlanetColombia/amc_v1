@@ -58,7 +58,9 @@ $routes->group('funcionario', function ($routes){
     $routes->post('remisiones/edit/muestra', 'FuncionarioController::remision_edit_muestra');
     $routes->get('remisiones/ticket/(:segment)', 'FuncionarioController::remision_ticket/$1');
 
-    $routes->get('resultados', 'FuncionarioController::resultados');
+    $routes->get('resultados', 'FuncionarioRMController::resultados');
+    $routes->post('resultados/ingreso', 'FuncionarioRMController::ingreso_muestras');
+    $routes->post('resultados/ingreso/resultado', 'FuncionarioRMController::ingreso_muestras_resultado');
 });
     // -------------------- Fin Controller Funcionario ------
 
