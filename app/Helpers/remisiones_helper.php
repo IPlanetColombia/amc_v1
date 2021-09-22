@@ -23,149 +23,146 @@ use App\Models\MuestreoDetalle;
 		$tabla = '
 			<div class="tabla-productos">
 				<hr>
-				<table>
-					<thead>
-						<tr>
-							<th colspan="2"><h4>Lista de parametros asociados a este producto</h4></th>
-						</tr>
-						<tr>
-							<th>Producto x1: '.$producto[0]->pro_nombre.'</th>
-							<th>Norma: '.$producto[0]->nor_nombre.'</th>
-						</tr>
-					</thead>
-					<tbody>
-						<table class="striped centered highlight">
-							<thead>
-								<tr>';
-									$ensayo = procesar_registro_fetch('ensayo', 'id_producto', $producto[0]->id_producto);
+				<div class="table-content">
+					<table>
+						<thead>
+							<tr>
+								<th colspan="2"><h4>Lista de parametros asociados a este producto</h4></th>
+							</tr>
+							<tr>
+								<th>Producto x1: '.$producto[0]->pro_nombre.'</th>
+								<th>Norma: '.$producto[0]->nor_nombre.'</th>
+							</tr>
+						</thead>
+						<tbody>
+							<table class="striped centered highlight">
+								<thead>
+									<tr>';
+										$ensayo = procesar_registro_fetch('ensayo', 'id_producto', $producto[0]->id_producto);
+										foreach($ensayo as $key => $value){
+											$parametro = procesar_registro_fetch('parametro', 'id_parametro', $value->id_parametro);
+											if($accion <> 0){
+					                            if($parametro[0]->par_estado=="Activo"){
+				                                    $aux_estado = '<small class="green-text darken-1">'.$parametro[0]->par_estado.' </small>';
+				                                }else{
+				                                    $aux_estado = '<small class="red-text darken-1">'.$parametro[0]->par_estado.' </small>';
+				                                }
+
+					                        }else{
+												if($parametro[0]->par_estado == 'Inactivo')
+													continue;
+					                        }
+			                                $tabla .='<th><b>'.$parametro[0]->par_nombre.'</b><br>'.$aux_estado.'</th>';
+										}
+
+						$tabla 	.=	'</tr>
+								</thead>
+								<tbody>
+									<tr>';
 									foreach($ensayo as $key => $value){
 										$parametro = procesar_registro_fetch('parametro', 'id_parametro', $value->id_parametro);
-										if($accion <> 0){
-				                            if($parametro[0]->par_estado=="Activo"){
-			                                    $aux_estado = '<small class="green-text darken-1">'.$parametro[0]->par_estado.' </small>';
-			                                }else{
-			                                    $aux_estado = '<small class="red-text darken-1">'.$parametro[0]->par_estado.' </small>';
-			                                }
+										if($accion<>0){// cero para ingreso de remisiones diferentes para editar
+	                                
+	                           			}else{
+											if($parametro[0]->par_estado == "Inactivo")
+		                                    	continue;
+		                                }
+		                                $tabla .= '<td>'.$value->med_valor_min.' - '.$value->med_valor_max.'</td>';
+									}
+					$tabla .= 	'	</tr>
+									<tr>';
+
+									$aux_cols = 0;
+									foreach($ensayo as $value){
+										$parametro = procesar_registro_fetch('parametro', 'id_parametro', $value->id_parametro);
+										if($accion<>0){// cero para ingreso de remisiones diferentes para editar
+	                                
+	                           			}else{
+											if($parametro[0]->par_estado == "Inactivo")
+		                                    	continue;
+		                                }
+
+		                                if($accion <> 0){
+				                            $filaChecked = procesar_registro_fetch('ensayo_vs_muestra', 'id_muestra', $accion, 'id_ensayo', $value->id_ensayo);
+
+				                            if(isset($filaChecked[0]->id_ensayo_vs_muestra)){//si existe se selecciona
+				                                $checked = "checked";
+				                            }else{
+				                                $checked = "";
+				                            }
 
 				                        }else{
-											if($parametro[0]->par_estado == 'Inactivo')
-												continue;
+				                            $checked = "checked";
 				                        }
-		                                $tabla .='<th><b>'.$parametro[0]->par_nombre.'</b><br>'.$aux_estado.'</th>';
+		                                $tabla .='<td class="action">
+		                                		<label>
+			                                		<input type="checkbox" name="frm_chk_'.$value->id_ensayo.'" id="frm_chk_'.$value->id_ensayo.'" '.$checked.'/>
+			                                		<span></span>
+		                                		</label>
+		                                	</td>';
+	                        			$aux_cols++;
 									}
+					if($accion<>0){// cero para ingreso de remisiones diferentes para editar
+						$muestreoDetalle = procesar_registro_fetch('muestreo_detalle', 'id_muestra_detalle', $accion);
+	                	$certificacion = procesar_registro_fetch('certificacion', 'id_muestreo_detalle', $muestreoDetalle[0]->id_muestra_detalle);
 
-					$tabla 	.=	'</tr>
-							</thead>
-							<tbody>
-								<tr>';
-								foreach($ensayo as $key => $value){
-									$parametro = procesar_registro_fetch('parametro', 'id_parametro', $value->id_parametro);
-									if($accion<>0){// cero para ingreso de remisiones diferentes para editar
-                                
-                           			}else{
-										if($parametro[0]->par_estado == "Inactivo")
-	                                    	continue;
-	                                }
-	                                $tabla .= '<td>'.$value->med_valor_min.' - '.$value->med_valor_max.'</td>';
-								}
-				$tabla .= 	'	</tr>
-								<tr>';
+	                	$mensaje = "Editar muestra";
+	                	$inputIdMuestraDetalle = '
+	                		<label>
+	                			<input type="checkbox" name="frm_elimina_resultado" id="frm_elimina_resultado" value="SI" checked/>
+	                			<span>Eliminar resultado ingresados.</span>
+	                		</label>
+							<input type="hidden" name="frm_id_muestra_detalle" id="frm_id_muestra_detalle" value="'.$accion.'"/>
+	                    	<input type="hidden" name="frm_id_codigo_amc" id="frm_id_codigo_amc" value="'.$muestreoDetalle[0]->id_codigo_amc.'"/>
+	                    	<input type="hidden" name="frm_id_certificado" id="frm_id_certificado" value="'.$certificacion[0]->certificado_nro.'"/>
+	                    	<input type="hidden" name="frm_id_muestreo" id="frm_id_muestreo" value="'.$certificacion[0]->id_muestreo.'"/>';     
+	                }else{
+						$mensaje = "Agregar a lista";
+		               	$inputIdMuestraDetalle = '';
+		            }
 
-								$aux_cols = 0;
-								foreach($ensayo as $value){
-									$parametro = procesar_registro_fetch('parametro', 'id_parametro', $value->id_parametro);
-									if($accion<>0){// cero para ingreso de remisiones diferentes para editar
-                                
-                           			}else{
-										if($parametro[0]->par_estado == "Inactivo")
-	                                    	continue;
-	                                }
+	            	$aux_checked_solido 	= 'checked';
+	            	$aux_checked_liquido 	= '';
+		            if($muestreoDetalle[0]->mue_unidad_medida === 'liquida'){
+			            $aux_checked_solido 	= '';
+			            $aux_checked_liquido 	= 'checked';
+		            }
 
-	                                if($accion <> 0){
-			                            $filaChecked = procesar_registro_fetch('ensayo_vs_muestra', 'id_muestra', $accion, 'id_ensayo', $value->id_ensayo);
-
-			                            if(isset($filaChecked[0]->id_ensayo_vs_muestra)){//si existe se selecciona
-			                                $checked = "checked";
-			                            }else{
-			                                $checked = "";
-			                            }
-
-			                        }else{
-			                            $checked = "checked";
-			                        }
-	                                $tabla .='<td class="action">
-	                                		<label>
-		                                		<input type="checkbox" name="frm_chk_'.$value->id_ensayo.'" id="frm_chk_'.$value->id_ensayo.'" '.$checked.'/>
-		                                		<span></span>
-	                                		</label>
-	                                	</td>';
-                        			$aux_cols++;
-								}
-				if($accion<>0){// cero para ingreso de remisiones diferentes para editar
-					$muestreoDetalle = procesar_registro_fetch('muestreo_detalle', 'id_muestra_detalle', $accion);
-                	$certificacion = procesar_registro_fetch('certificacion', 'id_muestreo_detalle', $muestreoDetalle[0]->id_muestra_detalle);
-
-                $mensaje = "Editar muestra";
-                $inputIdMuestraDetalle = '
-                	<label>
-                		<input type="checkbox" name="frm_elimina_resultado" id="frm_elimina_resultado" value="SI" checked/>
-                		<span>Eliminar resultado ingresados.</span>
-                	</label>
-				<input type="hidden" name="frm_id_muestra_detalle" id="frm_id_muestra_detalle" value="'.$accion.'"/>
-                                        <input type="hidden" name="frm_id_codigo_amc" id="frm_id_codigo_amc" value="'.$muestreoDetalle[0]->id_codigo_amc.'"/>
-                                            <input type="hidden" name="frm_id_certificado" id="frm_id_certificado" value="'.$certificacion[0]->certificado_nro.'"/>
-                                                <input type="hidden" name="frm_id_muestreo" id="frm_id_muestreo" value="'.$certificacion[0]->id_muestreo.'"/>';     
-                }else{
-					$mensaje = "Agregar a lista";
-	               	$inputIdMuestraDetalle = '';
-	            }
-
-            	$aux_checked_solido 	= 'checked';
-            	$aux_checked_liquido 	= '';
-	            if($muestreoDetalle[0]->mue_unidad_medida === 'liquida'){
-		            $aux_checked_solido 	= '';
-		            $aux_checked_liquido 	= 'checked';
-	            }
-
-				$tabla .=	'	</tr>
-								<tr><td colspan="'.$aux_cols.'">&nbsp;</td></tr>
-								<tr>
-			                        <td colspan="'.$aux_cols.'" class="action">
-			                        	<b>Unidad de Medida</b><br>
-			                        	<label>
-			                        		<input  type="radio" id="frm_unidad_parametro" name="frm_unidad_parametro" value="solida"'.$aux_checked_solido.'>
-			                        		<span>S&oacute;lidas</span>
-	                                	</label>
-			                        	<label>
-			                        		<input  type="radio" id="frm_unidad_parametro" name="frm_unidad_parametro" value="liquida"'.$aux_checked_liquido.'>
-			                        		<span>Liquidas</span>
-	                                	</label>
-			                        	<br><br>
-			                        </td>
-			                    </tr>
-			                    <tr>
-			                        <td colspan="'.$aux_cols.'" class="action">
-			                        	<label>
-			                        		<input type="checkbox" value="1" name="frm_bandera_certificado" id="frm_bandera_certificado" checked>
-			                        		<span>Un certificado</span>
-	                                	</label>
-	                                </td>
-			                    </tr>
-			                    <tr>
-					                <td colspan="'.$aux_cols.'" class="action">
-					                	<div id="campo_botton_agregar">
-					                		<button id="btn-muestreo-form" class="btn gradient-45deg-purple-deep-orange border-round agregar_lista">'.$mensaje.'</button>
-					                		<input type="hidden" name="frm_id_forma" id="frm_id_forma" value="frm_form_muestra"/>
-					                </td>
-					            </tr>
-					            <tr>
-					            	<td colspan="2">'.$inputIdMuestraDetalle.'</td>
-					            </tr>
-							</tbody>
-						</table>
-					</tbody>
-				</table>
+					$tabla .=	'	</tr>
+								</tbody>
+							</table>
+						</tbody>
+					</table>
+				</div>
 			</div>
+			<div class="row mt-2 mb-2">
+				<div class="col s12 centrar_button">
+                	<b style="width: 100%; text-align: center;">Unidad de Medida</b><br>
+                	<label>
+                		<input  type="radio" id="frm_unidad_parametro" name="frm_unidad_parametro" value="solida"'.$aux_checked_solido.'>
+                		<span>S&oacute;lidas</span>
+                	</label>
+                	<label>
+                		<input  type="radio" id="frm_unidad_parametro" name="frm_unidad_parametro" value="liquida"'.$aux_checked_liquido.'>
+                		<span>Liquidas</span>
+                	</label>
+                </div>
+    			<div class="col s12 centrar_button">
+                	<label>
+                		<input type="checkbox" value="1" name="frm_bandera_certificado" id="frm_bandera_certificado" checked>
+                		<span>Un certificado</span>
+                	</label>
+                </div>
+        		<div class="col s12 centrar_button" id="campo_botton_agregar">
+        			<button id="btn-muestreo-form" class="btn gradient-45deg-purple-deep-orange border-round agregar_lista">'.$mensaje.'</button>
+        			<input type="hidden" name="frm_id_forma" id="frm_id_forma" value="frm_form_muestra"/>
+        		</div>
+            </div>
+            <div class="row">
+            	<div class="col l12">
+		            '.$inputIdMuestraDetalle.'
+		        </div>
+		    </div>
 		';
 	    return $tabla;
 	}

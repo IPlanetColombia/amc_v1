@@ -99,33 +99,38 @@ class FuncionarioRMController extends BaseController
             $aux_where .=" and  d.id_tipo_analisis in ($aux_analisis)"; 
         }
         $aux_where .=")"; //echo $aux_;
-        $parametros = $db->table('producto p')->select('distinct (select par_nombre from parametro where id_parametro= e.id_parametro) parametro, e.id_parametro, (select concat(t.id_tecnica,"-",t.nor_nombre) nombre from parametro p inner join tecnica t on p.id_tecnica=t.id_tecnica where id_parametro=  e.id_parametro ) tecnica, (select t.id_tecnica from parametro p inner join tecnica t on p.id_tecnica=t.id_tecnica where id_parametro=  e.id_parametro ) id_tecnica')->join('ensayo e', 'p.id_producto=e.id_producto')->where($aux_where)->orderBy('id_parametro', 'ASC')->get()->getResult();
-        // foreach($filtros as $key => $muestra){
-        //     foreach($parametros as $llave => $parametro){
-        //         $ensayo = procesar_registro_fetch('ensayo', 'id_producto', $muestra->id_producto, 'id_parametro', $parametro->id_parametro);
-        //         if(!empty($ensayo[0])){
-        //             $ensayo_vs_muestra = procesar_registro_fetch('ensayo_vs_muestra', 'id_ensayo', $ensayo[0]->id_ensayo, 'id_muestra', $muestra->id_muestra_detalle);
-        //             if(!empty($ensayo_vs_muestra[0])){
-        //                 if($key == 3){
-        //                     if(!empty($ensayo_vs_muestra[0]->resultado_mensaje)){
-        //                         if(!empty($ensayo_vs_muestra[0]->resultado_mensaje <> '')){
-        //                             $mensaje_respuesta = $ensayo_vs_muestra[0]->resultado_mensaje;
-        //                             $id_ensayo_vs_muestra = $ensayo_vs_muestra[0]->id_ensayo_vs_muestra;
-        //                             $algo = evalua_alerta($ensayo[0]->med_valor_min  ,$ensayo[0]->med_valor_max , $ensayo_vs_muestra[0]->resultado_mensaje, $muestra->id_tipo_analisis, $id_ensayo_vs_muestra,2);
-        //                             var_dump([$algo, $ensayo_vs_muestra[0]]);
-        //                         }
-        //                     }    
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     if($key == 3)
-        //         break;
-        // }
+        $parametros = $db->table('producto p')->select('
+            distinct (select par_nombre from parametro where id_parametro= e.id_parametro) parametro,
+            e.id_parametro,
+            (select par_descripcion from parametro where id_parametro= e.id_parametro  ) parametro_descripcion,
+            (select concat(t.id_tecnica,"-",t.nor_nombre) nombre from parametro p inner join tecnica t on p.id_tecnica=t.id_tecnica where id_parametro=  e.id_parametro ) tecnica,
+            (select t.id_tecnica from parametro p inner join tecnica t on p.id_tecnica=t.id_tecnica where id_parametro=  e.id_parametro ) id_tecnica')->join('ensayo e', 'p.id_producto=e.id_producto')->where($aux_where)->orderBy('id_parametro', 'ASC')->get()->getResult();
+        foreach($filtros as $key => $muestra){
+            $aux_parametro = [];
+            $aux_ensayo_vs_muestra = [];
+            $aux_ensayo = [];
+            foreach($parametros as $llave => $parametro){
+                $ensayo = procesar_registro_fetch('ensayo', 'id_producto', $muestra->id_producto, 'id_parametro', $parametro->id_parametro);
+                if(!empty($ensayo[0])){
+                    $ensayo_vs_muestra = procesar_registro_fetch('ensayo_vs_muestra', 'id_ensayo', $ensayo[0]->id_ensayo, 'id_muestra', $muestra->id_muestra_detalle);
+                    if(!empty($ensayo_vs_muestra[0])){
+                        array_push($aux_parametro, $parametro);
+                        array_push($aux_ensayo_vs_muestra, $ensayo_vs_muestra[0]);
+                        array_push($aux_ensayo, $ensayo[0]);
+                    }
+                }
+            }
+            $muestra->parametros = $aux_parametro;
+            $muestra->ensayos = $aux_ensayo;
+            $muestra->ensayo_vs_muestras = $aux_ensayo_vs_muestra;
+            // var_dump($muestra->parametros);
+            // break;
+        }
+
         return view('funcionarios/resultados',[
             'analisis'      => $analisis,
             'muestras'      => $filtros,
-            'parametros'    => $parametros
+            // 'parametros'    => $parametros
         ]);
     }
 
@@ -138,6 +143,7 @@ class FuncionarioRMController extends BaseController
         $id_ensayo_vs_muestra   =   $this->request->getPost('aux_id_ensayo_vs_muestra'); 
         $rol                    =   session('user')->usr_rol;
         $id_tipo_analisis       =   $this->request->getPost('id_tipo_analisis');
+        $mohos_levaduras        =   $this->request->getPost('mohos_levaduras');
         $result['hide'] = false;
         $fila_ensayo_vs_muestra = procesar_registro_fetch("ensayo_vs_muestra", "id_ensayo_vs_muestra", $id_ensayo_vs_muestra);
         $fila_ensayo = procesar_registro_fetch("ensayo", "id_ensayo", $fila_ensayo_vs_muestra[0]->id_ensayo);
@@ -147,7 +153,68 @@ class FuncionarioRMController extends BaseController
         $mensaje        = '';
         $mensaje_campo  ='';
         $mensaje_campo2 ='';
-        if ($id_tecnica == 1){
+        if($mohos_levaduras){
+            $aux_0 = strripos($valor, ';');
+            $aux_m = calcula_mh($valor);
+            if($nombre_campo_bd=='resultado_analisis'){
+                if($aux_0 > 0){
+                    almacena_primer_campo($id_ensayo_vs_muestra, $valor);                    
+                    $mensaje = "<b>".$aux_m." M </b>";                    
+                    $aux_guarda_resultado_mensaje='-IC1S-NMC2-';//                    
+                    //almacena_campo_resultado($id_ensayo_vs_muestra, $valor);
+                    $fila_resultado_1 = procesar_registro_fetch("ensayo_vs_muestra", "id_ensayo_vs_muestra", $id_ensayo_vs_muestra);
+                    if($fila_resultado_1[0]->resultado_analisis2){
+                       
+                        $aux_l = calcula_mh($fila_resultado_1[0]->resultado_analisis2);
+                        // $aux_l = 10;
+                        $aux_resultado = $aux_m+$aux_l;
+                        
+                        $aux_m = formatea_mh_parcial($aux_m,"mohos");
+                        $aux_l = formatea_mh_parcial($aux_l,"levaduras");
+                              
+                        //$aux_resultado = $aux_m."M + ".$aux_l."L Total ".$aux_resultado;
+                        $aux_resultado = $aux_m." ".$aux_l." Total ".$aux_resultado;
+                        // return json_encode($aux_resultado);
+                        almacena_campo_resultado($id_ensayo_vs_muestra, $aux_resultado);  
+                        
+                        $mensaje = "<b>".$aux_resultado." </b>";       
+                    }
+                }else{
+                    $aux_guarda_resultado_mensaje='-NMC2-';
+                    $mensaje ="Debe ingresar 2 valores separados por <b>;</b>".$no;
+                }
+            }else{
+                if($aux_0 > 0){
+                    $aux_l = $aux_m; //para manejarla como levadura
+                    almacena_segundo_campo($id_ensayo_vs_muestra, $valor);    
+                    $mensaje = "<b>".$aux_l." L </b>";                    
+                    $aux_guarda_resultado_mensaje='-IC1S-NMC2-';//    
+                   
+                    $fila_resultado_1 = procesar_registro_fetch("ensayo_vs_muestra", "id_ensayo_vs_muestra", $id_ensayo_vs_muestra);
+                    if($fila_resultado_1[0]->resultado_analisis){
+                       
+                        $aux_m = calcula_mh($fila_resultado_1[0]->resultado_analisis);
+                        
+                        $aux_resultado = $aux_m+$aux_l;
+                        $aux_guarda_resultado_mensaje.=evalua_alerta($fila_ensayo->med_valor_min ,$fila_ensayo->med_valor_max, $aux_resultado, $id_tipo_analisis, $id_ensayo_vs_muestra);
+                        
+                        $aux_m = formatea_mh_parcial($aux_m,"mohos");
+                        $aux_l = formatea_mh_parcial($aux_l,"levaduras");
+                        
+                        //$aux_resultado = $aux_l."M + ".$aux_m."L Total ".$aux_resultado;
+                        $aux_resultado = $aux_m." ".$aux_l." Total ".$aux_resultado;
+                        almacena_campo_resultado($id_ensayo_vs_muestra, $aux_resultado);  
+                        
+                        $mensaje = "<b>".$aux_resultado." </b>";       
+                    }
+                    
+                }else{
+                    $aux_guarda_resultado_mensaje='-NMC2-';
+                    $mensaje ="Debe ingresar 2 valores separados por <b>;</b>".$no;
+                }
+                
+            }
+        }elseif ($id_tecnica == 1){
             if (is_numeric ($valor)) {
                     if ($valor <= 14){
                         $mensaje = "<b>".$valor." d&iacute;as</b>";
@@ -318,9 +385,9 @@ class FuncionarioRMController extends BaseController
                     $aux_guarda_resultado_mensaje='-NMC2-';
                 }
             }
-            $aux_guarda_resultado_mensaje.="Tenica".$id_tecnica;
+            $aux_guarda_resultado_mensaje.="Tecnica_".$id_tecnica;
         }// fin demas tecnica
-        $aux_guarda_resultado_mensaje.="Tenica".$id_tecnica;
+        $aux_guarda_resultado_mensaje.="Tecnica_".$id_tecnica;
         $aux_guarda_resultado_mensaje.="Campo".$nombre_campo_bd;
         $aux_guarda_resultado_mensaje.="Valor".$valor;
         $result = [];
@@ -352,7 +419,7 @@ class FuncionarioRMController extends BaseController
         }
         
         $result["campo_mensajes"] = "campo_mensajes_".$id_ensayo_vs_muestra;//.$aux_guarda_resultado_mensaje
-        $result["campo_mensajes_".$id_ensayo_vs_muestra] = $mensaje;//.$aux_guarda_resultado_mensaje
+        $result["campo_mensajes_".$id_ensayo_vs_muestra] = $mensaje;
         return json_encode($result);
         // return json_encode($id_tecnica);
     }

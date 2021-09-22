@@ -8,6 +8,26 @@
                         <h3 class="center-align">Portal de Funcionarios AMC</h3>
                     </div>
                 </div>
+                <div class="card animate fadeUp">
+                    <div class="card-content">
+                        <table class="centered striped">
+                            <tbody>
+                                <tr>
+                                    <td>Fecha:</td>
+                                    <td><?= date_fecha(date('Y-m-d', strtotime(session('user')->session_date))) ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Hora: </td>
+                                    <td><?= date('h:i:s a', strtotime(session('user')->session_date)) ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Tipo de usuario: </td>
+                                    <td><?= session('user')->cms_rol ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="content-overlay"></div>
         </div>

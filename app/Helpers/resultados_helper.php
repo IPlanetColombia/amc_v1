@@ -2,6 +2,7 @@
 	function evalua_alerta($med_valor_min ,$med_valor_max, $valor, $id_tipo_analisis, $id_ensayo_vs_muestra, $quien_invoca=1){//2 son de formaulario de consultas y no generea correo
     	$med_valor_min = formatea_valor_min_max($med_valor_min);
     	$med_valor_max = formatea_valor_min_max($med_valor_max);
+    	$valor = formatea_mh_total($valor);
     	$mensaje ='';
    
     
@@ -25,7 +26,7 @@
 				
 	            if($id_tipo_analisis == 3){// FA 
 	                
-	                $mensaje =($med_valor_min <= $valor  &&   $valor <= $med_valor_max )?'-MAN-No genera Alerta 1:':'-MAS-SI genera Alerta 1';//
+	                $mensaje =($med_valor_min <= $valor  &&   $valor <= $med_valor_max  )?'-MAN-No genera Alerta 1:':'-MAS-SI genera Alerta 1';//
 	                $mensaje.="min:".$med_valor_min." max:".$med_valor_max;
 	                
 	            }else{
@@ -34,7 +35,7 @@
 					//$med_valor_max =($med_valor_max)?$med_valor_max:9999999;
 					//$med_valor_max =(trim($med_valor_max) || $med_valor_max==0)?$med_valor_max:(trim($med_valor_max))?$med_valor_max:9999999;
 	                $mensaje = (0 <= $valor && $valor <= $med_valor_max  ) ? '-MAN-No genera Alerta 2':'-MAS-SI genera Alerta 2:';    
-	                 $mensaje.="min: Toma 0 x ser <>FA max:".$med_valor_max;//$med_valor_min
+	                 $mensaje.="min: $med_valor_min Toma 0 x ser <>FA max: $med_valor_max - valor: $valor";
 	                 // $mensaje = '0 <= '.$valor.' && '.$valor.' <= '.$med_valor_max;
 	           }
 	        }else{
@@ -44,7 +45,7 @@
 	            $med_valor_max  = strtoupper($med_valor_max);
 	              
 	            $mensaje        = ($valor == $med_valor_min || $valor == $med_valor_max)?'-MAN-No genera Alerta 3':'-MAS-SI genera Alerta 3 ';
-	             $mensaje.="min:".$med_valor_min." max:".$med_valor_max;
+	             $mensaje.="min:".$med_valor_min." max:".$med_valor_max.' valor:'.$valor;
 	               
 	        }
 	    }else{
@@ -62,7 +63,7 @@
 	    $valor          = str_replace('<', '',$valor);
 	    $valor          = str_replace('>', '',$valor);
 	    $valor          = str_replace('.', '',$valor);
-	    $valor          = str_replace('Máximo', '',  utf8_encode($valor));
+	    $valor          = str_replace('Máximo', '',  $valor);
 	    $valor          = str_replace('Mínimo', '',  $valor);    
 	    $valor          = str_replace('Máx', '',  $valor);
 	    $valor          = str_replace('Máx', '',$valor);

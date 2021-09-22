@@ -70,82 +70,102 @@
                         <table class="centered striped highlight">
                             <thead>
                                 <tr>
-                                    <?php foreach($parametros as $key => $parametro): ?>
-                                        <?php
-                                            $fila_ensayo = procesar_registro_fetch('ensayo', 'id_producto', $muestra->id_producto, 'id_parametro', $parametro->id_parametro);
-                                            $aux_fila_ensayo[$key] = $fila_ensayo[0];
-                                        ?>
-                                        <?php if (isset($fila_ensayo[0]->id_producto)): ?>
-                                            <?php
-                                                $fila_ensayo_vs_muestra = procesar_registro_fetch('ensayo_vs_muestra', 'id_ensayo', $fila_ensayo[0]->id_ensayo, 'id_muestra', $muestra->id_muestra_detalle);
-                                                $aux_ensayo_vs_muestra[$key] = $fila_ensayo_vs_muestra[0];
-                                            ?>
-                                            <?php if (isset($fila_ensayo_vs_muestra[0]->id_ensayo_vs_muestra)): ?>
-                                                <th><?= $parametro->parametro ?><br>(<?= $parametro->tecnica ?>)</th>
-                                            <?php endif ?>
-                                        <?php endif ?>
+                                    <?php foreach($muestra->parametros as $key => $parametro): ?>
+                                        <th><?= $parametro->parametro ?><br>(<?= $parametro->tecnica ?>)</th>
                                     <?php endforeach ?>
                                 </tr>
                             </thead>
 
     <tbody>
         <tr>
-            <?php foreach($parametros as $key => $parametro): ?>
-                <?php if (isset($aux_fila_ensayo[$key]->id_producto)): ?>
-                    <?php if (isset($aux_ensayo_vs_muestra[$key]->id_ensayo_vs_muestra)): ?>
+            <?php foreach($muestra->ensayo_vs_muestras as $key => $ensayo_vs_muestra): ?>
                         <?php
-                            $aux_id_ensayo_vs_muestra=$aux_ensayo_vs_muestra[$key]->id_ensayo_vs_muestra;
-                            $aux_cambiar_campos = 'onblur="js_cambiar_campos(`campo_repuesta_'.$aux_id_ensayo_vs_muestra.'`,this.value, `frm_resultado'.$aux_id_ensayo_vs_muestra.'`, `resultado_analisis`, '.$aux_id_ensayo_vs_muestra.', '.$parametro->id_tecnica.', '.$muestra->id_tipo_analisis.')"' ;
-                            $aux_mensaje_tecnica_7_y_texto = ($parametro->id_tecnica==7 || preg_match('/usen/',$aux_fila_ensayo[$key]->med_valor_min) || preg_match('/usen/',$aux_fila_ensayo[$key]->med_valor_max) )?formatea_valor_min_max($aux_fila_ensayo[$key]->med_valor_min).'-'.formatea_valor_min_max($aux_fila_ensayo[$key]->med_valor_max) :'';
-                            $aux_mensaje_tip = 'onclick="js_muestra_tip('.$muestra->id_muestreo.', `'.$aux_codigo_amc.'`, `'.$parametro->parametro.'`, `'.$muestra->mue_identificacion.'`, `'.$muestra->pro_nombre.'`)" ' ;
+                            $aux_id_ensayo_vs_muestra = $ensayo_vs_muestra->id_ensayo_vs_muestra;
+                            $aux_cambiar_campos = 'onblur="js_cambiar_campos(`campo_repuesta_'.$aux_id_ensayo_vs_muestra.'`,this.value, `frm_resultado'.$aux_id_ensayo_vs_muestra.'`, `resultado_analisis`, '.$aux_id_ensayo_vs_muestra.', '.$muestra->parametros[$key]->id_tecnica.', '.$muestra->id_tipo_analisis.')"' ;
+                            $aux_mensaje_tecnica_7_y_texto = ($muestra->parametros[$key]->id_tecnica==7 || preg_match('/usen/',$muestra->ensayos[$key]->med_valor_min) || preg_match('/usen/',$muestra->ensayos[$key]->med_valor_max) )?formatea_valor_min_max($muestra->ensayos[$key]->med_valor_min).'-'.formatea_valor_min_max($aux_fila_ensayo[$key]->med_valor_max) :'';
+                            $aux_mensaje_tip = 'onclick="js_muestra_tip('.$muestra->id_muestreo.', `'.$aux_codigo_amc.'`, `'.$muestra->parametros[$key]->parametro.'`, `'.$muestra->mue_identificacion.'`, `'.$muestra->pro_nombre.'`)" ' ;
                             $aux_cambiar_campos2 = 'onblur="js_cambiar_campos(`campo_repuesta_'.$aux_id_ensayo_vs_muestra.'\'`,this.value, `frm_resultado2'.$aux_id_ensayo_vs_muestra.'`, `resultado_analisis2`, '.$aux_id_ensayo_vs_muestra.', '.$parametro->id_tecnica.','.$muestra->id_tipo_analisis.')" ' ;
-                            if($aux_ensayo_vs_muestra[$key]->resultado_analisis2){
+                            if($ensayo_vs_muestra->resultado_analisis2){
                                 $aux_cambiar_campos2 = (session('user')->usr_rol == 1 || session('user')->usr_rol == 2 || session('user')->usr_rol == 3) ? $aux_cambiar_campos2.' class="valid" ':'disabled class="valid"  ';//|| $user_rol_id==4
                             }
-                            $aux_value2 = $aux_ensayo_vs_muestra[$key]->resultado_analisis2;
+                            $aux_value2 = $ensayo_vs_muestra->resultado_analisis2;
                             $aux_input2 = '<input type="text" name="frm_resultado2'.$aux_id_ensayo_vs_muestra.'" id="frm_resultado2'.$aux_id_ensayo_vs_muestra.'" '.$aux_cambiar_campos2.' value="'.$aux_value2.'">';
-                            if(!$aux_ensayo_vs_muestra[$key]->resultado_analisis  ){// || 
-                                if($aux_ensayo_vs_muestra[$key]->resultado_analisis == '0' ){
+                            if(!$ensayo_vs_muestra->resultado_analisis  ){// || 
+                                if($ensayo_vs_muestra->resultado_analisis == '0' ){
                                     $aux_cambiar_campos = (session('user')->usr_rol == 1 || session('user')->usr_rol == 2 || session('user')->usr_rol == 3) ? $aux_cambiar_campos.' class="valid"':'disabled class="valid"';
-                                    $aux_value          =   $aux_ensayo_vs_muestra[$key]->resultado_analisis;
+                                    $aux_value          =   $ensayo_vs_muestra->resultado_analisis;
                                 }else{
                                     $aux_value          =   '';
                                     $aux_input2         = '';
                                 }                                                
                             }else{
                                 $aux_cambiar_campos = (session('user')->usr_rol == 1 || session('user')->usr_rol == 2 || session('user')->usr_rol == 3) ? $aux_cambiar_campos.' class="valid"  ':'disabled class="valid"  ';
-                                $aux_value = $aux_ensayo_vs_muestra[$key]->resultado_analisis;
+                                $aux_value = $ensayo_vs_muestra->resultado_analisis;
                             }
                             $aux_div_rta = '<div id="campo_respuesta_'.$aux_id_ensayo_vs_muestra.'"></div>';
                             $aux_mensaje_respuesta='';
-                            if(isset($aux_ensayo_vs_muestra[$key]->resultado_mensaje) ){
-                               if($aux_ensayo_vs_muestra[$key]->resultado_mensaje<>'' ){
-                                   if($aux_ensayo_vs_muestra[$key]->resultado_analisis2=='' ){
+                            if(isset($ensayo_vs_muestra->resultado_mensaje) ){
+                               if($ensayo_vs_muestra->resultado_mensaje<>'' ){
+                                   if($ensayo_vs_muestra->resultado_analisis2=='' ){
                                         $aux_input2='';   
                                    }                                               
-                                   $aux_mensaje_respuesta=$aux_ensayo_vs_muestra[$key]->resultado_mensaje;
-                                   $algo = evalua_alerta($aux_fila_ensayo[$key]->med_valor_min, $aux_fila_ensayo[$key]->med_valor_max , $aux_ensayo_vs_muestra[$key]->resultado_mensaje, $muestra->id_tipo_analisis, $aux_id_ensayo_vs_muestra,2);
-                                    if(preg_match("/^-MAS-/", $algo)){//2 para que no genere correos
+                                   $aux_mensaje_respuesta=$ensayo_vs_muestra->resultado_mensaje;
+                                   $aux_ml_existe = explode("Total", $ensayo_vs_muestra->resultado_mensaje);
+                                   $aux_ml_existe = trim($aux_ml_existe[1]);
+                                   if(!empty($aux_ml_existe)){
+                                        $ensayo_vs_muestra->resultado_mensaje =   $aux_ml_existe;
+                                   }
+                                   $evaluar = evalua_alerta($muestra->ensayos[$key]->med_valor_min, $muestra->ensayos[$key]->med_valor_max , $ensayo_vs_muestra->resultado_mensaje, $muestra->id_tipo_analisis, $aux_id_ensayo_vs_muestra,2);
+                                    if(preg_match("/-MAS-/", $evaluar)){//2 para que no genere correos
                                        $aux_input2          = str_replace('valid', 'invalid', $aux_input2);
                                        $aux_cambiar_campos  = str_replace('valid', 'invalid', $aux_cambiar_campos);
                                     }
                                 }
                             }
+                            $mohos = strripos($muestra->parametros[$key]->parametro_descripcion, 'mohos');
+                            $levaduras = strripos($muestra->parametros[$key]->parametro_descripcion, 'levadura');
                         ?>
-                        <td>
-                            <div class="input-field col l12">
-                                <input type="text" name="frm_resultado<?= $aux_id_ensayo_vs_muestra ?>" id="frm_resultado<?= $aux_id_ensayo_vs_muestra ?>" <?= $aux_cambiar_campos ?> <?= $aux_mensaje_tip ?> value="<?= $aux_value ?>">
-                            </div>
-                            <div class="input-field col l12" id="campo_respuesta2_<?= $aux_id_ensayo_vs_muestra ?>">
-                                <?= $aux_input2 ?>
-                            </div>
-                            <?= $aux_div_rta ?>
-                            <div id="campo_mensajes_<?= $aux_id_ensayo_vs_muestra?>">
-                                <?= $aux_mensaje_respuesta ?>
-                            </div>
-                        </td>
-                    <?php endif ?>
-                <?php endif ?>
+                        <?php if ( ($mohos !== false && $levaduras >1) && (!preg_match("/--r/", $aux_value)) && ($muestra->certificado_nro>187069) ): ?>
+                            <?php
+                                $aux_ml="Captura de mohos y levaduras";
+                                           // modificamos tip, pendiene de valiar el ultimo campo
+                                $aux_mensaje_tip = 'onclick="js_muestra_tip('.$muestra->id_muestreo.', `'.$aux_codigo_amc.'`, `'.$muestra->parametros[$key]->parametro.'`, `'.$muestra->mue_identificacion.'`, `'.$muestra->pro_nombre.'`, `Ingrese el valor de Mohos y levaduras separados por punto y coma (;)`)"';
+                                $aux_input2 = '<input type="text" name="frm_resultado2'.$aux_id_ensayo_vs_muestra.'" id="frm_resultado2'.$aux_id_ensayo_vs_muestra.'" '.$aux_cambiar_campos2.' value="'.$aux_value2.'">
+                                    <label for="frm_resultado2'.$aux_id_ensayo_vs_muestra.'">Levadura</label>
+                                ';
+                                // incluimos una bandera para identificar en la fucnion
+                                $aux_cambiar_campos = str_replace( ")", ", 'mohos')", $aux_cambiar_campos);
+                                $aux_input2 = str_replace( ")", ", 'levaduras')", $aux_input2);
+                                if(preg_match('/invalid/', $aux_cambiar_campos)){
+                                    $aux_input2  = str_replace('valid', 'invalid', $aux_input2);
+                                }
+                            ?>
+                            <td>
+                                <div class="input-field col s12">
+                                    <input type="text" name="frm_resultado<?= $aux_id_ensayo_vs_muestra ?>_mohos" id="frm_resultado<?= $aux_id_ensayo_vs_muestra ?>" <?= $aux_cambiar_campos ?> <?= $aux_mensaje_tip ?> value="<?= $aux_value ?>">
+                                    <label for="frm_resultado<?= $aux_id_ensayo_vs_muestra ?>">Moho:</label>
+                                </div>
+                                <div class="input-field col s12" id="campo_respuesta2_'<?= $aux_id_ensayo_vs_muestra ?>">
+                                        <?= $aux_input2 ?>
+                                </div>
+                                    <?= $aux_div_rta ?>
+                                    <div id="campo_mensajes_<?= $aux_id_ensayo_vs_muestra ?>"><?= $aux_mensaje_respuesta ?></div>
+                            </td>
+                        <?php else: ?>
+                            <td>
+                                <!-- <?= $ensayo_vs_muestra->resultado_mensaje ?> -->
+                                <div class="input-field col l12">
+                                    <input type="text" name="frm_resultado<?= $aux_id_ensayo_vs_muestra ?>" id="frm_resultado<?= $aux_id_ensayo_vs_muestra ?>" <?= $aux_cambiar_campos ?> <?= $aux_mensaje_tip ?> value="<?= $aux_value ?>">
+                                </div>
+                                <div class="input-field col l12" id="campo_respuesta2_<?= $aux_id_ensayo_vs_muestra ?>">
+                                    <?= $aux_input2 ?>
+                                </div>
+                                <?= $aux_div_rta ?>
+                                <div id="campo_mensajes_<?= $aux_id_ensayo_vs_muestra?>">
+                                    <?= $aux_mensaje_respuesta ?>
+                                </div>
+                            </td>
+                        <?php endif ?>
             <?php endforeach ?>
         </tr>
     </tbody>

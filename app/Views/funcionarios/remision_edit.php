@@ -243,8 +243,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div id="campo_detalle_muestras">
-                            </div>
+                            <div id="campo_detalle_muestras"></div>
                         </form>
                         <form id="frm_form_pie" method="POST" action="<?= base_url(['funcionario','remisiones','muestra']) ?>" autocomplete="off">
                             <div class="row">

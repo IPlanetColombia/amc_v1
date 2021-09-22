@@ -2,6 +2,47 @@
 use App\Models\Certificacion;
 use App\Models\MuestreoDetalle;
 
+	function formatea_mh_parcial($aux_ml,$who){
+	    if($who == "mohos"){
+	        $aux_m = $aux_ml;
+	    
+	        if ( is_numeric($aux_m) ){
+	                $aux_m =  $aux_m."M";
+	        }elseif( preg_match("/</", $aux_m) ){
+	                $aux_m =  $aux_m."M";
+	        }else{
+	                $aux_m =  "";
+	        }
+	        return $aux_m;  
+	                    
+	    }else{//es levadura
+	        $aux_l = $aux_ml;
+	        
+	         if ( preg_match("/</", $aux_l) ){
+	            $aux_l =  $aux_l."L"; 
+	        }elseif( is_numeric($aux_l) ){
+	            $aux_l = "+ ". $aux_l."L";
+	        }else{
+	            $aux_l =  "";
+	        }
+	        return $aux_l;  
+	    }
+	    
+	    
+	}
+	function calcula_mh($valor){
+	    $porciones = explode(";", $valor);
+	    
+	    if( $porciones[1] > 0 )
+	        //return  $porciones[1];
+	        return ($porciones[0] + $porciones[1]) / 2;
+	    else
+	       /* if( is_null ($porciones[1]) )
+	            return $porciones[1];
+	        else*/
+	        return $porciones[0] ;
+	}
+
 	function procesar_registro_fetch($aux_tabla, $aux_columna1, $aux_variable1, 
                                             $aux_columna2=0, $aux_variable2=0, 
                                             $aux_columna3=0, $aux_variable3=0, 
@@ -230,4 +271,12 @@ use App\Models\MuestreoDetalle;
 	    }
     
        $query = $db->query($texto);  
+	}
+	function formatea_mh_total($valor){
+	    if(preg_match("/Total/", $valor)){
+	        $porciones = explode("Total ", $valor);
+	        return (trim($porciones[1]));    
+	    }else{
+	        return $valor;    
+	    }
 	}

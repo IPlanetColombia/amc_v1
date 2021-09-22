@@ -54,6 +54,7 @@ class AuthController extends BaseController
                 $session = session();
                 $result[0]->funcionario = $rol == 1 ? true : false;
                 $session->set('user', $result[0]);
+                session('user')->session_date = date('Y-m-d H:i:s');
                 return json_encode(['login' => base_url().'/amc-laboratorio/home']);
             }
             return json_encode(['errors' => 'Las credenciales no concuerdan.']);

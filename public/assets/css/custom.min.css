@@ -145,6 +145,8 @@ h2.card-title{
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	flex-wrap: wrap;
+	
 }
 .frm_analisis .select-wrapper input.select-dropdown:focus {
     border-bottom: 1px solid #00bcd4 !important;
@@ -204,4 +206,12 @@ div.collapsible-header .list-muestras{
 }
 div.collapsible-header .list-muestras span b{
 	font-weight: 800;
+}
+.tabla-productos, #campo_detalle_muestras, #campo_detalle_muestras_basic{
+	width: 100% !important;
+	overflow: auto !important;
+}
+.tabla-productos .table-content{
+	width: 100%;
+	overflow: auto !important;
 }
