@@ -220,6 +220,7 @@ use App\Models\MuestreoDetalle;
             $aux_codigo_amc = $forms['frm_id_codigo_amc'];
             $muestreoDetalle = new MuestreoDetalle();
             $data = [
+            	'id_tipo_analisis'				=> $forms['frm_analisis'],
             	'id_codigo_amc' 				=> $aux_codigo_amc,
 				'mue_procedencia' 				=> $forms['frm_procedencia'],
 				'mue_identificacion' 			=> $forms['frm_identificacion'],
