@@ -207,12 +207,12 @@
                                                 <span id="frm_fibra_peso_calcinada"></span>
                                             </div>
                                             <div class="input-field col s12 l3">
-                                                <input type="text" name="frm_fibra_peso_calcinada"
-                                                id="frm_fibra_peso_calcinada" value="<?= $result_fibra[0]->result_2 ?>"
-                                                onblur="js_cambiar_campos('campo_repuesta_2_<?= $fibra[0]->id_ensayo_vs_muestra ?>', this.value, 'frm_fibra_peso_calcinada', 'result_2', '<?= $fibra[0]->id_ensayo_vs_muestra ?>', 26)"
+                                                <input type="text" name="frm_fibra_peso_m_seca"
+                                                id="frm_fibra_peso_m_seca" value="<?= $result_fibra[0]->result_2 ?>"
+                                                onblur="js_cambiar_campos('campo_repuesta_2_<?= $fibra[0]->id_ensayo_vs_muestra ?>', this.value, 'frm_fibra_peso_m_seca', 'result_2', '<?= $fibra[0]->id_ensayo_vs_muestra ?>', 26)"
                                                 <?= disable_frm($result_fibra[0]->result_2, session('user')->id) ?>>
-                                                <label for="frm_fibra_peso_calcinada">Peso M. Calcinada (g)</label>
-                                                <span id="frm_fibra_peso_calcinada"></span>
+                                                <label for="frm_fibra_peso_m_seca">PESO M SECA (g)</label>
+                                                <span id="frm_fibra_peso_m_seca"></span>
                                             </div>
                                             <div class="input-field col s12 l2">
                                                 <input type="text" name="frm_fibra_peso_muestra"
@@ -427,7 +427,7 @@
                                                 <span id="frm_ceniza_peso_ceniza"></span>
                                             </div>
                                             <div class="col s12 l2">
-                                                <p><b>% Fibra</b></p>
+                                                <p><b>% Cenizas</b></p>
                                                 <b id="campo_repuesta_mensaje_<?= $ceniza[0]->id_ensayo_vs_muestra ?>"><?= $result_ceniza[0]->result_5 ?> %</b>
                                             </div>
                                             <div class="input-field col s12 l3">
