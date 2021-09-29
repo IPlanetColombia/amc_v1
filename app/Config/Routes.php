@@ -65,6 +65,11 @@ $routes->group('funcionario', function ($routes){
     $routes->get('resultados/alimentos', 'FuncionarioALFQController::index');
     $routes->post('resultados/alimentos', 'FuncionarioALFQController::buscar_muestra');
     $routes->post('resultados/alimentos/cambiar/fq', 'FuncionarioALFQController::cambiar_campos_resultados_fq');
+
+    $routes->get('resultados/aguas', 'FuncionarioAGFQController::index');
+    $routes->post('resultados/aguas', 'FuncionarioAGFQController::buscar_muestra');
+    $routes->post('resultados/aguas/cambiar/fq', 'FuncionarioAGFQController::cambiar_campos_resultados_fq');
+
 });
     // -------------------- Fin Controller Funcionario ------
 
