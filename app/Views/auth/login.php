@@ -52,7 +52,8 @@
                     <form class="login-form" action="<?= base_url() ?>/validation" method="POST">
                         <div class="row">
                             <div class="input-field col s12">
-                                <h5 class="ml-4">Inicio de Sesion</h5>
+                                <h5 class="center-align">AMC</h5>
+                                <p class="center-align">Zona segura</p>
                             </div>
                         </div>
                         <div class="row margin">

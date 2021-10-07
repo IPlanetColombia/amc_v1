@@ -14,19 +14,19 @@
         <li>
             <div class="user-view" style="">
                 <div class="background" style="margin:0px;">
-                <img src="<?= isset(configInfo()['background_img_vertical']) ||  !empty(configInfo()['background_img_vertical'])? base_url().'/assets/img/'.configInfo()['background_img_vertical']: base_url().'/assets/img/fondo1.jpg' ; ?>" style="width: 100%;">
+                <img src="<?= isset(configInfo()['background_img_vertical']) ||  !empty(configInfo()['background_img_vertical'])? base_url().'/assets/img/'.configInfo()['background_img_vertical']: base_url().'/assets/img/logo_background.jpeg' ; ?>" style="width: 100%;">
                 </div>
-                <a href="#user" style="margin-right: 0px;"><img class="circle"  style="width: 50px; height:50px;" src="<?= session('user') && session('user')->photo ? base_url().'/assets/upload/images/'.session('user')->photo : base_url().'/assets/img/'.'user.png' ?>"></a>
+                <a href="#" style="margin-right: 0px;"><img class="circle"  style="width: 50px; height:50px;" src="<?= session('user') && session('user')->photo ? base_url().'/assets/upload/images/'.session('user')->photo : base_url().'/assets/img/'.'user.png' ?>"></a>
 
-                <a href="#name" style="margin-right: 0px;">
-                    <small class="white-text name" style=" font-size: 12px !important;">
-                    <?= session('user')->name ? session('user')->name : session('user')->nombre ?>   
+                <a href="#" style="margin-right: 0px;">
+                    <small class="black-text name" style=" font-size: 12px !important; text-shadow: 0 0 0.2px #000;">
+                    <?= session('user')->name ? session('user')->name : session('user')->nombre ?>
                     </small>
                 </a>
-                <a href="#email">
-                    <small class="white-text email">
-                        <?= session('user')->usertype ? session('user')->usertype : session('user')->cms_rol  ?>
-                    </small>
+                <a href="#">
+                    <p class="black-text email" style="text-shadow: 0 0 0.2px #000;">
+                        <b><?= session('user')->usertype ? session('user')->usertype : session('user')->cms_rol  ?></b>
+                    </p>
                 </a>
             </div>
         </li>
