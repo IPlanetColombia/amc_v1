@@ -87,10 +87,20 @@ class FuncionarioAGFQController extends BaseController
                 $id_parametro           = $this->request->getPost('aux_id_parametro');
                 $validation = false;
                 if(is_numeric(str_replace(",","",$valor))){
-                        almacena_campo_fq($id_ensayo_vs_muestra, $valor, $id_parametro, $nombre_campo_frm, $nombre_campo_bd);
-                        $mensaje_resultado = comprueba_calcular_resultado_agua($id_ensayo_vs_muestra,  $id_parametro);
-                        $validation = true;
+                    almacena_campo_fq($id_ensayo_vs_muestra, $valor, $id_parametro, $nombre_campo_frm, $nombre_campo_bd);
+                    $mensaje_resultado = comprueba_calcular_resultado_agua($id_ensayo_vs_muestra,  $id_parametro);
+                    if (
+                        ($nombre_campo_bd == 'result_1' && $valor == 0 && ($id_parametro == 39 || $id_parametro == 40)) ||
+                        ($nombre_campo_bd == 'result_1' && $valor == 0 && $id_parametro == 234) ||
+                        ($nombre_campo_bd == 'result_1' && $valor == 0 && $id_parametro == 235) ||
+                        ($nombre_campo_bd == 'result_1' && $valor == 0 && $id_parametro == 236) ||
+                        ($nombre_campo_bd == 'result_6' && $valor == 0 && $id_parametro == 240)
+                    ) {
+                        $mensaje = 'Proceso incompleto <br> Motivo: division por 0';
+                    }else{
                         $mensaje = 'Ok';
+                    }
+                    $validation = true;
                 }else{
                     $mensaje = 'Valor no permitido';
                 }

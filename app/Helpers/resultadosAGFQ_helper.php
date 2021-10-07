@@ -32,6 +32,25 @@
 		];
 		return $parametros;
 	}
+	function proceso_parametro_fq($id_parametro){
+		$parametro = 0;
+		$parametros = parametros_aguas_fq();
+		foreach ($parametros as $key => $value) {
+			if ($value[0] == $id_parametro)
+				$parametro = $value;
+		}
+		// return $parametro;
+		$proceso = [
+			234 => '( ( '.$parametro[4].' - '.$parametro[3].' ) * '.$parametro[2].' * Factor  )  /  Alicuota (ml)',
+			235 => '( ( mL desplazados AgNO3 - mL Blanco ) *  Concentracion [AgNO3]  * Factor )/ Alicuota (ml)',
+			236 => '( ( Concentracion [EDTA] * mL desplazados EDTA ) / Alicuota (ml) )  * Factor',
+			240 => '( ( NTU 2 - NTU 1 ) -  Valor 1 )/ Valor 2'
+		];
+		if(!empty($proceso[$id_parametro]))
+			return $proceso[$id_parametro];
+		else
+			return '';
+	}
 	function pinta_parametro_agua($id_parametro, $id_muestra_detalle, $user_rol_id, $titulo_principal, $titulo_campo_1, $titulo_campo_2 = '',  $titulo_campo_3 = '',  $titulo_campo_4 = '' ){
 		$fila = fq_tiene_parametro($id_muestra_detalle, $id_parametro);
 		$aux_titulo_label = $titulo_principal;
@@ -90,7 +109,9 @@
 					<tr>
 						<td>
 							<p class="center-align">
-                                <b>'.$aux_titulo_label.'.</b>
+                                <b>'.$aux_titulo_label.'</b>
+                                <br>
+                                <small>'.proceso_parametro_fq($id_parametro).'</small>
                             </p>
                             <div class="row">
                                 <div class="input-field col s12 l3">
@@ -176,7 +197,7 @@
 			$salida .= '
 							<div class="col s12 l'.$aux_col.'">
 	                            <p><b>'.$aux_titulo_label.'</b></p>
-	                            <b id="campo_repuesta_agua_'.$fila[0]->id_ensayo_vs_muestra.'">'.$result[0]->result_5.'</b>
+	                            <b id="campo_respuesta_agua_'.$fila[0]->id_ensayo_vs_muestra.'">'.$result[0]->result_5.'</b>
 	                        </div>
 	                        <div class="col s12 l'.$aux_col.'">
 	                            <p><b>IRCA '.$aux_titulo_label.'</b></p>
@@ -285,8 +306,10 @@
 	        $fila_factor = procesar_registro_fetch ('factor_fq', 'id_factor', $result_fq->id_factor);
 	        $fila_factor = $fila_factor[0];
 	        $fila_factor->valor = str_replace(",",".",$fila_factor->valor);
-	        
-	        $result =  ( ( $result_fq->result_4 - $result_fq->result_3 ) * $result_fq->result_2 * $fila_factor->valor  )  /  $result_fq->result_1   ;
+	        if($result_fq->result_1 == 0)
+	        	$result = 0;
+	        else
+	        	$result =  ( ( $result_fq->result_4 - $result_fq->result_3 ) * $result_fq->result_2 * $fila_factor->valor  )  /  $result_fq->result_1   ;
 	        
 	        $nombre_campo_frm ="resultado_ALCALINIDAD";
 	        $nombre_campo_frm_irca="resultado_alcalinidad_irca";
@@ -357,8 +380,10 @@
 	        $fila_factor = procesar_registro_fetch ('factor_fq', 'id_factor', $result_fq->id_factor);
 	        $fila_factor = $fila_factor[0];
 	        $fila_factor->valor = str_replace(",",".",$fila_factor->valor);
-	        
-	        $result =  ( ( $result_fq->result_2 * $result_fq->result_3 ) / $result_fq->result_1 )  * $fila_factor->valor;
+	        if($result_fq->result_1 == 0)
+	        	$result = 0;
+	        else
+	        	$result =  ( ( $result_fq->result_2 * $result_fq->result_3 ) / $result_fq->result_1 )  * $fila_factor->valor;
 	        
 	        $nombre_campo_frm ="resultado_dureza";
 	        $nombre_campo_frm_irca="resultado_dureza_irca";
@@ -373,8 +398,10 @@
 	        $fila_factor = procesar_registro_fetch ('factor_fq', 'id_factor', $result_fq->id_factor);
 	        $fila_factor = $fila_factor[0];
 	        $fila_factor->valor = str_replace(",",".",$fila_factor->valor);
-	        
-	        $result =   ( ( $result_fq->result_4 - $result_fq->result_3 ) *  $result_fq->result_2  * $fila_factor->valor )/ $result_fq->result_1 ;
+	        if($result_fq->result_1 == 0)
+	        	$result = 0;
+	        else
+	        	$result =   ( ( $result_fq->result_4 - $result_fq->result_3 ) *  $result_fq->result_2  * $fila_factor->valor )/ $result_fq->result_1 ;
 	        
 	        $nombre_campo_frm ="resultado_cloruros";
 	        $nombre_campo_frm_irca="resultado_cloruros_irca";
@@ -385,8 +412,10 @@
 	    //sulfatos 240
 	    elseif(isset($result_fq->result_2) && isset($result_fq->result_3) && isset($result_fq->result_4) && isset($result_fq->result_6)  && $result_fq->id_equipo && $id_parametro ==240){
 	        //$salida="Calcula sulfatos";
-	        
-	        $result =   ( ( $result_fq->result_3 - $result_fq->result_2 ) -  $result_fq->result_4 )/ $result_fq->result_6 ;
+	        if($result_fq->result_6 == 0)
+	        	$result = 0;
+	        else
+	        	$result =   ( ( $result_fq->result_3 - $result_fq->result_2 ) -  $result_fq->result_4 )/ $result_fq->result_6 ;
 	        
 	        $nombre_campo_frm ="resultado_sulfatos";
 	        $nombre_campo_frm_irca="resultado_sulfatos_irca";
@@ -398,7 +427,10 @@
 	    //solidos_totales 39 y 40
 	    elseif(isset($result_fq->result_2) && isset($result_fq->result_3) && isset($result_fq->result_4)  && ($id_parametro ==39 || $id_parametro == 40)){
 	        //$salida="Calcula sulfatos";
-	        $result =   ( ( $result_fq->result_1 - $result_fq->result_2 ) * 1000000 )/ $result_fq->result_3 ;
+	        if($result_fq->result_3)
+	        	$result = 0;
+	        else
+	        	$result =   ( ( $result_fq->result_1 - $result_fq->result_2 ) * 1000000 )/ $result_fq->result_3 ;
 	        
 	        $nombre_campo_frm ="resultado_solidos_totales";
 	        $nombre_campo_frm_irca="resultado_solidos_totales_irca";
@@ -518,7 +550,7 @@
             $fila_ph = fq_tiene_parametro($result_e_v_m->id_muestra, 86);
             if (!empty($fila_ph[0])){
                 $salida.="<br>Si tiene pH";
-                $result_ph = procesar_registro_fetch('ensa_mues_fq', 'id_ensayo_vs_muestra', $fila_ph[0][id_ensayo_vs_muestra]);
+                $result_ph = procesar_registro_fetch('ensa_mues_fq', 'id_ensayo_vs_muestra', $fila_ph[0]->id_ensayo_vs_muestra);
                 if($result_ph[0]->result_irca>=0){
                         $salida.="".  $result_ph[0]->result_irca;
                         $aux_total_castigo = $aux_total_castigo + str_replace(",",".",$result_ph[0]->result_irca);

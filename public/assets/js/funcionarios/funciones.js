@@ -159,7 +159,7 @@ function js_enviar_agregar_a_detalle(url, create=0){
 	 	$('.row.boton_guardar_remision').append(tabla.boton);
 		var frm_form_muestra =$('#frm_form_muestra')[0];
 	 	formateo_forms(0, frm_form_muestra, 0);
-	 	$('#campo_parametros_producto_detalle').remove();
+	 	$('.lista_parametros').remove();
 	 	$('#frm_id_remision').val(tabla.frm_id_remision);
 	 	if(create == 0)
 	 		$('#frm_producto').attr('type', 'hidden');
@@ -220,7 +220,6 @@ function producto_blur(buscar){
 		data += "&buscar="+buscar;
 		result = proceso_fetch(url, data);
 		result.then(tabla => {
-			console.log(tabla);
 		 	if(tabla === '')
 		 		return null;
 		 	$('.tabla-productos').remove();

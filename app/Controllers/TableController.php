@@ -30,6 +30,79 @@ class TableController extends BaseController
         if($component) {
             $this->crud->setTable($component[0]->table);
             switch ($component[0]->table) {
+                case 'certificacion':
+                    $this->crud->setTable('view_certificados'.session('user')->id);
+                    $this->crud->unsetAdd();
+                    $this->crud->unsetEdit();
+                    $this->crud->unsetDelete();
+                    if(session('user')->id == 10){    
+                        $columnas = [
+                            'mue_fecha_muestreo',
+                            'certificado_nro',
+                            'mue_lote',
+                            'mue_subtitulo',
+                            'mue_identificacion',
+                            'mensaje',
+                            'resultados',
+                            'preinforme', 'informe', 'informe2'];
+                    }else{
+                        $columnas = [
+                            'mue_fecha_muestreo',
+                            'certificado_nro',
+                            'id_cliente',
+                            'mue_subtitulo',
+                            'id_codigo_amc',
+                            'mue_identificacion',
+                            'mensaje',
+                            'resultados',
+                            'informe', 'preinforme', 'informe2'];
+                    }
+                    $this->crud->columns($columnas);
+                    $this->crud->displayAs([
+                        'mue_fecha_muestreo' => 'Fecha de registro',
+                        'certificado_nro' => 'Cert Nro.',
+                        'id_cliente' => 'Cliente',
+                        'mue_subtitulo' => 'Seccional',
+                        'id_codigo_amc' => 'Codigo AMC',
+                        'mue_identificacion' => 'Producto',
+                        'mensaje' => 'Resultado',
+                    ]);
+                    $aux_variable_preinforme = 0;
+                    $this->crud->callbackColumn('informe', function($fecha, $row){
+                        if ($row->resultados == 3  || $row->resultados == 5){//cer_fecha_preinforme
+                            $aux_bttn_preinforme = '
+                                <button class="btn green white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,'.$row->certificado_nro.',1,`php_lista_resultados`)"><i class="far fa-check-circle"></i></button>
+                            ';
+                        } else {
+                            $aux_bttn_preinforme='<button class="btn red white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,'.$row->certificado_nro.',2,`php_lista_resultados`)"><i class="fas fa-times-circle"></i></button>';
+                        }
+                        return $aux_bttn_preinforme;
+                    });
+                    $this->crud->callbackColumn('preinforme', function($fecha, $row){
+                        // return (new \GroceryCrud\Core\Error\ErrorMessage())->setMessage("There was an error with the upload:\n" . print_r($row));
+                        $aux_variable_preinforme = 0;
+                        if ($row->resultados == 3 || $row->resultados == 5)
+                            $aux_variable_preinforme = 1;
+                        if ($fecha == '0000-00-00 00:00:00'){//cer_fecha_preinforme
+                            if($aux_variable_preinforme == 0){
+                                $aux_bttn_preinforme='<button class="btn red white-text"><i class="fas fa-times-circle"></i></button>';
+                            }else{
+                                $aux_bttn_preinforme='<button class="btn red white-text"><i class="fas fa-times-circle"></i></button>';
+                            }
+                        } else {
+                            $aux_bttn_preinforme = '<button class="btn green white-text"><i class="far fa-check-circle"></i></button>';
+                        }
+                        return $aux_bttn_preinforme;
+                    });
+                    $this->crud->callbackColumn('informe2', function($fecha, $row){
+                        if ($fecha == '0000-00-00 00:00:00'){//cer_fecha_preinforme
+                                $aux_bttn_preinforme='<button class="btn red white-text"><i class="fas fa-times-circle"></i></button>';
+                        }  else {
+                            $aux_bttn_preinforme = '<button class="btn green white-text"><i class="far fa-check-circle"></i></button>';
+                        }
+                        return $aux_bttn_preinforme;
+                    });
+                    break;
                 case 'usuario':
                     $this->crud->displayAs([
                         'name'                  => 'Nombre',

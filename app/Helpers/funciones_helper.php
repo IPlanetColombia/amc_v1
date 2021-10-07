@@ -2,6 +2,41 @@
 use App\Models\Certificacion;
 use App\Models\MuestreoDetalle;
 
+	function formateo_valores($valor, $formato){
+	    // el formateo solo aplica para valores que tiene una coma
+	    // y para formato verdadero
+	    $valor =  str_replace(",",".",$valor);
+	    
+	    if(is_numeric($valor) || is_float($valor) ) {
+	        
+	    if($formato){
+	        if($formato==1){
+	           $valor = number_format($valor, 0);
+	        }elseif($formato==2){
+	            $valor = number_format($valor, 1);
+	        }elseif($formato==3){
+	            $valor = number_format($valor, 2);
+	        }   
+	    }
+	    
+	    }
+	    $valor =  str_replace(".",",",$valor);
+	    return $valor;
+	}
+	function recortar_fecha($fecha_a_recortar,$separador=0){
+		$matriz_fecha = str_split($fecha_a_recortar, 10);
+        if($separador==0) $matriz_fecha[0]=str_replace("-","/",$matriz_fecha[0]);
+		return $matriz_fecha[0];
+	}
+	
+	function formatea_tildes($aux){
+        
+	    $array_errores  = array("Ã±","Ã‘", "Ã¡",  "Ã©", "Ã­",  "Ã³",  "Ãº", "Ã", "Ã‰", "Ã", "Ã“", "Ãš"); 
+	    $array_corregido= array("ñ","Ñ", "á", "é", "í", "ó", "ú","Á", "É","Í", "Ó", "Ú");
+	    $aux = $aux;
+	    $aux = str_replace($array_errores, $array_corregido, $aux);
+	    return $aux;
+	}
 	function formatea_mh_parcial($aux_ml,$who){
 	    if($who == "mohos"){
 	        $aux_m = $aux_ml;
@@ -170,7 +205,7 @@ use App\Models\MuestreoDetalle;
                                 	if($editar){
                                 $tabla .= '<a href="#!" onclick="buscar_detalle('.$recordSet->id_muestreo_detalle.')" class="editar_detalle tooltipped" data-position="bottom" data-tooltip="Editar detalle"><i class="far fa-edit"></i></i></a>';
                                 	}else{
-                                    	$tabla .= '<a href="#!" onclick="quitar_detalle('.$recordSet->id_certificacion.', '.$fila_detalle[0]->mue_identificacion.', `'.$fila_analisis[0]->mue_sigla.' '.$fila_detalle[0]->id_codigo_amc.'`)" class="delete_detail_list tooltipped" data-position="bottom" data-tooltip="Eliminar detalle" data-detalle=""><i class="far fa-trash-alt"></i></a>';
+                                    	$tabla .= '<a href="#!" onclick="quitar_detalle('.$recordSet->id_certificacion.', `'.$fila_detalle[0]->mue_identificacion.'`, `'.$fila_analisis[0]->mue_sigla.' '.$fila_detalle[0]->id_codigo_amc.'`)" class="delete_detail_list tooltipped" data-position="bottom" data-tooltip="Eliminar detalle" data-detalle=""><i class="far fa-trash-alt"></i></a>';
                                 	}                          
                                     	$tabla .= '<a href="'.base_url(['funcionario', 'remisiones', 'ticket', $recordSet->id_certificacion]).'" class="imprimir_ticket tooltipped" data-position="bottom" data-tooltip="Imprimir detalle"><i class="fas fa-print"></i></a>
                                     </td>

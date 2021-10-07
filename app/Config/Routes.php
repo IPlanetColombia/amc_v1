@@ -70,6 +70,8 @@ $routes->group('funcionario', function ($routes){
     $routes->post('resultados/aguas', 'FuncionarioAGFQController::buscar_muestra');
     $routes->post('resultados/aguas/cambiar/fq', 'FuncionarioAGFQController::cambiar_campos_resultados_fq');
 
+    $routes->post('certificados', 'FuncionarioCController::index');
+
 });
     // -------------------- Fin Controller Funcionario ------
 

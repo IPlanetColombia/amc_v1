@@ -86,6 +86,33 @@
                                     </td>
                                 </tr>
                             <?php endif ?>
+                            <?php $fila = fq_tiene_parametro($certificado->id_muestra_detalle, 243); ?>
+                            <?php if (!empty($fila[0])): ?>
+                                <?php $result = procesar_registro_fetch('ensa_mues_fq', 'id_ensayo_vs_muestra', $fila[0]->id_ensayo_vs_muestra, 'id_parametro', 243); ?>
+                                <tr>
+                                    <td>
+                                        <p class="center-align">
+                                            <b>Resultados IRCA</b>
+                                        </p>
+                                        <div class="row">
+                                            <div class="input-field col s12 l6">
+                                                <input type="text" name="frm_micro" id="frm_micro"
+                                                value="<?= $result[0]->result_1 ?>"
+                                                onblur="js_cambiar_campos('campo_respuesta_micro_<?= $fila[0]->id_ensayo_vs_muestra ?>', this.value, 'frm_micro<?= $key ?>', 'result_1', '<?= $fila[0]->id_ensayo_vs_muestra ?>', 243)"
+                                                <?= disable_frm($result->result_1, session('user')->id) ?>>
+                                                <label for="frm_micro">Resultado microbiologico</label>
+                                                <span id="campo_respuesta_micro_<?= $fila->id_ensayo_vs_muestra ?>"></span>
+                                            </div>
+                                            <div class="col s12 l6">
+                                                <p class="center-align">
+                                                    <b>Resultado IRCA</b>
+                                                </p>
+                                                <small id="campo_resultado_irca"><?= $result->result_irca ?></small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endif ?>
                         </tbody>
                     </table>
                 </form>

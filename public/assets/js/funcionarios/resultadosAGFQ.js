@@ -32,6 +32,7 @@ function js_cambiar_campos(campo_respuesta,
 		        });
 		        var result = proceso_fetch(url, data.toString());
 		        result.then(respuesta => {
+		        	console.log(respuesta);
 		        	if(respuesta.validation){
 		        		$('input#'+frm_resultado).prop('disabled', true);
 		        		$('select#'+frm_resultado).attr('disabled', 'disabled');
@@ -40,8 +41,8 @@ function js_cambiar_campos(campo_respuesta,
 		        		$('input#'+frm_resultado).addClass('valid');
 		        		$('span#'+frm_resultado).removeClass();
 		        		$('span#'+frm_resultado).addClass('green-text text-darken-2');
-		        		$('#campo_repuesta_agua_'+aux_id_ensayo_vs_muestra).html(respuesta.mensaje_resultado[0]);
-		        		$('#campo_repuesta_irca_'+aux_id_ensayo_vs_muestra).html(respuesta.mensaje_resultado[1]);
+		        		$('#campo_respuesta_agua_'+aux_id_ensayo_vs_muestra).html(respuesta.mensaje_resultado[0]);
+		        		$('#campo_respuesta_irca_'+aux_id_ensayo_vs_muestra).html(respuesta.mensaje_resultado[1]);
 		        		my_toast('<i class="fas fa-check"></i>&nbsp Resultado actualizado', 'blue darken-2', 3000);
 		        	}else{
 		        		$('input#'+frm_resultado).removeClass();
@@ -51,14 +52,14 @@ function js_cambiar_campos(campo_respuesta,
 		        		my_toast('<i class="fas fa-times"></i>&nbsp Ha ocurrido un error', 'red darken-2', 3000);
 		        	}
 		        	$('span#'+frm_resultado).html(respuesta.mensaje);
-		        	var data = new URLSearchParams({
+		        	var data_2 = new URLSearchParams({
 						aux_id_ensayo_vs_muestra: aux_id_ensayo_vs_muestra,
 						funcion: 'calcula_IRCA'
 			        });
-		        	var result_2 = proceso_fetch(url, data.toString());
+		        	var result_2 = proceso_fetch(url, data_2.toString());
 		        	result_2.then(respuesta => {
 		        		console.log(respuesta);
-		        		$('#campo_respuesta_irca_'+aux_id_ensayo_vs_muestra).html(respuesta.mensaje);
+		        		$('#campo_resultado_irca').html(respuesta.mensaje);
 		        	})
 		        });
         		// xajax_cambiar_campos_resultados_fq(campo_respuesta,valor, frm_resultado, resultado_analisis,  aux_id_ensayo_vs_muestra, aux_id_parametro);
