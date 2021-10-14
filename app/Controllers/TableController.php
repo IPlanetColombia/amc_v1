@@ -129,7 +129,7 @@ class TableController extends BaseController
                                     $aux_btn_c = 'green';
                                     $aux_metodo = 1;
                                 }
-                                $aux_bttn_preinforme .= '<button class="btn '.$aux_btn_c.' white-text" onClick="actualizar_informe(`'.$row->certificado_nro.'`, `'.$aux_metodo.'`, '.session('user')->usr_rol.', 2)"><i class="'.$aux_btn_i.'"></i></button>';
+                                $aux_bttn_preinforme .= '<button class="btn '.$aux_btn_c.' white-text" onClick="actualizar_informe(`'.$row->certificado_nro.'`, `'.$aux_metodo.'`, '.session('user')->usr_rol.', 1)"><i class="'.$aux_btn_i.'"></i></button>';
                             }
                         }
                         $aux_bttn_preinforme .='</div>';

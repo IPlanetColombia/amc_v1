@@ -123,7 +123,7 @@ class FuncionarioCController extends BaseController
                 ]);
                 if($form['envio'] == 2){
                     if($form['frm_id_procedencia'] == 1){
-                        $aux_bttn .= '<button class="btn green white-text" onClick="actualizar_informe(`'.$form['frm_id_certificado'].'`, `1`, '.session('user')->usr_rol.', 2)"><i class="fad fa-check-circle"></i></button>';
+                        $aux_bttn .= '<button class="btn green white-text" onClick="actualizar_informe(`'.$form['frm_id_certificado'].'`, `1`, '.session('user')->usr_rol.', 1)"><i class="fad fa-check-circle"></i></button>';
                         $aux_div = '#certificado_'.$form['frm_id_certificado'];
                     }else{
                         $aux_bttn .= '<button onClick="descargar_info('.$form['frm_id_certificado'].', '.$form['frm_id_procedencia'].', '.session('user')->usr_rol.', 0)" class="btn green white-text"><i class="fad fa-check-circle"></i></button>';
