@@ -7,7 +7,7 @@
                 <thead>
                     <tr>
                         <td width="170"><img src="assets/img/logo_1.png" width="150" height="40" /></td>
-                        <td><h1><b>Reporte de Ensayo 2</h1></b></td>
+                        <td><b><h1>Reporte de Ensayo 2</h1></b></td>
                         <td width="170"><h2 align="center">AMC - EI - FT - 01<br>Versi&oacute;n 03</h2></td>
                     </tr>
                 </thead>
@@ -101,8 +101,8 @@
                                     <td><?= $detalle[0]->mue_fecha_produccion ?></td>
                                     <td><?= $detalle[0]->mue_fecha_vencimiento ?></td>
                                     <td><?= $detalle[0]->mue_condiciones_recibe.' / '.$detalle[0]->mue_temperatura_laboratorio ?></td>
-                                </tr>';
-                                <?= $conteo_productos = $key+1 ?>;
+                                </tr>
+                                <?= $conteo_productos = $key+1 ?>
                         <?php endforeach ?>
                         <?php $conteo_columnas = $conteo_productos+3;?><!-- cantidad de columnas -->
                     </tbody>
@@ -137,7 +137,6 @@
                                 $norma_producto = $query_norma_producto[0];
                             ?>
                             <td><b><?= $norma_producto->nor_nombre.' '.$norma_producto->pro_nombre ?></b></td>
-                            </td>
                         </tr>
                         
                         <!-- //contenido de resultados -->
@@ -167,7 +166,7 @@
                             <?php $fila_tecnica = procesar_registro_fetch('tecnica', 'id_tecnica', $parametro[0]->id_tecnica); ?>
                             <tr class="center">
                                 <td class="left"><?= $aux_descripcion_ensayo ?></td>
-                                <td><?= $fila_tecnica[0]->nor_nombre ?></td>';
+                                <td><?= $fila_tecnica[0]->nor_nombre ?></td>
                                 <?php foreach ($analisis_aux as $key => $analisis): ?>
                                     <!-- /*Ajuste para presentacion de varios resultados en un mismo certificado 22-08-2019*/ -->
                                     <?php $sql_ensayos2 = "SELECT e.resultado_mensaje FROM certificacion c, muestreo_detalle m, ensayo_vs_muestra e, ensayo p
@@ -188,16 +187,17 @@
                                         <?php endif ?>                                         
                                     <?php else: ?>
                                         <!-- //$ax=$fila_ensayos->resultado_mensaje; -->
-                                    <?php $ensayo->resultado_mensaje = formateo_valores($ensayos2->resultado_mensaje, $form_entrada['frm_form_valo']); ?>
-                                    <td><?= $ensayo->resultado_mensaje ?></td>'; 
+                                        <?php $ensayo->resultado_mensaje = formateo_valores($ensayos2->resultado_mensaje, $form_entrada['frm_form_valo']); ?>
+                                        <td><?= $ensayo->resultado_mensaje ?></td>
+                                       
                                     <?php endif ?>   
                                 <?php endforeach ?>
                                  <!-- //presentacion de rangos de norma
                                  // si existen los 2 rangos se muestran separados de lo contrario se mostrara 1 -->
                                 <?php if($ensayo->med_valor_min && $ensayo->med_valor_max): ?>
-                                             <td><?= $ensayo->med_valor_min.' -  '.$ensayo->med_valor_max ?></td>';
+                                    <td><?= $ensayo->med_valor_min.' -  '.$ensayo->med_valor_max ?></td>
                                 <?php else: ?>
-                                             <td><?= $ensayo->med_valor_min.' '.$ensayo->med_valor_max ?></td>';
+                                    <td><?= $ensayo->med_valor_min.' '.$ensayo->med_valor_max ?></td>
                                 <?php endif ?>
                                 </tr>
                         <?php endforeach ?>
@@ -272,7 +272,7 @@
                                     <?php else: ?>
                                             <?php $resultado->resultado_mensaje = formateo_valores($resultado->resultado_mensaje, $form_entrada['frm_form_valo']); ?>
                                             
-                                        <td><div align="center"><?= $resultado->resultado_mensaje ?></div></td>';
+                                        <td><div align="center"><?= $resultado->resultado_mensaje ?></div></td>
                                     <?php endif ?>
                                 <?php endforeach ?>
                             </tr>
@@ -674,14 +674,14 @@
                 <div id="campo_logo" align="right"> 
                     <img src="assets/img/blank.png" width="300" height="80" />
                     <img src="assets/img/blank.png" width="300" height="80" />
-                </div>';
+                </div>
             <?php endif ?>
             <?php if($form_entrada['frm_plantilla'] == 111 ): ?><!-- coloca imagen para dos paginas -->
                 <div id="campo_logo" align="right">
                     <img src="assets/img/blank.png" width="300" height="220" />
                     <img src="assets/img/blank.png" width="300" height="220" />
                     <img src="assets/img/blank.png" width="300" height="220" />
-                </div>';
+                </div>
             <?php endif ?>
             <!--FIN TABLA DE RESULTADOS-->
 

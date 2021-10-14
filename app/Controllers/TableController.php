@@ -14,6 +14,7 @@ class TableController extends BaseController
     use Grocery;
 
     private $crud;
+    private $certificado_aux;
 
     public function __construct()
     {
@@ -37,24 +38,22 @@ class TableController extends BaseController
                     $this->crud->unsetDelete();
                     if(session('user')->id == 10){    
                         $columnas = [
-                            'mue_fecha_muestreo',
                             'certificado_nro',
+                            'mue_fecha_muestreo',
                             'mue_lote',
                             'mue_subtitulo',
                             'mue_identificacion',
                             'mensaje',
-                            'resultados',
                             'preinforme', 'informe', 'informe2'];
                     }else{
                         $columnas = [
-                            'mue_fecha_muestreo',
                             'certificado_nro',
+                            'mue_fecha_muestreo',
                             'id_cliente',
                             'mue_subtitulo',
                             'id_codigo_amc',
                             'mue_identificacion',
                             'mensaje',
-                            'resultados',
                             'informe', 'preinforme', 'informe2'];
                     }
                     $this->crud->columns($columnas);
@@ -66,40 +65,74 @@ class TableController extends BaseController
                         'id_codigo_amc' => 'Codigo AMC',
                         'mue_identificacion' => 'Producto',
                         'mensaje' => 'Resultado',
+                        'informe' => 'Resultado',
+                        'preinforme' => 'Preliminar',
+                        'informe2' => 'Informe'
                     ]);
-                    $aux_variable_preinforme = 0;
+                    $certificado = [];
                     $this->crud->callbackColumn('informe', function($fecha, $row){
-                        if ($row->resultados == 3  || $row->resultados == 5){//cer_fecha_preinforme
-                            $aux_bttn_preinforme = '
-                                <button class="btn green white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,'.$row->certificado_nro.',1,`php_lista_resultados`)"><i class="far fa-check-circle"></i></button>
+                        $row = procesar_registro_fetch('certificacion', 'certificado_nro', $row->certificado_nro);
+                        $this->certificado_aux[$row[0]->certificado_nro] = $row[0];
+                        $row = $row[0];
+                        $aux_bttn_preinforme = '<div class="button grocery">';
+                        if ($row->certificado_estado == 3  || $row->certificado_estado == 5){//cer_fecha_preinforme
+                            $aux_bttn_preinforme .= '
+                                <button class="btn green white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,'.$row->certificado_nro.',1,`php_lista_resultados`)"><i class="fad fa-check-circle"></i></button>
                             ';
                         } else {
-                            $aux_bttn_preinforme='<button class="btn red white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,'.$row->certificado_nro.',2,`php_lista_resultados`)"><i class="fas fa-times-circle"></i></button>';
+                            $aux_bttn_preinforme .='
+                                    <button class="btn red white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,'.$row->certificado_nro.',2,`php_lista_resultados`)"><i class="fad fa-times-circle"></i></button>
+                            ';
                         }
+                        $aux_bttn_preinforme .= '</div>';
                         return $aux_bttn_preinforme;
                     });
                     $this->crud->callbackColumn('preinforme', function($fecha, $row){
-                        // return (new \GroceryCrud\Core\Error\ErrorMessage())->setMessage("There was an error with the upload:\n" . print_r($row));
+                        $certificado_aux = $this->certificado_aux[$row->certificado_nro];
                         $aux_variable_preinforme = 0;
-                        if ($row->resultados == 3 || $row->resultados == 5)
+                        if ($certificado_aux->certificado_estado == 3 || $certificado_aux->certificado_estado == 5)
                             $aux_variable_preinforme = 1;
+                        $aux_bttn_preinforme ='<div class="button grocery" id="pre_informe_'.$row->certificado_nro.'">';
                         if ($fecha == '0000-00-00 00:00:00'){//cer_fecha_preinforme
                             if($aux_variable_preinforme == 0){
-                                $aux_bttn_preinforme='<button class="btn red white-text"><i class="fas fa-times-circle"></i></button>';
+                                $aux_bttn_preinforme .= '<button class="btn red white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,'.$row->certificado_nro.',2,`php_lista_resultados`)"><i class="fad fa-times-circle"></i></button>';
                             }else{
-                                $aux_bttn_preinforme='<button class="btn red white-text"><i class="fas fa-times-circle"></i></button>';
+                                $aux_bttn_preinforme .= '<button class="btn red white-text" onClick="my_toast(`No puede generar preinforme, ya que posee resultados de an&aacute;lisis`, `red darken-4`, 5000)"><i class="fad fa-times-circle"></i></button>';
                             }
                         } else {
-                            $aux_bttn_preinforme = '<button class="btn green white-text"><i class="far fa-check-circle"></i></button>';
+                            $aux_bttn_preinforme .= '<button class="btn green white-text" onClick="descargar_info(`'.$row->certificado_nro.'`, 0, `'.session('user')->usr_rol.'`, 0)"><i class="fad fa-check-circle"></i></button>';
                         }
+                        $aux_bttn_preinforme .='</div>';
                         return $aux_bttn_preinforme;
                     });
                     $this->crud->callbackColumn('informe2', function($fecha, $row){
-                        if ($fecha == '0000-00-00 00:00:00'){//cer_fecha_preinforme
-                                $aux_bttn_preinforme='<button class="btn red white-text"><i class="fas fa-times-circle"></i></button>';
-                        }  else {
-                            $aux_bttn_preinforme = '<button class="btn green white-text"><i class="far fa-check-circle"></i></button>';
+                        $certificado_aux = $this->certificado_aux[$row->certificado_nro];
+                        $aux_bttn_preinforme='<div class="button grocery" id="certificado_'.$row->certificado_nro.'">';
+                        if ($certificado_aux->cer_fecha_analisis == '0000-00-00 00:00:00'){//cer_fecha_analisis
+                            $aux_bttn_preinforme .= '<button class="btn red white-text" onClick="my_toast(`No puede generar informe, ya que &nbsp <b>NO</b> &nbsp posee los resultados del an&aacute;lisis`, `red darken-4`, 5000)"><i class="fad fa-times-circle"></i></button>';
+                        }else {
+                            if ($certificado_aux->cer_fecha_informe == '0000-00-00 00:00:00'){//cer_fecha_informe
+                                $aux_bttn_preinforme .= '<button class="btn red white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,`'.$row->certificado_nro.'`,3,`php_lista_resultados`)"><i class="fad fa-times-circle"></i></button>';
+                            }else{
+                                if($certificado_aux->cer_fecha_publicacion > '0000-00-00 00:00:00'){
+                                    if($certificado_aux->cer_fecha_facturacion > '0000-00-00 00:00:00' ){
+                                        $aux_btn_i = "fad fa-usd-circle";
+                                        $aux_btn_c = 'cyan';
+                                        $aux_metodo = 3;
+                                    }else{
+                                        $aux_btn_i = "fad fa-thumbs-up";
+                                        $aux_btn_c = 'deep-orange';
+                                        $aux_metodo = 2;
+                                    }
+                                }else{
+                                    $aux_btn_i = "fad fa-check-circle";
+                                    $aux_btn_c = 'green';
+                                    $aux_metodo = 1;
+                                }
+                                $aux_bttn_preinforme .= '<button class="btn '.$aux_btn_c.' white-text" onClick="actualizar_informe(`'.$row->certificado_nro.'`, `'.$aux_metodo.'`, '.session('user')->usr_rol.', 2)"><i class="'.$aux_btn_i.'"></i></button>';
+                            }
                         }
+                        $aux_bttn_preinforme .='</div>';
                         return $aux_bttn_preinforme;
                     });
                     break;

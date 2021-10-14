@@ -19,12 +19,12 @@
                 <a href="#" style="margin-right: 0px;"><img class="circle"  style="width: 50px; height:50px;" src="<?= session('user') && session('user')->photo ? base_url().'/assets/upload/images/'.session('user')->photo : base_url().'/assets/img/'.'user.png' ?>"></a>
 
                 <a href="#" style="margin-right: 0px;">
-                    <small class="black-text name" style=" font-size: 12px !important; text-shadow: 0 0 0.2px #000;">
+                    <small class="black-text name" style=" font-size: 12px !important; text-shadow: 0 0 1px #000;">
                     <?= session('user')->name ? session('user')->name : session('user')->nombre ?>
                     </small>
                 </a>
                 <a href="#">
-                    <p class="black-text email" style="text-shadow: 0 0 0.2px #000;">
+                    <p class="black-text email" style="text-shadow: 0 0 1px #000;">
                         <b><?= session('user')->usertype ? session('user')->usertype : session('user')->cms_rol  ?></b>
                     </p>
                 </a>

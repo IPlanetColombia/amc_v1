@@ -1,4 +1,8 @@
 <?= view('layouts/header') ?>
+<?php if ($title == 'Certificados'): ?>
+    <link rel="stylesheet" type="text/css" href="<?= base_url(['assets', 'css', 'funcionario', 'certificados.css']) ?>">
+    <link rel="stylesheet" type="text/css" href="<?= base_url(['assets', 'css', 'funcionario', 'informe.css']) ?>">
+<?php endif ?>
 <?= view('layouts/navbar_horizontal') ?>
 <?= view('layouts/navbar_vertical') ?>
 
@@ -16,9 +20,10 @@
                         </div>
                         <?php if ($title == 'Certificados'): ?>
                             <div class="card-content card-detalle" style="display:none">
-                                <form id="form-certificados" action="<?= base_url(['funcionario', 'certificados']) ?>" method="POST">
-                                    <div class="content-info"></div>
-                                </form>
+                                <div class="content-info">
+                                    <form id="form-certificados" action="<?= base_url(['funcionario', 'certificados']) ?>" method="POST">
+                                    </form>
+                                </div>
                                 <!-- <button class="btn green darken-3" onClick="js_mostrar_detalle(`card-table`, `card-detalle`,``,2,`php_lista_resultados`)">Volver atrás</button> -->
                             </div>
                         <?php endif ?>

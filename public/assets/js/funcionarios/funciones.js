@@ -1,10 +1,14 @@
-function my_toast(html, clase, duracion){
-	M.Toast.dismissAll();
+function my_toast(html, clase, duracion, error=false){
+	if(error || html.includes('fa-check'))
+		M.Toast.dismissAll();
 	M.toast({
 	 	html: html,
 	 	classes: clase,
 	 	displayLength: duracion,
 	});
+	setTimeout(function(){
+		M.Toast.dismissAll();
+	}, duracion);
 }
 function proceso_fetch(url, data){
 	return fetch(url, {
@@ -14,7 +18,7 @@ function proceso_fetch(url, data){
 		}).then(response => {
 	    	if (!response.ok) throw Error(response.status);
 	    		return response.json();
-	 	}).catch(error => my_toast('<i class="fas fa-times"></i>&nbsp&nbsp Error en consulta', 'red darken-2', 3000));
+	 	}).catch(error => my_toast('<i class="fas fa-times"></i>&nbsp&nbsp Error en consulta', 'red darken-2', 3000, true));
 }
 function buscar_cliente(remision = 0){
 	$('.empresa_row small').html('');

@@ -52,7 +52,7 @@
                     <form class="login-form" action="<?= base_url() ?>/validation" method="POST">
                         <div class="row">
                             <div class="input-field col s12">
-                                <h5 class="center-align">AMC</h5>
+                                <h5 class="center-align" style="text-shadow: 0 0 1px"><b>AMC</b></h5>
                                 <p class="center-align">Zona segura</p>
                             </div>
                         </div>

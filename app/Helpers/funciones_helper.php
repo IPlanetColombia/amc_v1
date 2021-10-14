@@ -2,6 +2,13 @@
 use App\Models\Certificacion;
 use App\Models\MuestreoDetalle;
 
+	function max_valor($nro_certificado){
+		$db = \Config\Database::connect();
+	    $texto= "select max(form_valo)  valor from certificacion_vs_mensaje where  id_certificacion='$nro_certificado'";
+	    $salida = $db->query($texto)->getResult();
+	    return $salida[0]->valor;
+	}
+
 	function formateo_valores($valor, $formato){
 	    // el formateo solo aplica para valores que tiene una coma
 	    // y para formato verdadero
