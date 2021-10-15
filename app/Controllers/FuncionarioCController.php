@@ -48,21 +48,46 @@ class FuncionarioCController extends BaseController
                 break;
             case 'guardar':
                 $form = $this->request->getPost();
-                $response = guardar_certificado($form);
-                if($form['frm_id_procedencia'] == 1){
-                    $aux_bttn .= '<button class="btn green white-text" onClick="actualizar_informe(`'.$form['frm_id_certificado'].'`, `1`)"><i class="fad fa-check-circle"></i></button>';
+                $certificado = procesar_registro_fetch('certificacion', 'certificado_nro', $form['frm_id_certificado']);
+                $certificado = $certificado[0];
+                $response = guardar_certificado($form, $certificado);
+                $aux_mensaje = '';
+                if($form['frm_id_procedencia'] == 2){
+                    if($certificado->cer_fecha_publicacion > '0000-00-00 00:00:00'){
+                        $mensajes = procesar_registro_fetch('mensaje_resultado', 'id_mensaje', $form['frm_mensaje_resultado']);
+                        $aux_mensaje = $mensajes[0]->mensaje_titulo;
+                        if($certificado->cer_fecha_facturacion > '0000-00-00 00:00:00' ){
+                            $aux_btn_i = "fad fa-usd-circle";
+                            $aux_btn_c = 'cyan';
+                            $aux_metodo = 3;
+                        }else{
+                            $aux_btn_i = "fad fa-thumbs-up";
+                            $aux_btn_c = 'deep-orange';
+                            $aux_metodo = 2;
+                        }
+                    }else{
+                        $aux_btn_i = "fad fa-check-circle";
+                        $aux_btn_c = 'green';
+                        $aux_metodo = 1;
+                    }
+                    $aux_bttn .= '<button class="btn '.$aux_btn_c.' white-text" onClick="actualizar_informe(`'.$certificado->certificado_nro.'`, `'.$aux_metodo.'`, '.session('user')->usr_rol.', 1)"><i class="'.$aux_btn_i.'"></i></button>';
                     $aux_div = '#certificado_'.$form['frm_id_certificado'];
                 }else{
-                    $aux_bttn .= '<button class="btn green white-text"><i class="fad fa-check-circle"></i></button>';
+                    $aux_bttn .= '<button class="btn green white-text" onClick="descargar_info(`'.$certificado->certificado_nro.'`, 0, `'.session('user')->usr_rol.'`, 0)"><i class="fad fa-check-circle"></i></button>';
                     $aux_div = '#pre_informe_'.$form['frm_id_certificado'];
                 }
                 $boton = [
                     'button' => $aux_bttn,
                     'div' => $aux_div
                 ];
+                $mensaje_resultado = [
+                    'div' => '#div_resultado_'.$certificado->certificado_nro,
+                    'mensaje' => $aux_mensaje
+                ];
                 $response = [
                     'mensaje' => $response,
-                    'boton' => $boton
+                    'boton' => $boton,
+                    'mensaje_resultado' => $mensaje_resultado
                 ];
                 break;
             case 'previsualizar':
@@ -122,29 +147,52 @@ class FuncionarioCController extends BaseController
                     'form_entrada' => $form
                 ]);
                 if($form['envio'] == 2){
-                    if($form['frm_id_procedencia'] == 1){
-                        $aux_bttn .= '<button class="btn green white-text" onClick="actualizar_informe(`'.$form['frm_id_certificado'].'`, `1`, '.session('user')->usr_rol.', 1)"><i class="fad fa-check-circle"></i></button>';
+                    $certificado_aux = $response['certificado'];
+                    $aux_mensaje = '';
+                    if($form['frm_id_procedencia'] == 2){
+                        if($certificado_aux->cer_fecha_publicacion > '0000-00-00 00:00:00'){
+                            $mensajes = procesar_registro_fetch('mensaje_resultado', 'id_mensaje', $form['frm_mensaje_resultado']);
+                            $aux_mensaje = $mensajes[0]->mensaje_titulo;
+                            if($certificado_aux->cer_fecha_facturacion > '0000-00-00 00:00:00' ){
+                                $aux_btn_i = "fad fa-usd-circle";
+                                $aux_btn_c = 'cyan';
+                                $aux_metodo = 3;
+                            }else{
+                                $aux_btn_i = "fad fa-thumbs-up";
+                                $aux_btn_c = 'deep-orange';
+                                $aux_metodo = 2;
+                            }
+                        }else{
+                            $aux_btn_i = "fad fa-check-circle";
+                            $aux_btn_c = 'green';
+                            $aux_metodo = 1;
+                        }
+                        $aux_bttn .= '<button class="btn '.$aux_btn_c.' white-text" onClick="actualizar_informe(`'.$certificado_aux->certificado_nro.'`, `'.$aux_metodo.'`, '.session('user')->usr_rol.', 1)"><i class="'.$aux_btn_i.'"></i></button>';
                         $aux_div = '#certificado_'.$form['frm_id_certificado'];
                     }else{
-                        $aux_bttn .= '<button onClick="descargar_info('.$form['frm_id_certificado'].', '.$form['frm_id_procedencia'].', '.session('user')->usr_rol.', 0)" class="btn green white-text"><i class="fad fa-check-circle"></i></button>';
+                        $aux_bttn .= '<button class="btn green white-text" onClick="descargar_info(`'.$certificado_aux->certificado_nro.'`, 0, `'.session('user')->usr_rol.'`, 0)"><i class="fad fa-check-circle"></i></button>';
                         $aux_div = '#pre_informe_'.$form['frm_id_certificado'];
                     }
                     $boton = [
                         'button' => $aux_bttn,
                         'div' => $aux_div
                     ];
+                    $mensaje_resultado = [
+                        'div' => '#div_resultado_'.$certificado_aux->certificado_nro,
+                        'mensaje' => $aux_mensaje
+                    ];
                     $response = [
-                        'boton' => $boton
+                        'boton' => $boton,
+                        'mensaje' => $mensaje_resultado
                     ];
                 }else{
                     $css  = file_get_contents('assets/css/styles-f.css');
                     $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
                     $mpdf->WriteHTML($salida, \Mpdf\HTMLParserMode::HTML_BODY);
-                    // $this->response->setHeader('Content-Type', 'application/pdf');
-                    // $mpdf->Output('arjun.pdf','I');
-                    $name = $response['aux_mensaje'].'_'.$response['certificado']->certificado_nro.'.pdf';
+                    $name = strtolower($response['aux_mensaje']);
+                    $name = str_replace(' ', '_', $name);
+                    $name = $response['certificado']->certificado_nro.'_'.$name.'.pdf';
                     $mpdf->Output($name,'D');
-                    // return var_dump($form);
                 }
                 break;
             case 'presentar_preinforme2':
@@ -175,6 +223,7 @@ class FuncionarioCController extends BaseController
                 // $this->response->setHeader('Content-Type', 'application/pdf');
                 // $mpdf->Output('arjun.pdf','I');
                 $name = $que_mostrar == 0 ? $certificado_nro.'-PRELIMINAR.pdf':$certificado_nro.'-REPORTE_DE_ENSAYO_3.pdf';
+                $name = strtolower($name);
                 $mpdf->Output($name,'D');
                 break;
             default:

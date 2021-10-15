@@ -292,6 +292,9 @@
 	        <div id="campo_bttn_enviar"></div>
 	        <div id="campo_resultados"></div>
 	<?php else: ?>
+			<?php 
+				$mensajes_aux =  procesar_registro_fetch('certificacion_vs_mensaje', 'id_certificacion', $certificados[0]->certificado_nro);
+	    	?>
 	    	<br>
 	    	<div class="row table">
 	    		<p class="center-align"></b>Mensajes de resultado</b></p>
@@ -299,9 +302,12 @@
 				    <select id="frm_mensaje_resultado" name="frm_mensaje_resultado" class="required"
 	                    onChange="muestra_mensaje(this.value, `mensaje_resultado`)">
 				      	<option value="">Seleccione mensaje</option>
-				      	<?php $mensajes = procesar_registro_fetch('mensaje_resultado', 0, 0); ?>
+				      	<?php $mensajes = procesar_registro_fetch('mensaje_resultado', 0, 0);?>
 				      	<?php foreach ($mensajes as $key => $mensaje): ?>
-				      		<option value="<?= $mensaje->id_mensaje ?>"><?= $mensaje->mensaje_titulo ?></option>
+				      		<?php
+				      			$selected = $mensaje->id_mensaje == $mensajes_aux[0]->id_mensaje_resultado ? 'selected':''
+				      		?>
+				      		<option value="<?= $mensaje->id_mensaje ?>" <?= $selected ?>><?= $mensaje->mensaje_titulo ?></option>
 				      	<?php endforeach ?>
 					</select>
 				    <label><b>Resultado</b></label>
@@ -313,7 +319,8 @@
 				      	<option value="">Seleccione observacion</option>
 				      	<?php $mensajes = procesar_registro_fetch('mensaje', 0, 0); ?>
 				      	<?php foreach ($mensajes as $key => $mensaje): ?>
-				      		<option value="<?= $mensaje->id_mensaje ?>"><?= $mensaje->mensaje ?></option>
+				      		<?php $selected = $mensajes_aux[0]->id_mensaje_comentario == $mensaje->id_mensaje ? 'selected':''; ?>
+				      		<option value="<?= $mensaje->id_mensaje ?>" <?= $selected ?>><?= $mensaje->mensaje ?></option>
 				      	<?php endforeach ?>
 					</select>
 				    <label><b>Observaci&oacute;n</b></label>
@@ -347,7 +354,8 @@
 		            			$firmas = $db->query($sql_firma)->getResult();
 		            		?>
 		            		<?php foreach ($firmas as $key => $firma): ?>
-		            			<option value="<?= $firma->id_firma ?>"><?= $firma->n1.' ('.$firma->c1.') -/- '.$firma->n2.' ('.$firma->c2 ?>)</option>
+		            			<?php $selected = $mensajes_aux[0]->id_firma == $firma->id_firma ? 'selected':'';?>
+		            			<option value="<?= $firma->id_firma ?>" <?= $selected ?>><?= $firma->n1.' ('.$firma->c1.') -/- '.$firma->n2.' ('.$firma->c2 ?>)</option>
 		            		<?php endforeach ?>
 						</select>
 					    <label><b>Firmas</b></label>
@@ -402,9 +410,9 @@
 		    	</div>
 		    	<hr>
 		    	<?php if($que_mostrar == 2): ?>
-		            <input type="hidden" name="frm_id_procedencia" id="frm_id_procedencia" value="2"/><!--1. para preinformes-->
-		    	<?php else: ?>
 		            <input type="hidden" name="frm_id_procedencia" id="frm_id_procedencia" value="1"/><!--2. para informes-->
+		    	<?php else: ?>
+		            <input type="hidden" name="frm_id_procedencia" id="frm_id_procedencia" value="2"/><!--1. para preinformes-->
 		        <?php endif ?>
 						<input type="hidden" name="frm_id_certificado" id="frm_id_certificado" value="<?= $id_certificado ?>"/>
 		                <input type="hidden" name="frm_id_forma" id="frm_id_forma" value="forma_muestra_preinforme"/>
@@ -412,12 +420,12 @@
 		                <input type="hidden" name="funcion" value="" id="funcion"/>
 		        	</form>
 					<div class="row">
-						<div class="col s12 m12 l12">
-							<button id="guardar" class="btn blue darken-2" onClick="js_enviar(1, <?= $id_certificado ?>)"><i class="far fa-save"></i> Guardar documento</button>
+						<div class="col s12 l12 center">
+							<button style="margin: 2px 0px !important" id="guardar" class="btn blue darken-3 p-1" onClick="js_enviar(1, <?= $id_certificado ?>)"><i class="fad fa-save"></i> Guardar documento</button>
 							<small id="campo_bttn_enviar"></small>
-							<button id="enviar" class="btn red darken-2" onClick="js_enviar(0, <?= $id_certificado ?>)"><i class="fad fa-file-pdf"></i> Guardar y descargar documento</button>
-							<button id="enviar" class="btn red darken-2" onClick="js_enviar(2, <?= $id_certificado ?>)"><i class="far fa-file-pdf"></i> previsualizar documento</button>
-							<button class="btn green darken-3" onClick="js_mostrar_detalle(`card-table`, `card-detalle`)">Volver atrás</button>
+							<button style="margin: 2px 0px !important" id="enviar" class="btn red darken-2 p-1" onClick="js_enviar(0, <?= $id_certificado ?>)"><i class="fad fa-file-download"></i> Guardar y descargar documento</button>
+							<button style="margin: 2px 0px !important" id="enviar" class="btn red darken-3 p-1" onClick="js_enviar(2, <?= $id_certificado ?>)"><i class="fad fa-file-pdf"></i> previsualizar documento</button>
+							<button style="margin: 2px 0px !important" class="btn green darken-3 p-1" onClick="js_mostrar_detalle(`card-table`, `card-detalle`);"><i class="fal fa-arrow-alt-to-left"></i> Volver atrás</button>
 						</div>
 					</div>
 	    	<?php endif ?>

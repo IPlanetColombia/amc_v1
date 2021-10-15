@@ -70,6 +70,10 @@ class TableController extends BaseController
                         'informe2' => 'Informe'
                     ]);
                     $certificado = [];
+                    $this->crud->callbackColumn('mensaje', function($resultado, $row){
+                        $div = '<div id="div_resultado_'.$row->certificado_nro.'">'.$resultado.'</div>';
+                        return $div;
+                    });
                     $this->crud->callbackColumn('informe', function($fecha, $row){
                         $row = procesar_registro_fetch('certificacion', 'certificado_nro', $row->certificado_nro);
                         $this->certificado_aux[$row[0]->certificado_nro] = $row[0];
@@ -95,7 +99,8 @@ class TableController extends BaseController
                         $aux_bttn_preinforme ='<div class="button grocery" id="pre_informe_'.$row->certificado_nro.'">';
                         if ($fecha == '0000-00-00 00:00:00'){//cer_fecha_preinforme
                             if($aux_variable_preinforme == 0){
-                                $aux_bttn_preinforme .= '<button class="btn red white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,'.$row->certificado_nro.',2,`php_lista_resultados`)"><i class="fad fa-times-circle"></i></button>';
+                                $aux_bttn_preinforme .= '<button class="btn red white-text"><i class="fad fa-times-circle"></i></button>';
+                                // $aux_bttn_preinforme .= '<button class="btn red white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,'.$row->certificado_nro.',2,`php_lista_resultados`)"><i class="fad fa-times-circle"></i></button>';
                             }else{
                                 $aux_bttn_preinforme .= '<button class="btn red white-text" onClick="my_toast(`No puede generar preinforme, ya que posee resultados de an&aacute;lisis`, `red darken-4`, 5000)"><i class="fad fa-times-circle"></i></button>';
                             }
@@ -112,7 +117,8 @@ class TableController extends BaseController
                             $aux_bttn_preinforme .= '<button class="btn red white-text" onClick="my_toast(`No puede generar informe, ya que &nbsp <b>NO</b> &nbsp posee los resultados del an&aacute;lisis`, `red darken-4`, 5000)"><i class="fad fa-times-circle"></i></button>';
                         }else {
                             if ($certificado_aux->cer_fecha_informe == '0000-00-00 00:00:00'){//cer_fecha_informe
-                                $aux_bttn_preinforme .= '<button class="btn red white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,`'.$row->certificado_nro.'`,3,`php_lista_resultados`)"><i class="fad fa-times-circle"></i></button>';
+                                $aux_bttn_preinforme .= '<button class="btn red white-text"><i class="fad fa-times-circle"></i></button>';
+                                // $aux_bttn_preinforme .= '<button class="btn red white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,`'.$row->certificado_nro.'`,3,`php_lista_resultados`)"><i class="fad fa-times-circle"></i></button>';
                             }else{
                                 if($certificado_aux->cer_fecha_publicacion > '0000-00-00 00:00:00'){
                                     if($certificado_aux->cer_fecha_facturacion > '0000-00-00 00:00:00' ){

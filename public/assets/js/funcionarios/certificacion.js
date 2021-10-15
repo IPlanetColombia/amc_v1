@@ -34,6 +34,9 @@ function js_mostrar_detalle(
     }else{
         $('.card-content.'+campo_oculta).fadeOut();
         $('.card-content.'+campo_muestra).fadeIn();
+        setTimeout(function(){
+            $('html, body').animate({scrollTop:0}, 'slow')
+        }, 500);
     }
 }
 function editar_campos(type, id_campo, valor_campo, nombre_campo_frm, nombre_campo_bd, tabla_update, id_operacion){
@@ -187,12 +190,15 @@ function js_enviar(aux, certificado_nro){
                         frm_id_certificado: certificado_nro,
                         envio: 2,
                         frm_id_procedencia: $('#frm_id_procedencia').val(),
+                        frm_mensaje_resultado: $('#frm_mensaje_resultado').val(),
                         funcion: 'presentar_preinforme'
                     });
+                    $('#form-certificados').removeAttr('target');
                     var form = $('#form-certificados');
                     var result = proceso_fetch(form.attr('action'), data.toString());
                     result.then(respuesta => {
                         $(respuesta.data.boton.div).html(respuesta.data.boton.button);
+                        $(respuesta.data.mensaje.div).html(respuesta.data.mensaje.mensaje);
                         descargar();
                     });
                     break;
@@ -204,6 +210,7 @@ function js_enviar(aux, certificado_nro){
                     result.then(respuesta => {
                         my_toast(respuesta.data.mensaje.html, respuesta.data.mensaje.class, 3000);
                         $(respuesta.data.boton.div).html(respuesta.data.boton.button);
+                        $(respuesta.data.mensaje_resultado.div).html(respuesta.data.mensaje_resultado.mensaje);
                     });
                     break;
                 case 2:
@@ -235,6 +242,7 @@ function descargar(){
     $('#form-certificados').submit();
 }
 function descargar_info(certificado_nro, tipo_documento, rol){
+    my_toast('<i class="fas fa-check"></i>&nbsp Generando reporte', 'blue darken-2', 3000);
     var form = `
         <div id="div-descargar">
             <form id="descargar-info" method="POST" action="`+$('#form-certificados').attr('action')+`">
@@ -248,7 +256,7 @@ function descargar_info(certificado_nro, tipo_documento, rol){
     $('#descargar-info').submit();
     $('#div-descargar').remove();
 }
-function certificado_facturacion(certificado_nro){
+function certificado_facturacion(certificado_nro, rol, tipo_documento){
     Swal.fire({
         title: 'Ya realizo factura ?',
         icon: 'warning',
@@ -272,12 +280,12 @@ function certificado_facturacion(certificado_nro){
                     icon: respuesta.data.icon,
                 });
                 $('#certificado_'+certificado_nro).html(`
-                    <button class="btn cyan white-text" onClick="actualizar_informe(`+certificado_nro+`, `+3+`)"><i class="fad fa-usd-circle"></i></button>`);
+                    <button class="btn cyan white-text" onClick="actualizar_informe(`+certificado_nro+`, 3, `+rol+`, `+tipo_documento+`)"><i class="fad fa-usd-circle"></i></button>`);
             })
         }
     })
 }
-function certificado_autorizacion(certificado_nro){
+function certificado_autorizacion(certificado_nro, rol, tipo_documento){
     Swal.fire({
         title: 'Autoriza publicación?',
         icon: 'warning',
@@ -300,8 +308,13 @@ function certificado_autorizacion(certificado_nro){
                     position:'top-end',
                     icon: respuesta.data.icon,
                 });
-                $('#certificado_'+certificado_nro).html(`
-                    <button class="btn deep-orange white-text" onClick="actualizar_informe(`+certificado_nro+`, `+2+`)"><i class="fad fa-thumbs-up"></i></button>`)
+                if(respuesta.data.icon != 'warning'){
+                    $('#certificado_'+certificado_nro).html(`
+                        <button class="btn deep-orange white-text" onClick="actualizar_informe(`+certificado_nro+`, 2, `+rol+`, `+tipo_documento+`)">
+                            <i class="fad fa-thumbs-up"></i>
+                        </button>`);
+                    $(respuesta.data.div).html(respuesta.data.mensaje);
+                }
             })
         }
     })
@@ -334,9 +347,9 @@ function actualizar_informe(certificado_nro, metodo, rol, tipo_documento){
                 descargar_info(certificado_nro, tipo_documento, rol);
             } else if (result.isDenied) {
                 if(metodo == 1){
-                    certificado_autorizacion(certificado_nro);
+                    certificado_autorizacion(certificado_nro, rol, tipo_documento);
                 }else{
-                    certificado_facturacion(certificado_nro);
+                    certificado_facturacion(certificado_nro, rol, tipo_documento);
                 }
             }
         })

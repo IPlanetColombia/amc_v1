@@ -93,13 +93,18 @@ use Config\Services;
     
     // $respuesta->assign("campo_$tabla","innerHTML", utf8_encode($salida));
 	}
-	function guardar_certificado($form){
+	function guardar_certificado($form, $certificado){
 		$db = \Config\Database::connect();
-		if($form['frm_id_procedencia'] == 1){
-        	$sql_guardar = 'update certificacion set
+		if($form['frm_id_procedencia'] == 2){
+			if($certificado->cer_fecha_publicacion > '0000-00-00 00:00:00')
+				$aux_mensaje_certificado = ", id_mensaje = '".$form['frm_mensaje_resultado']."'";
+			else
+				$aux_mensaje_certificado = '';
+        	$sql_guardar = "update certificacion set
                     cer_fecha_informe=now(),
                     certificado_estado=5
-                    where certificado_nro='.$form['frm_id_certificado'];
+                    ".$aux_mensaje_certificado."
+                    where certificado_nro=".$form['frm_id_certificado'];
 	    }else{
 	        $sql_guardar = "update certificacion set
 	                    cer_fecha_preinforme=now(),
@@ -193,26 +198,35 @@ use Config\Services;
 	}
 	function presentar_preinforme($form){
 		$db = \Config\Database::connect();
-		if($form['frm_id_procedencia'] == 1){
-        	$sql_guardar = 'update certificacion set
+		$certificado = procesar_registro_fetch('certificacion', 'certificado_nro', $form['frm_id_certificado']);
+		$certificado = $certificado[0];
+		if($form['frm_id_procedencia'] == 2){
+			if($certificado->cer_fecha_publicacion > '0000-00-00 00:00:00')
+				$aux_mensaje_certificado = ", id_mensaje = '".$form['frm_mensaje_resultado']."' ";
+			else
+				$aux_mensaje_certificado = '';
+        	$sql_guardar = "update certificacion set
                     cer_fecha_informe=now(),
                     certificado_estado=5
-                    where certificado_nro='.$form['frm_id_certificado'];
+                    ".$aux_mensaje_certificado."
+                    where certificado_nro= ".$form['frm_id_certificado'];
 	    }else{
 	        $sql_guardar = "update certificacion set
 	                    cer_fecha_preinforme=now(),
-	                    certificado_estado=4
+	                    certificado_estado=4,
 	                    where certificado_nro=".$form['frm_id_certificado'];
 	    }
 	   // echo $sql;
 	    if ($db->simpleQuery($sql_guardar)){
 			$salida .= '<br>Operacion ok 222222<br>';
 	    }
+	    $certificado = procesar_registro_fetch('certificacion', 'certificado_nro', $form['frm_id_certificado']);
+		$certificado = $certificado[0];
 		$fila_existe = procesar_registro_fetch('certificacion_vs_mensaje', 'id_certificacion', $form['frm_id_certificado'], 'id_mensaje_tipo', $form['frm_id_procedencia']);
 		if (!empty($fila_existe[0])){//existe actualiza
 	        $sql = "update certificacion_vs_mensaje set
-	                            id_mensaje_resultado='".$form['frm_mensaje_resultado']."', 
-	                            id_mensaje_comentario='".$form['frm_mensaje_observacion']."',
+	                            id_mensaje_resultado ='".$form['frm_mensaje_resultado']."', 
+	                            id_mensaje_comentario ='".$form['frm_mensaje_observacion']."',
 	                            id_firma = ".$form['frm_mensaje_firma'].",
 	                            id_plantilla = ".$form['frm_plantilla']." ,
 	                            form_valo =  ".$form['frm_form_valo']."
@@ -229,8 +243,6 @@ use Config\Services;
 	    if ($db->simpleQuery($sql)) {
 		    $salida .= "<br>Operacion ok 11111";
 		}
-		$certificado = procesar_registro_fetch('certificacion', 'certificado_nro', $form['frm_id_certificado']);
-		$certificado = $certificado[0];
 		//formateo de muestreo
         $sql = "select * from muestreo where id_muestreo=$certificado->id_muestreo  group by id_muestreo";
         $muestreo = $db->query($sql)->getResult();
@@ -274,7 +286,7 @@ use Config\Services;
 	    	'fecha_analisis' => $fecha_analisis,
 	    	'fila_detalle_para_tipo_muestreo' => $fila_detalle_para_tipo_muestreo,
 	    	'plantilla' => $form['frm_plantilla'],
-	    	'form_entrada' => $form
+	    	'form_entrada' => $form,
 	    ];        
 	}
 	function presentar_preinforme2($nro_informe, $aux_tipo_documento=1, $id_rol=0, $pdf=false){
@@ -383,11 +395,12 @@ use Config\Services;
 	}
 	function certificado_autorizacion($certificado_nro){
 		$db = \Config\Database::connect();
-		$fila =  procesar_registro_fetch('certificacion_vs_mensaje', 'id_certificacion', $certificado_nro, 'id_mensaje_tipo',2);
+		$fila =  procesar_registro_fetch('certificacion_vs_mensaje', 'id_certificacion', $certificado_nro, 'id_mensaje_tipo', 2);
+		$mensajes = procesar_registro_fetch('mensaje_resultado', 'id_mensaje', $fila[0]->id_mensaje_resultado);
     	$sql3 = "update certificacion set                            
                             cer_fecha_publicacion=now(),
                             cer_usuario_publica= ".session('user')->id." ,
-                                id_mensaje=".$fila[0]->id_mensaje_resultado."
+                            id_mensaje=".$fila[0]->id_mensaje_resultado."
                             where certificado_nro =$certificado_nro";
 
         if ($db->simpleQuery($sql3)){
@@ -406,12 +419,16 @@ use Config\Services;
 		    $sDe ="admin@amc-laboratorios.com";
         	$salida = [
         		'html' => 'Certificado Autorizado. Se enviarà link de descarga al correo <b>'.$usuario[0]->email.'</b>',
-        		'icon' => 'success'
+        		'icon' => 'success',
+        		'div' => '#div_resultado_'.$certificado_nro,
+                'mensaje' => $mensajes[0]->mensaje_titulo
         	];
         }else{
             $salida = [
-	    		'html' => 'Error al autorizar certificado',
-	    		'icon' => 'warning'
+	    		'html' => $fila[0],
+	    		'icon' => 'warning',
+	    		'div' => '#div_resultado_'.$certificado_nro,
+                'mensaje' => ''
 	    	];
         }
         return $salida;

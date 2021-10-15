@@ -1,14 +1,11 @@
 function my_toast(html, clase, duracion, error=false){
-	if(error || html.includes('fa-check'))
+	if(error || html.includes('check'))
 		M.Toast.dismissAll();
 	M.toast({
 	 	html: html,
 	 	classes: clase,
 	 	displayLength: duracion,
 	});
-	setTimeout(function(){
-		M.Toast.dismissAll();
-	}, duracion);
 }
 function proceso_fetch(url, data){
 	return fetch(url, {
