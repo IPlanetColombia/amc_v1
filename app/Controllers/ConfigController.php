@@ -67,7 +67,7 @@ class ConfigController extends BaseController
             case 'permissions_funcionarios':
                 $title = 'Permisos';
                 $subtitle = 'Listado de permisos.';
-                //$this->crud->setRelation('role_id', 'roles', 'name');
+                $this->crud->setRelation('usr_rol', 'cms_rol', '{nombre} - {usr_rol}');
                 $this->crud->setRelation('menu_id', 'menus_funcionarios', '{option} - {type}');
                 break;
             case 'menus_cliente':

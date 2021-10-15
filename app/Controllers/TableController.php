@@ -21,6 +21,7 @@ class TableController extends BaseController
         $this->crud = $this->_getGroceryCrudEnterprise();
         $this->crud->setSkin('bootstrap-v3');
         $this->crud->setLanguage('Spanish');
+        $this->get_certificaciones();
     }
 
     public function index($data)
@@ -215,5 +216,37 @@ class TableController extends BaseController
         } else {
             throw PageNotFoundException::forPageNotFound();
         }
+    }
+
+    public function get_certificaciones(){
+        $db = \Config\Database::connect();
+        $aux_columna_cliente =" (select name from usuario where id=m.id_cliente) id_cliente,"; 
+        $aux_columna_id_codigo_amc =" 
+            if (d.ano_codigo_amc, CONCAT (d.ano_codigo_amc,\"-\",d.id_tipo_analisis,\"-\",LPAD(d.id_codigo_amc,5,\"0\")) ,CONCAT ((select mue_sigla from muestra_tipo_analisis where id_muestra_tipo_analsis= d.id_tipo_analisis),\" \", d.id_codigo_amc)) id_codigo_amc,             
+            "; 
+        $aux_columna_lote =" "; 
+        $sql = "CREATE OR REPLACE VIEW view_certificados".session('user')->id." 
+                AS
+                select
+                c.id_muestreo,
+                m.mue_fecha_muestreo,
+                c.certificado_nro,
+               ".$aux_columna_cliente."
+                m.mue_subtitulo,
+                ".$aux_columna_id_codigo_amc."
+                ".$aux_columna_lote."
+                d.mue_identificacion,        
+        c.certificado_estado resultados,
+        c.cer_fecha_preinforme preinforme,
+        c.cer_fecha_analisis informe,
+        c.cer_fecha_informe informe2,
+        c.cer_fecha_publicacion fecha_publicacion,
+        c.cer_fecha_facturacion fecha_facturacion,
+        (select mensaje_titulo from mensaje_resultado where id_mensaje=c.id_mensaje) mensaje
+                        
+                from certificacion c, muestreo m, muestreo_detalle d
+                where c.id_muestreo = m.id_muestreo and c.id_muestreo_detalle = d.id_muestra_detalle
+                and m.mue_estado <> 0 order by certificado_nro desc ";
+        $db->query($sql);
     }
 }
