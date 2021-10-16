@@ -194,11 +194,76 @@ class ClienteController extends BaseController
             $mpdf->Output($name,'D');
     }
     public function certificado_down(){
-    	if (isset($_POST['certificado_down'])) {
+        $certificados_preliminar = $this->request->getPost('certificado_preliminar');
+        $certificados_reporte = $this->request->getPost('certificado_reporte');
+    	if (!empty($certificados_reporte) || !empty($certificados_preliminar)){
+            $db = \Config\Database::connect();
             $zip = new \ZipArchive();
-            $count = count($_POST['certificado_down']);
+            $count_preliminar = !empty($certificados_preliminar) ? count($certificados_preliminar) : 0;
+        // return var_dump($certificados_reporte);
+            $count_reporte = !empty($certificados_reporte) ? count($certificados_reporte) : 0;
+            $count = $count_reporte + $count_preliminar;
+            $certificados = [];
+            $i = 0;
+            while ($i < $count) {
+                if (!empty($certificados_preliminar)) {
+                    foreach ($certificados_preliminar as $key => $value) {
+                        $certificados[$i]['certificado_nro'] = $value;
+                        $certificados[$i]['id_mensaje_tipo'] = 1;
+                        $i++;
+                    }
+                }
+                if(!empty($certificados_reporte)){
+                    foreach ($certificados_reporte as $key => $value) {
+                        $certificados[$i]['certificado_nro'] = $value;
+                        $certificados[$i]['id_mensaje_tipo'] = 2;
+                        $i++;
+                    }
+                }
+            }
             $archivo = 'certificados_amc.zip';
-    		foreach ($_POST['certificado_down'] as $key => $value) {
+    		foreach ($certificados as $key => $value) {
+                $certificado_nro = $value['certificado_nro']; //183342;
+                $id_mensaje_tipo = $value['id_mensaje_tipo']; //183342;
+                // $frm_plantilla= $_POST['plantilla'] ;
+                $c_v_m = procesar_registro_fetch('certificacion_vs_mensaje', 'id_certificacion', $certificado_nro, 'id_mensaje_tipo', $id_mensaje_tipo);
+                $certificado = procesar_registro_fetch('certificacion', 'certificado_nro', $certificado_nro);
+                $certificado = $certificado[0];
+                //formateo de muestreo
+                $sql = "select * from muestreo where id_muestreo=$certificado->id_muestreo  group by id_muestreo";
+                $query = $db->query($sql)->getResult();
+                $muestreo = $query[0];
+                $cliente = procesar_registro_fetch('usuario ', 'id', $muestreo->id_cliente);
+                $cliente = $cliente[0];
+                $detalle_para_tipo_muestreo = procesar_registro_fetch('muestreo_detalle', 'id_muestra_detalle', $certificado->id_muestreo_detalle);
+                $detalle_para_tipo_muestreo = $detalle_para_tipo_muestreo[0];
+                $fecha_analisis = recortar_fecha($muestreo->mue_fecha_muestreo,1);
+                $frm_form_valo = $c_v_m[0]->form_valo; //tipo de formateo de la plantilla
+                $frm_plantilla = $c_v_m[0]->id_plantilla;
+                $frm_mensaje_resultado = $c_v_m[0]->id_mensaje_resultado; // cero para cuando venga de creacion de construccion de documento
+                $frm_mensaje_observacion = $c_v_m[0]->id_mensaje_comentario;
+                $frm_mensaje_firma = $c_v_m[0]->id_firma;
+                $frm_id_procedencia = 1; // 0 PRELIMINAR - 1 REPORTE DE ENSAYO
+                $frm_id_procedencia = $c_v_m[0]->id_mensaje_tipo == 2 ? 1 : 0;
+                if($frm_id_procedencia == 0){//preinformes
+                    $aux_mensaje='PRELIMINAR';
+                    $tipo_mensajes = 1;
+                    if($certificado->cer_fecha_preinforme == '0000-00-00 00:00:00'){
+                        $aux_fecha_informe=date("Y-m-d H:i:s");
+                    }else{
+                        $aux_fecha_informe=$certificado->cer_fecha_preinforme;
+                    }
+                    
+                }else{
+                    $aux_mensaje='REPORTE DE ENSAYO';
+                    $tipo_mensajes = 2;
+                    if($certificado->cer_fecha_informe == '0000-00-00 00:00:00'){
+                        $aux_fecha_informe=date("Y-m-d H:i:s");
+                    }else{
+                        $aux_fecha_informe=$certificado->cer_fecha_informe;
+                    }
+                    
+                }
                 $zip->open($archivo, \ZIPARCHIVE::CREATE);
                 $mpdf = new \Mpdf\Mpdf([
                     'mode' => 'utf-8',
@@ -207,14 +272,28 @@ class ClienteController extends BaseController
                     "margin_right" => 0,
                     "margin_top" => 0,
                     "margin_bottom" => 0,
-                    "margin_header" => 0,
-                    "margin_footer" => 0
                 ]);
-                $html = view('clientes/generate_pdf',['value' => $value]);
+                $mpdf->showImageErrors = true;
                 $css  = file_get_contents('assets/css/styles.css');
+                $html = view('views_mpdf/cliente/plantilla', [
+                    'aux_mensaje' => $aux_mensaje,
+                    'certificado' => $certificado,
+                    'cliente' => $cliente,
+                    'muestreo' => $muestreo,
+                    'aux_fecha_informe' => $aux_fecha_informe,
+                    'fecha_analisis' => $fecha_analisis,
+                    'detalle_para_tipo_muestreo' => $detalle_para_tipo_muestreo,
+                    'frm_plantilla' => $frm_plantilla,
+                    'frm_form_valo' => $frm_form_valo,
+                    'frm_mensaje_resultado' => $frm_mensaje_resultado,
+                    'tipo_mensajes' => $tipo_mensajes,
+                    'frm_mensaje_firma' => $frm_mensaje_firma
+                ]);
                 $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
                 $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
-                $name = 'certificado_'.$value.'.pdf';
+                $name = $certificado_nro.'_'.$aux_mensaje.'.pdf';
+                $name = str_replace(' ', '_', $name);
+                $name = strtolower($name);
                 if($count == 1 ){
                     $mpdf->Output($name,'D');
                     exit;
@@ -271,7 +350,7 @@ class ClienteController extends BaseController
         ]);
     }
     public function reporte_post(){
-// $db = \Config\Database::connect();
+        // $db = \Config\Database::connect();
         $data = [
             'parametro'        => $this->request->getPost('parametros'),
             'tipo_analisis'    => $this->request->getPost('tipo_analisis'),
@@ -435,7 +514,7 @@ class ClienteController extends BaseController
                                         else{
                                             $certificados.='
                                                 <label>
-                                                    <input type="checkbox" name="certificado[]" value="'. $value->certificado_nro.'" />
+                                                    <input type="checkbox" name="certificado_preliminar[]" value="'. $value->certificado_nro.'" />
                                                     <span></span>
                                                 </label>';
 
@@ -455,7 +534,7 @@ class ClienteController extends BaseController
                                         else{
                                             $certificados.='
                                                 <label>
-                                                    <input type="checkbox" name="certificado[]" value="'. $value->certificado_nro.'" />
+                                                    <input type="checkbox" name="certificado_reporte[]" value="'. $value->certificado_nro.'" />
                                                     <span></span>
                                                 </label>
                                                 ';

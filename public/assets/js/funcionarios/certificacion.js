@@ -184,23 +184,79 @@ function js_enviar(aux, certificado_nro){
         if($('#frm_mensaje_resultado').val() && $('#frm_mensaje_observacion').val() && $('#frm_mensaje_firma').val()){
             switch(aux){
                 case 0:
-                    $('#funcion').val('presentar_preinforme');
-                    my_toast('<i class="fas fa-spinner fa-spin"></i>&nbsp Actualizando datos', 'blue-grey darken-2', 30000);
-                    var data = new URLSearchParams({
-                        frm_id_certificado: certificado_nro,
-                        envio: 2,
-                        frm_id_procedencia: $('#frm_id_procedencia').val(),
-                        frm_mensaje_resultado: $('#frm_mensaje_resultado').val(),
-                        funcion: 'presentar_preinforme'
-                    });
-                    $('#form-certificados').removeAttr('target');
-                    var form = $('#form-certificados');
-                    var result = proceso_fetch(form.attr('action'), data.toString());
-                    result.then(respuesta => {
-                        $(respuesta.data.boton.div).html(respuesta.data.boton.button);
-                        $(respuesta.data.mensaje.div).html(respuesta.data.mensaje.mensaje);
-                        descargar();
-                    });
+                    if($('#plantilla_validator').val() == 1){
+                        if($('#plantilla_nueva').is(':checked')){
+                            $('#funcion').val('guardar');
+                            my_toast('<i class="fas fa-spinner fa-spin"></i>&nbsp Actualizando datos', 'blue-grey darken-2', 30000);
+                            var form = $('#form-certificados');
+                            var result = proceso_fetch(form.attr('action'), form.serialize());
+                            result.then(respuesta => {
+                            my_toast('<i class="fas fa-check"></i>&nbsp Generando reporte', 'blue darken-2', 3000);
+                            $(respuesta.data.boton.div).html(respuesta.data.boton.button);
+                            $(respuesta.data.mensaje_resultado.div).html(respuesta.data.mensaje_resultado.mensaje);
+                            if($('#frm_id_procedencia').val() == 1 ){
+                                var button = `<input type="checkbox" name="certificado_preliminar[]" value="`+certificado_nro+`" checked>
+                                <input type="checkbox" name="certificado_reporte[]" value="" >`;
+                            }else{
+                                var button = `<input type="checkbox" name="certificado_preliminar[]" value="" >
+                                <input type="checkbox" name="certificado_reporte[]" value="`+certificado_nro+`" checked>`;
+                            }
+                            var form = `
+                                <form id="form-plantilla" method="POST" action="`
+                                +$('#form-certificados').attr('action').replace('funcionario/certificados', 'cliente/certificado/download' )+`">
+                                    `+button+`
+                                </form>
+                            `;
+                            $('#form-nueva').html(form);
+                            $('#form-plantilla').submit();
+                            $('#form-nueva').html('');
+                        });
+                        }else{
+                            $('#funcion').val('presentar_preinforme');
+                            my_toast('<i class="fas fa-spinner fa-spin"></i>&nbsp Actualizando datos', 'blue-grey darken-2', 30000);
+                            var data = new URLSearchParams({
+                                frm_id_certificado: certificado_nro,
+                                envio: 2,
+                                frm_id_procedencia: $('#frm_id_procedencia').val(),
+                                frm_mensaje_resultado: $('#frm_mensaje_resultado').val(),
+                                funcion: 'presentar_preinforme'
+                            });
+                            $('#form-certificados').removeAttr('target');
+                            var form = $('#form-certificados');
+                            var result = proceso_fetch(form.attr('action'), data.toString());
+                            result.then(respuesta => {
+                                $(respuesta.data.boton.div).html(respuesta.data.boton.button);
+                                $(respuesta.data.mensaje.div).html(respuesta.data.mensaje.mensaje);
+                                descargar();
+                            });
+                        }
+                    }else{
+                        $('#funcion').val('guardar');
+                        my_toast('<i class="fas fa-spinner fa-spin"></i>&nbsp Actualizando datos', 'blue-grey darken-2', 30000);
+                        var form = $('#form-certificados');
+                        var result = proceso_fetch(form.attr('action'), form.serialize());
+                        result.then(respuesta => {
+                            my_toast('<i class="fas fa-check"></i>&nbsp Generando reporte', 'blue darken-2', 3000);
+                            $(respuesta.data.boton.div).html(respuesta.data.boton.button);
+                            $(respuesta.data.mensaje_resultado.div).html(respuesta.data.mensaje_resultado.mensaje);
+                            if($('#frm_id_procedencia').val() == 1 ){
+                                var button = `<input type="checkbox" name="certificado_preliminar[]" value="`+certificado_nro+`" checked>`;
+                                var button = `<input type="checkbox" name="certificado_reporte[]" value="" >`;
+                            }else{
+                                var button = `<input type="checkbox" name="certificado_preliminar[]" value="" >`;
+                                var button = `<input type="checkbox" name="certificado_reporte[]" value="`+certificado_nro+`" checked>`;
+                            }
+                            var form = `
+                                <form id="form-plantilla" method="POST" action="`
+                                +$('#form-certificados').attr('action').replace('funcionario/certificados', 'cliente/certificado/download' )+`">
+                                    `+button+`
+                                </form>
+                            `;
+                            $('#form-nueva').html(form);
+                            $('#form-plantilla').submit();
+                            $('#form-nueva').html('');
+                        });
+                    }
                     break;
                 case 1:
                     $('#funcion').val('guardar');
@@ -242,19 +298,76 @@ function descargar(){
     $('#form-certificados').submit();
 }
 function descargar_info(certificado_nro, tipo_documento, rol){
-    my_toast('<i class="fas fa-check"></i>&nbsp Generando reporte', 'blue darken-2', 3000);
-    var form = `
-        <div id="div-descargar">
-            <form id="descargar-info" method="POST" action="`+$('#form-certificados').attr('action')+`">
-                <input type="hidden" name="certificado_nro" value="`+certificado_nro+`" />
-                <input type="hidden" name="que_mostrar" value="`+tipo_documento+`" />
-                <input type="hidden" name="user_rol_id" value="`+rol+`" />
-                <input type="hidden" name="funcion" value="descargar" />
-            </form>
-        </div>`;
-    $('#form-certificados').append(form);
-    $('#descargar-info').submit();
-    $('#div-descargar').remove();
+    if($('#table-plantilla_'+certificado_nro).val() == 1){
+        Swal.fire({
+            position: 'top-end',
+            title: '<i class="fad fa-file-pdf"></i>&nbsp Descargar con plantilla nueva',
+            icon: 'question',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonColor: '#b71c1c',
+            cancelButtonColor: '#263238',
+            denyButtonColor: '#ff5722',
+            confirmButtonText: 'Si',
+            denyButtonText: 'No',
+            cancelButtonText: '<i class="fad fa-times-circle"></i>&nbsp Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                my_toast('<i class="fas fa-check"></i>&nbsp Generando reporte 2', 'blue darken-2', 3000);
+                if(tipo_documento == 1 ){
+                    var button = `<input type="checkbox" name="certificado_preliminar[]" value="" >
+                        <input type="checkbox" name="certificado_reporte[]" value="`+certificado_nro+`" checked>`;
+                }else{
+                    var button = `<input type="checkbox" name="certificado_preliminar[]" value="`+certificado_nro+`" checked>
+                    <input type="checkbox" name="certificado_reporte[]" value="" >`;
+                }
+                var form = `
+                    <div id="div-descargar">
+                        <form id="form-plantilla" method="POST" action="`
+                        +$('#form-certificados').attr('action').replace('funcionario/certificados', 'cliente/certificado/download' )+`">
+                            `+button+`
+                        </form>
+                    </div>
+                `;
+                $('#form-certificados').append(form);
+                $('#form-plantilla').submit();
+                $('#div-descargar').remove();
+            } else if (result.isDenied) {
+                my_toast('<i class="fas fa-check"></i>&nbsp Generando reporte', 'blue darken-2', 3000);
+                var form = `
+                    <div id="div-descargar">
+                        <form id="descargar-info" method="POST" action="`+$('#form-certificados').attr('action')+`">
+                            <input type="hidden" name="certificado_nro" value="`+certificado_nro+`" />
+                            <input type="hidden" name="que_mostrar" value="`+tipo_documento+`" />
+                            <input type="hidden" name="user_rol_id" value="`+rol+`" />
+                            <input type="hidden" name="funcion" value="descargar" />
+                        </form>
+                    </div>`;
+                $('#form-certificados').append(form);
+                $('#descargar-info').submit();
+                $('#div-descargar').remove();
+            }
+        })
+    }else{
+        if(tipo_documento == 1 ){
+            var button = `<input type="checkbox" name="certificado_preliminar[]" value="" >
+            <input type="checkbox" name="certificado_reporte[]" value="`+certificado_nro+`" checked>`;
+        }else{
+            var button = `<input type="checkbox" name="certificado_preliminar[]" value="`+certificado_nro+`" checked>
+            <input type="checkbox" name="certificado_reporte[]" value="" >`;
+        }
+        var form = `
+            <div id="div-descargar">
+                <form id="form-plantilla" method="POST" action="`
+                +$('#form-certificados').attr('action').replace('funcionario/certificados', 'cliente/certificado/download' )+`">
+                    `+button+`
+                </form>
+            </div>
+        `;
+        $('#form-certificados').append(form);
+        $('#form-plantilla').submit();
+        $('#div-descargar').remove();
+    }
 }
 function certificado_facturacion(certificado_nro, rol, tipo_documento){
     Swal.fire({

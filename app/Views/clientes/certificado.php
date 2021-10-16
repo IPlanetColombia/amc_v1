@@ -127,7 +127,7 @@
         <div class="row">
             <div class="col s12 l12 m12 x13 tabla_certificados">
                 <?php session() ?>
-                <form action="http://localhost:8080/Wilfredo/mpdf_AMC/app/index.php" method="POST">
+                <form action="<?= base_url(['cliente', 'certificado', 'download']) ?>" method="POST">
                     <input type="hidden" name="plantilla" value="1">
                     <div id="tabla"></div>
                     <?= $certificados ?>

@@ -447,3 +447,27 @@ th {
 .firmas tr td{
     text-align: center;
 }
+
+/* estilos AMC */
+
+.amc-border th
+{
+    border: 1px solid rgb(222, 226, 230);
+}
+
+.amc-border2 tr
+{
+    border: 1px solid rgb(222, 226, 230);
+}
+
+.amc-centrado th,
+.amc-centrado tr,
+.amc-centrado td
+{
+    text-align: center;
+}
+
+.amc-header {
+    text-align: center;
+    font-size: 22px;
+}

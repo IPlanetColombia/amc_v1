@@ -76,10 +76,17 @@ class TableController extends BaseController
                         return $div;
                     });
                     $this->crud->callbackColumn('informe', function($fecha, $row){
+                        $fecha_aux = explode('/', $row->mue_fecha_muestreo);
+                        $fecha_aux2 = explode(' ', $fecha_aux[2]);
+                        $fecha_m = $fecha_aux2[0].'-'.$fecha_aux[1].'-'.$fecha_aux[0].' '.$fecha_aux2[1];
                         $row = procesar_registro_fetch('certificacion', 'certificado_nro', $row->certificado_nro);
                         $this->certificado_aux[$row[0]->certificado_nro] = $row[0];
                         $row = $row[0];
                         $aux_bttn_preinforme = '<div class="button grocery">';
+                        if (strtotime(date_certificados()) >= strtotime($fecha_m))
+                            $aux_bttn_preinforme .= '<input type="hidden" id="table-plantilla_'.$row->certificado_nro.'" value="1">';
+                        else
+                            $aux_bttn_preinforme .= '<input type="hidden" id="table-plantilla_'.$row->certificado_nro.'" value="0">';
                         if ($row->certificado_estado == 3  || $row->certificado_estado == 5){//cer_fecha_preinforme
                             $aux_bttn_preinforme .= '
                                 <button class="btn green white-text" onClick="js_mostrar_detalle(`card-detalle`,`card-table`,'.$row->certificado_nro.',1,`php_lista_resultados`)"><i class="fad fa-check-circle"></i></button>

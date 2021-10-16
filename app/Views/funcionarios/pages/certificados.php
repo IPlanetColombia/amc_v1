@@ -1,3 +1,4 @@
+<div id="form-nueva"></div>
 <form id="form-certificados" action="<?= base_url(['funcionario', 'certificados']) ?>" method="POST">
 	<div class="row">
 		<div class="col s12 l12">
@@ -377,7 +378,7 @@
 					</div>
 		    	</div>
 		    	</div class="row table">
-		    		<div class="input-field col s12 l12">
+		    		<div class="input-field col s12 l6">
 		    			<p><label>
 					        <input class="with-gap" type="radio" name="frm_plantilla" id="frm_plantilla" value="1" checked/>
 					        <span>Plantilla estandar</span>
@@ -394,6 +395,8 @@
 					        <input class="with-gap" type="radio" name="frm_plantilla" id="frm_plantilla" value="2"/>
 					        <span>Plantilla Frotis</span>
 					    </label></p>
+					</div>
+					<div class="input-field col s12 l6">
 					    <p><label>
 					        <input class="with-gap" type="radio" name="frm_plantilla" id="frm_plantilla" value="3"/>
 					        <span>Plantilla Mixta MA y FA (1 pagina)</span>
@@ -409,6 +412,24 @@
 					</div>
 		    	</div>
 		    	<hr>
+		    	<?php if (strtotime(date_certificados()) >= strtotime($certificados[0]->mue_fecha_muestreo) ): ?>
+		    		<br>
+		    		<div class="row">
+						<div class="col s12 l12 center">
+				    		<p>
+						      <label>
+						        <input id="plantilla_nueva" type="checkbox" name="plantilla_nueva"  checked="checked"/>
+						        <span>Certificado plantilla nueva</span>
+						      </label>
+						    </p>
+						</div>
+					</div>
+					<br>
+					<input type="hidden" name="plantilla_validator" id="plantilla_validator" value="1">
+				<?php else: ?>
+				    <input type="hidden" name="plantilla_validator" id="plantilla_validator" value="0">
+				    <div id="form-nueva"></div>
+		    	<?php endif ?>
 		    	<?php if($que_mostrar == 2): ?>
 		            <input type="hidden" name="frm_id_procedencia" id="frm_id_procedencia" value="1"/><!--2. para informes-->
 		    	<?php else: ?>
