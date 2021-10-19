@@ -127,7 +127,18 @@
         <div class="row">
             <div class="col s12 l12 m12 x13 tabla_certificados">
                 <?php session() ?>
-                <form action="<?= base_url(['cliente', 'certificado', 'download']) ?>" method="POST">
+                <form action="<?= base_url(['certificado', 'download']) ?>" method="POST">
+                    <hr>
+                    <div class="row">
+                        <div class="col s12 l12 center">
+                            <p>
+                              <label>
+                                <input id="validador" type="checkbox" name="validador"  checked="checked"/>
+                                <span>Certificado plantilla nueva</span>
+                              </label>
+                            </p>
+                        </div>
+                    </div>
                     <input type="hidden" name="plantilla" value="1">
                     <div id="tabla"></div>
                     <?= $certificados ?>

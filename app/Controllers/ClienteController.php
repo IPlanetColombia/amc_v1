@@ -200,7 +200,7 @@ class ClienteController extends BaseController
             $db = \Config\Database::connect();
             $zip = new \ZipArchive();
             $count_preliminar = !empty($certificados_preliminar) ? count($certificados_preliminar) : 0;
-        // return var_dump($certificados_reporte);
+            // return var_dump($certificados_reporte);
             $count_reporte = !empty($certificados_reporte) ? count($certificados_reporte) : 0;
             $count = $count_reporte + $count_preliminar;
             $certificados = [];

@@ -431,8 +431,10 @@
 				    <div id="form-nueva"></div>
 		    	<?php endif ?>
 		    	<?php if($que_mostrar == 2): ?>
+		    		<input type="hidden" name="frm_certificado" id="frm_certificado" value="2">
 		            <input type="hidden" name="frm_id_procedencia" id="frm_id_procedencia" value="1"/><!--2. para informes-->
 		    	<?php else: ?>
+		    		<input type="hidden" name="frm_certificado" id="frm_certificado" value="1">
 		            <input type="hidden" name="frm_id_procedencia" id="frm_id_procedencia" value="2"/><!--1. para preinformes-->
 		        <?php endif ?>
 						<input type="hidden" name="frm_id_certificado" id="frm_id_certificado" value="<?= $id_certificado ?>"/>
