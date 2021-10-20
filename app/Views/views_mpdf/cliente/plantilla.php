@@ -169,7 +169,7 @@
 						<?= $texto_incertidumbre; ?>
 						
 						<?php foreach ( $array_regla as $key => $value ): ?>
-							<br><b><?= $key ?></b>= <?= $value ?>
+							<br><b><?= ($key+1) ?></b>= <?= $value ?>
 						<?php endforeach ?>
 						</p>
 						<br>

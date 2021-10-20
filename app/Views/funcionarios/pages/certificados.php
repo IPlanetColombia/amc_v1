@@ -293,8 +293,9 @@
 	        <div id="campo_bttn_enviar"></div>
 	        <div id="campo_resultados"></div>
 	<?php else: ?>
-			<?php 
-				$mensajes_aux =  procesar_registro_fetch('certificacion_vs_mensaje', 'id_certificacion', $certificados[0]->certificado_nro);
+			<?php
+				$aux_c_v_m = $que_mostrar == 1 ? 2 : 1;
+				$mensajes_aux =  procesar_registro_fetch('certificacion_vs_mensaje', 'id_certificacion', $certificados[0]->certificado_nro, 'id_mensaje_tipo', $aux_c_v_m);
 	    	?>
 	    	<br>
 	    	<div class="row table">

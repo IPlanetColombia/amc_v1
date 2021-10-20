@@ -180,6 +180,7 @@ function muestra_mensaje(id_mensaje, tabla){
     })
 }
 function js_enviar(aux, certificado_nro){
+    $('#form-certificados').attr('target', '');
     if($('#frm_id_forma').val() == 'forma_muestra_preinforme'){
         if($('#frm_mensaje_resultado').val() && $('#frm_mensaje_observacion').val() && $('#frm_mensaje_firma').val()){
             switch(aux){
@@ -195,7 +196,6 @@ function js_enviar(aux, certificado_nro){
                                 $(respuesta.data.boton.div).html(respuesta.data.boton.button);
                                 $(respuesta.data.mensaje_resultado.div).html(respuesta.data.mensaje_resultado.mensaje);
                                 enviar_certificado($('#frm_certificado').val(), certificado_nro, 1);
-                                console.log($('#frm_certificado').val())
                             });
                         }else{
                             $('#funcion').val('presentar_preinforme');
@@ -207,7 +207,6 @@ function js_enviar(aux, certificado_nro){
                                 frm_mensaje_resultado: $('#frm_mensaje_resultado').val(),
                                 funcion: 'presentar_preinforme'
                             });
-                            $('#form-certificados').removeAttr('target');
                             var form = $('#form-certificados');
                             var result = proceso_fetch(form.attr('action'), data.toString());
                             result.then(respuesta => {
@@ -265,6 +264,7 @@ function js_enviar(aux, certificado_nro){
     }
 }
 function enviar_certificado(procedencia, certificado_nro, plantilla){
+    my_toast('<i class="fas fa-check"></i>&nbsp Generando reporte', 'blue darken-2', 3000);
     if(procedencia == 1 ){ // 1 - reporte
         $('#certificado_reporte').val(certificado_nro);
         $('#certificado_reporte').attr('checked', true);
@@ -281,7 +281,7 @@ function enviar_certificado(procedencia, certificado_nro, plantilla){
     $('#form-download')[0].reset();
 }
 function descargar(){
-    my_toast('<i class="fas fa-check"></i>&nbsp Generando reporte si', 'blue darken-2', 3000);
+    my_toast('<i class="fas fa-check"></i>&nbsp Generando reporte', 'blue darken-2', 3000);
     $('#form-certificados').submit();
 }
 function descargar_info(certificado_nro, tipo_documento, rol){

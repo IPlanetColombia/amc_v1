@@ -22,7 +22,7 @@
                             <form id="form-download" action="<?= base_url(['certificado', 'download']) ?>" method="POST">
                                 <input id="certificado_reporte" type="checkbox" name="certificado_reporte[]" value="">
                                 <input id="certificado_preliminar" type="checkbox" name="certificado_preliminar[]" value="">
-                                <input id="validador" type="checkbox" name="validador" checked="checked"/>
+                                <input id="validador" type="checkbox" name="validador"/>
                             </form>
                             <div class="card-content card-detalle" style="display:none">
                                 <div class="content-info">

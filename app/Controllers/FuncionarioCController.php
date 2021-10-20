@@ -103,19 +103,44 @@ class FuncionarioCController extends BaseController
                     "margin_header" => 0,
                     "margin_footer" => 0
                 ]);
-                $salida = view('views_mpdf/preliminar',[
-                    'db' => $response['db'],
+                $tipo_mensajes = $form['frm_id_procedencia'] == 1 ? 2:1;
+                $parametros_view = [
+                    'aux_mensaje' => $response['aux_mensaje'],
                     'certificado' => $response['certificado'],
                     'cliente' => $response['cliente'],
                     'muestreo' => $response['muestreo'],
                     'aux_fecha_informe' => $response['aux_fecha_informe'],
-                    'aux_mensaje' => $response['aux_mensaje'],
                     'fecha_analisis' => $response['fecha_analisis'],
-                    'fila_detalle_para_tipo_muestreo' => $response['fila_detalle_para_tipo_muestreo'],
-                    'plantilla' => $form['frm_plantilla'],
-                    'form_entrada' => $form
-                ]);
-                $css  = file_get_contents('assets/css/styles-f.css');
+                    'detalle_para_tipo_muestreo' =>  $response['fila_detalle_para_tipo_muestreo'],
+                    'frm_plantilla' => $form['frm_plantilla'],
+                    'frm_form_valo' => $form['frm_form_valo'],
+                    'frm_mensaje_resultado' =>  $form['frm_mensaje_resultado'],
+                    'tipo_mensajes' => $tipo_mensajes,
+                    'frm_mensaje_firma' => $form['frm_mensaje_firma']
+                ];
+                if ($form['plantilla_validator'] == 1) {
+                    if(!empty($form['plantilla_nueva'])){
+                        $css  = file_get_contents('assets/css/styles.css');
+                        $salida = view('views_mpdf/cliente/plantilla',$parametros_view);
+                    }else{
+                        $salida = view('views_mpdf/preliminar',[
+                            'db' => $response['db'],
+                            'certificado' => $response['certificado'],
+                            'cliente' => $response['cliente'],
+                            'muestreo' => $response['muestreo'],
+                            'aux_fecha_informe' => $response['aux_fecha_informe'],
+                            'aux_mensaje' => $response['aux_mensaje'],
+                            'fecha_analisis' => $response['fecha_analisis'],
+                            'fila_detalle_para_tipo_muestreo' => $response['fila_detalle_para_tipo_muestreo'],
+                            'plantilla' => $form['frm_plantilla'],
+                            'form_entrada' => $form
+                        ]);
+                        $css  = file_get_contents('assets/css/styles-f.css');
+                    }
+                }else{
+                    $css  = file_get_contents('assets/css/styles.css');
+                    $salida = view('views_mpdf/cliente/plantilla',$parametros_view);
+                }
                 $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
                 $mpdf->WriteHTML($salida, \Mpdf\HTMLParserMode::HTML_BODY);
                 $this->response->setHeader('Content-Type', 'application/pdf');
@@ -368,10 +393,7 @@ class FuncionarioCController extends BaseController
             readfile($archivo);
             unlink($archivo);
         }else{
-            var_dump($this->request->getPost());
-            var_dump($certificados_preliminar);
-            var_dump($certificados_reporte);
-            // return redirect()->back();
+            return redirect()->back();
         }
             // return var_dump($certificados_reporte);
     }
