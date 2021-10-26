@@ -30,147 +30,143 @@ class FuncionarioController extends BaseController
 
     public function remision_empresa(){
         $validation = Services::validation();
-        $message = [
-                'frm_nit' => [
-                    'required'      => 'Campo obligatorio.',
-                    'max_length'    => 'La identificación no debe tener mas de 30 caracteres.',
-                    'is_unique'     => 'La identificación ya se encuentra registrada.'
-                ],
-                'frm_nombre_empresa' => [
-                    'required'      => 'Campo obligatorio.',
-                    'max_length'    => 'El nombre de la empresa no debe tener mas de 100 caracteres.',
-                    'is_unique'     => 'La empresa ya se encuentra registrada.'
-                ],
-                'username' => [
-                    'required'      => 'Campo obligatorio.',
-                    'max_length'    => 'El nombre de la empresa no debe tener mas de 100 caracteres.',
-                    'is_unique'     => 'El usuario ya se encuentra registrado.'
-                ],
-                'frm_correo' => [
-                    'required'  => 'Campo obligatorio.',
-                    'is_unique' => 'El correo ya se encuentra registrado.'
-                ],
-                'frm_contacto_cargo' => [
-                    'required' => 'Campo obligatorio.'
-                ],
-                'frm_contacto_nombre'      => [
-                    'required'      => 'Campo obligatorio.',
-                    'max_length'    => 'El nombre del contacto no debe tener mas de 100 caracteres.'
-                ],
-                'frm_telefono' => [
-                    'required'      => 'Campo obligatorio.',
-                    'max_length'    => 'El telefono no debe tener mas de 20 caracteres.'
-                ]
-            ];
+        $message = arreglo_validacion();
         $rules = [
                 'frm_nombre_empresa'    => 'required|max_length[30]|is_unique[usuario.name]',
                 'frm_contacto_cargo'    => 'required',
                 'frm_contacto_nombre'   => 'required|max_length[100]',
                 'frm_telefono'          => 'required|max_length[20]',
             ];
-        $empresa = $this->request->getPost('frm_nombre_empresa');
         $buscar = $this->request->getPost('buscar');
-        $empresa_nueva = $this->request->getPost('empresa_nueva');
-        if($buscar == 1){
-            $data = new Cliente();
-            $empresas = $data->like('name', $empresa)->select('name')->orderBy('name', 'ASC')->get()->getResult();
-            $data = array();
-            foreach($empresas as $key => $empresa){
-                $data[$empresas[$key]->name] = null;
-            }
-            return json_encode($data);
-        }else if($buscar == 2){
-            $data = new Cliente();
-            $empresas = $data->where(['name' => $empresa])->get()->getResult();
-            if( empty($empresas[0]) ){
-                return json_encode(['validation' => true, 'empresa' => $empresa]);
-            }
-            $empresas[0]->password = null;
-            return json_encode($empresas[0]);
-        }else if($empresa_nueva == 0){ // Creamos empresa
-            $rules['frm_nit'] = 'required|max_length[30]|is_unique[usuario.id]';
-            $rules['username']  = 'required|max_length[30]|is_unique[usuario.username]';
-            $rules['frm_correo']     = 'required|valid_email|is_unique[usuario.email]|max_length[100]';
-            if ($this->validate($rules, $message)){
-                $data = [
-                    'id' => $this->request->getPost('frm_nit'),
-                    'name' => $this->request->getPost('frm_nombre_empresa'),
-                    'username' => $this->request->getPost('username'),
-                    'email' => $this->request->getPost('frm_correo'),
-                    'password' => md5( $this->request->getPost('frm_nit') ),
-                    'usertype' => 'Registered',
-                    'block' => 1,
-                    'registerDate' => date('Y-m-d H:i:s'),
-                    'lastvisitDate' => date('Y-m-d H:i:s'),
-                    'use_cargo' => $this->request->getPost('frm_contacto_cargo'),
-                    'use_nombre_encargado' => $this->request->getPost('frm_contacto_nombre'),
-                    'use_telefono' => $this->request->getPost('frm_telefono'),
-                    'use_fax' => $this->request->getPost('frm_fax'),
-                    'use_direccion' => $this->request->getPost('frm_direccion'),
-                    'pyme' => 'No'
-                ];
-                $cliente = new Cliente();
-                $cliente->insert($data);
-                return json_encode(['success' => 'Empresa creada con exito']);
-            } else {
-                return json_encode($validation->getErrors());
-            }
-        }else if($empresa_nueva == 1){ //Editamos empresa
-            $id = $this->request->getPost('frm_nombre_empresa2');
-            $rules['frm_nit']       = 'required|max_length[100]|is_unique[usuario.id, id, '.$id.']';
-            $rules['frm_nombre_empresa2']       = 'required|max_length[100]|is_unique[usuario.id, id, '.$id.']';
-            $rules['frm_nombre_empresa']   = 'required|max_length[100]|is_unique[usuario.name, id, '.$id.']';
-            $rules['frm_correo']     = 'max_length[100]|required|is_unique[usuario.email, id, '.$id.']';
-            if ($this->validate($rules, $message)){
-                $data = [
-                    'name' => $this->request->getPost('frm_nombre_empresa'),
-                    'email' => $this->request->getPost('frm_correo'),
-                    'use_cargo' => $this->request->getPost('frm_contacto_cargo'),
-                    'use_nombre_encargado' => $this->request->getPost('frm_contacto_nombre'),
-                    'use_telefono' => $this->request->getPost('frm_telefono'),
-                    'use_fax' => $this->request->getPost('frm_fax'),
-                    'use_direccion' => $this->request->getPost('frm_direccion'),
-                ];
-                $cliente = new Cliente();
-                $cliente
-                    ->set($data)
-                    ->where(['id' => $id])
-                    ->update();
-                return json_encode(['success' => 'Empresa actualizada con exito']);
-            } else {
-                return json_encode($validation->getErrors());
-            }
+        switch($buscar){
+            case 1:
+                $empresa = $this->request->getPost('frm_nombre_empresa');
+                $data = new Cliente();
+                $empresas = $data->like('name', $empresa)->select('name')->orderBy('name', 'ASC')->get()->getResult();
+                $data = array();
+                foreach($empresas as $key => $empresa){
+                    $data[$empresas[$key]->name] = null;
+                }
+                $return = $data;
+                break;
+            case 2:
+                $empresa = $this->request->getPost('frm_nombre_empresa');
+                $data = new Cliente();
+                $empresas = $data->where(['name' => $empresa])->get()->getResult();
+                if( empty($empresas[0]) ){
+                    return json_encode(['validation' => true, 'empresa' => $empresa]);
+                }
+                $empresas[0]->password = null;
+                $return = $empresas[0];
+                break;
         }
+        $empresa_nueva = $this->request->getPost('empresa_nueva');
+        switch($empresa_nueva){
+            case '0':
+                $rules['frm_nit'] = 'required|max_length[12]|is_unique[usuario.id]';
+                $rules['username']  = 'required|max_length[30]|is_unique[usuario.username]';
+                $rules['frm_correo']     = 'required|valid_email|is_unique[usuario.email]|max_length[100]';
+                if ($this->validate($rules, $message)){
+                    $form = $this->request->getPost();
+                    $data = [
+                        'id' => $form['frm_nit'],
+                        'name' => $form['frm_nombre_empresa'],
+                        'username' => $form['username'],
+                        'email' => $form['frm_correo'],
+                        'password' => md5( $form['frm_nit'] ),
+                        'usertype' => 'Registered',
+                        'block' => 1,
+                        'registerDate' => date('Y-m-d H:i:s'),
+                        'lastvisitDate' => date('Y-m-d H:i:s'),
+                        'use_cargo' => $form['frm_contacto_cargo'],
+                        'use_nombre_encargado' => $form['frm_contacto_nombre'],
+                        'use_telefono' => $form['frm_telefono'],
+                        'use_fax' => $form['frm_fax'],
+                        'use_direccion' => $form['frm_direccion'],
+                        'pyme' => 'No'
+                    ];
+                    $cliente = new Cliente();
+                    $cliente->insert($data);
+                    $cliente = $cliente->where(['id' => $form['frm_nit']])->get()->getResult();
+                    $return = [
+                        'id' => $form['frm_nit'],
+                        'procedencia' => 0,
+                        'success' => 'Empresa creada con exito'
+                    ];
+                }else {
+                    $return = $validation->getErrors();
+                }
+                break;
+            case '1':
+                $id = $this->request->getPost('frm_nombre_empresa2');
+                $rules['frm_nit']       = 'required|max_length[12]|is_unique[usuario.id, id, '.$id.']';
+                $rules['frm_nombre_empresa2']       = 'required|max_length[100]|is_unique[usuario.id, id, '.$id.']';
+                $rules['frm_nombre_empresa']   = 'required|max_length[100]|is_unique[usuario.name, id, '.$id.']';
+                $rules['frm_correo']     = 'max_length[100]|required|is_unique[usuario.email, id, '.$id.']';
+                if ($this->validate($rules, $message)){
+                    $data = [
+                        'name' => $this->request->getPost('frm_nombre_empresa'),
+                        'email' => $this->request->getPost('frm_correo'),
+                        'use_cargo' => $this->request->getPost('frm_contacto_cargo'),
+                        'use_nombre_encargado' => $this->request->getPost('frm_contacto_nombre'),
+                        'use_telefono' => $this->request->getPost('frm_telefono'),
+                        'use_fax' => $this->request->getPost('frm_fax'),
+                        'use_direccion' => $this->request->getPost('frm_direccion'),
+                    ];
+                    $cliente = new Cliente();
+                    $cliente
+                        ->set($data)
+                        ->where(['id' => $id])
+                        ->update();
+                    $cliente = $cliente->where(['id' => $id])->get()->getResult();
+                    $return = [
+                        'cliente' => $cliente,
+                        'procedencia' => 1,
+                        'success' => 'Empresa actualizada con exito'
+                    ];
+                } else {
+                    $return = $validation->getErrors();
+                }
+                break;
+        }
+        return json_encode($return);
     }
 
     public function remision_muestra(){
-        $producto = $this->request->getPost('frm_producto');
         $buscar = $this->request->getPost('buscar');
-        if($buscar == 1){
-            $tabla = new Producto();
-            $productos = $tabla->like('pro_nombre', $producto)->select('pro_nombre')->get()->getResult();
-            $data = [];
-            foreach($productos as $key => $producto){
-                $data[$producto->pro_nombre] = null;
-            }
-            return json_encode($data);
-        }else if($buscar == 2){
-            $data = muestra_tabla($producto);
-            return json_encode($data);
-        }else if($buscar == 3){
-            $forms = $this->request->getPost();
-            $data = detalles_tabla($forms);
-            return json_encode($data);
-        }else if($buscar == 4){
-            $forms = $this->request->getPost();
-            $accion = $this->request->getPost('accion');
-            $data = guardar_remision($forms, $accion);
-            return json_encode($data);
-        }else if($buscar == 5){
-            $certificado = $this->request->getPost('id_certificacion');
-            $data = delete_detail_list($certificado);
-            return json_encode($data);
+        switch($buscar){
+            case 1:
+                $producto = $this->request->getPost('frm_producto');
+                $tabla = new Producto();
+                $productos = $tabla->like('pro_nombre', $producto)->select('pro_nombre')->get()->getResult();
+                $data = [];
+                foreach($productos as $key => $producto){
+                    $data[$producto->pro_nombre] = null;
+                }
+                $return = $data;
+                break;
+            case 2:
+                $producto = $this->request->getPost('frm_producto');
+                $return = muestra_tabla($producto);
+                break;
+            case 3:
+                $forms = $this->request->getPost();
+                $return = detalles_tabla($forms);
+                break;
+            case 4:
+                $forms = $this->request->getPost();
+                $accion = $this->request->getPost('accion');
+                $return = guardar_remision($forms, $accion);
+                break;
+            case 5:
+                $certificado = $this->request->getPost('id_certificacion');
+                $return = delete_detail_list($certificado);
+                break;
+            default:
+                return var_dump($this->request->getPost());
+                break;
         }
+        return json_encode($return);
     }
 
     public function remision_ticket($id_certificacion){
@@ -233,77 +229,88 @@ class FuncionarioController extends BaseController
         $buscar = $this->request->getPost('buscar');
         $certificado = $this->request->getPost('frm_certificados_editar');
         $certificado = procesar_registro_fetch('certificacion', 'certificado_nro', $certificado);
-        if($buscar == 0){
-            if(empty($certificado[0]))
-                return json_encode(['result' => false]);
-            else{
-                $certificado = $certificado[0];
-                $muestra = procesar_registro_fetch('muestreo', 'id_muestreo', $certificado->id_muestreo);
-                $cliente = procesar_registro_fetch('usuario', 'id', $muestra[0]->id_cliente);
-                $cliente[0]->fecha = date('Y-m-d', strtotime($muestra[0]->mue_fecha_muestreo));
-                $cliente[0]->hora = date('H:i:s', strtotime($muestra[0]->mue_fecha_muestreo));
-                $tabla = imprime_detalle_muestras($muestra[0]->id_muestreo, 1);
-                $conceptos = mensaje_resultado($certificado->certificado_nro);
-                return json_encode([
-                    'result'            =>  true,
-                    'certificado'       =>  $certificado,
-                    'muestra'           =>  $muestra[0],
-                    'cliente'           =>  $cliente[0],
-                    'tabla'             =>  $tabla,
-                    'conceptos'         =>  $conceptos,
-                ]);
-            }
-        }else if($buscar == 1){ //Editamos empresa
-            $id_cliente = $this->request->getPost('frm_nit');
-            $id_muestreo = $this->request->getPost('frm_id_muestra');
-            if(empty($id_cliente)){
-                return json_encode(['vacio' => true, 'mensaje' => 'No se a seleccionado la empresa.']);
-            }
-            if(empty($id_muestreo)){
-                return json_encode(['vacio' => true, 'mensaje' => 'No se ha seleccionado el certificado']);
-            }
-            $muestra = new Muestreo();
-            $muestra->set(['id_cliente' => $id_cliente])
-                ->where(['id_muestreo' => $id_muestreo])
-                ->update();
-            $cliente = new Cliente();
-            $data = [
-                'use_cargo'             => $this->request->getPost('frm_contacto_cargo'),
-                'use_nombre_encargado'  => $this->request->getPost('frm_contacto_nombre'),
-                'use_telefono'          => $this->request->getPost('frm_telefono'),
-                'use_fax'               => $this->request->getPost('frm_fax'),
-                'use_direccion'         => $this->request->getPost('frm_direccion'),
-            ];
-            $cliente->set($data)->where(['id' => $id_cliente])->update();
-            return json_encode(['success' => true]);
-        }else if($buscar == 2){ //Buscar detalle
-            $idMuestraDetalle = $this->request->getPost('id_muestra_detalle');
-            $detalle = procesar_registro_fetch('muestreo_detalle', 'id_muestra_detalle', $idMuestraDetalle);
-            $producto = procesar_registro_fetch('producto', 'id_producto', $detalle[0]->id_producto);
-            $tabla = muestra_tabla($producto[0]->pro_nombre, $idMuestraDetalle);
-            return json_encode([
-                'detalle'   => $detalle[0],
-                'producto'  => $producto[0],
-                'tabla'     => $tabla,
-            ]);
-        }else if($buscar == 3){
-            $forms = $this->request->getPost();
-            $idMuestraDetalle = $this->request->getPost('id_muestra_detalle');
-            $data = detalles_tabla($forms, $idMuestraDetalle);
-            return json_encode($data);
-        }else if($buscar == 4){
-            $producto = $this->request->getPost('frm_producto');
-            $idMuestraDetalle = $this->request->getPost('id_muestra_detalle');
-            $data = muestra_tabla($producto, $idMuestraDetalle);
-            return json_encode($data);
-        }else if($buscar == 5){
-            $data = [
-                'id_mensaje_resultado' => $this->request->getPost('frm_mensaje_resultado'),
-                'id_mensaje_comentario' => $this->request->getPost('frm_mensaje_observacion'),
-            ];
-            $id = $this->request->getPost('frm_id_certificado');
-            $db->table('certificacion_vs_mensaje')->set($data)->where(['id_certificacion' => $id])->update();
-            return json_encode('Mensaje actualizado.');
+        switch($buscar){
+            case 0:
+                if(empty($certificado[0]))
+                    $return = ['result' => false];
+                else{
+                    $certificado = $certificado[0];
+                    $muestra = procesar_registro_fetch('muestreo', 'id_muestreo', $certificado->id_muestreo);
+                    $cliente = procesar_registro_fetch('usuario', 'id', $muestra[0]->id_cliente);
+                    $cliente[0]->fecha = date('Y-m-d', strtotime($muestra[0]->mue_fecha_muestreo));
+                    $cliente[0]->hora = date('H:i:s', strtotime($muestra[0]->mue_fecha_muestreo));
+                    $tabla = imprime_detalle_muestras($muestra[0]->id_muestreo, 1);
+                    $conceptos = mensaje_resultado($certificado->certificado_nro);
+                    $return = [
+                        'result'            =>  true,
+                        'certificado'       =>  $certificado,
+                        'muestra'           =>  $muestra[0],
+                        'cliente'           =>  $cliente[0],
+                        'tabla'             =>  $tabla,
+                        'conceptos'         =>  $conceptos,
+                    ];
+                }
+                break;
+            case 1:
+                $id_cliente = $this->request->getPost('frm_nit');
+                $id_muestreo = $this->request->getPost('frm_id_muestra');
+                if(empty($id_cliente)){
+                    $return = ['vacio' => true, 'mensaje' => 'No se a seleccionado la empresa.'];
+                }
+                if(empty($id_muestreo)){
+                    $return = ['vacio' => true, 'mensaje' => 'No se ha seleccionado el certificado'];
+                }
+                $muestra = new Muestreo();
+                $muestra->set(['id_cliente' => $id_cliente])
+                    ->where(['id_muestreo' => $id_muestreo])
+                    ->update();
+                $cliente = new Cliente();
+                $data = [
+                    'use_cargo'             => $this->request->getPost('frm_contacto_cargo'),
+                    'use_nombre_encargado'  => $this->request->getPost('frm_contacto_nombre'),
+                    'use_telefono'          => $this->request->getPost('frm_telefono'),
+                    'use_fax'               => $this->request->getPost('frm_fax'),
+                    'use_direccion'         => $this->request->getPost('frm_direccion'),
+                ];
+                $cliente->set($data)->where(['id' => $id_cliente])->update();
+                $return = ['success' => true];
+                break;
+            case 2:
+                $idMuestraDetalle = $this->request->getPost('id_muestra_detalle');
+                $detalle = procesar_registro_fetch('muestreo_detalle', 'id_muestra_detalle', $idMuestraDetalle);
+                $producto = procesar_registro_fetch('producto', 'id_producto', $detalle[0]->id_producto);
+                $tabla = muestra_tabla($producto[0]->pro_nombre, $idMuestraDetalle);
+                $return =  [
+                    'detalle'   => $detalle[0],
+                    'producto'  => $producto[0],
+                    'tabla'     => $tabla,
+                ];
+                break;
+            case 3:
+                $forms = $this->request->getPost();
+                $idMuestraDetalle = $this->request->getPost('id_muestra_detalle');
+                $data = detalles_tabla($forms, $idMuestraDetalle);
+                $return = $data;
+                break;
+            case 4:
+                $producto = $this->request->getPost('frm_producto');
+                $idMuestraDetalle = $this->request->getPost('id_muestra_detalle');
+                $data = muestra_tabla($producto, $idMuestraDetalle);
+                $return = $data;
+                break;
+            case 5:
+                $data = [
+                    'id_mensaje_resultado' => $this->request->getPost('frm_mensaje_resultado'),
+                    'id_mensaje_comentario' => $this->request->getPost('frm_mensaje_observacion'),
+                ];
+                $id = $this->request->getPost('frm_id_certificado');
+                $db->table('certificacion_vs_mensaje')->set($data)->where(['id_certificacion' => $id])->update();
+                $return = 'Mensaje actualizado.';
+                break;
+            default:
+                return 'var_dump($this->request->getPost())';
+                break;
         }
+        return json_encode($return);
     }
 }

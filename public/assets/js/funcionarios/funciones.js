@@ -1,5 +1,5 @@
 function my_toast(html, clase, duracion, error=false){
-	if(error || html.includes('check'))
+	if(error || html.includes('check') || clase.includes('amber'))
 		M.Toast.dismissAll();
 	M.toast({
 	 	html: html,
@@ -23,19 +23,21 @@ function buscar_cliente(remision = 0){
 		my_toast('Nombre de la empresa vacio', 'red darken-2', 3000);
 	}else{
 		setTimeout(function(){
-			var data = "frm_nombre_empresa="+$('#frm_nombre_empresa').val()+"&buscar=2";
+			var data = new URLSearchParams({
+                frm_nombre_empresa: $('#frm_nombre_empresa').val(),
+                buscar: 2,
+            });
 			var form = $('#frm_form');
 			var url = form.attr('action');
-			$('#click').val(0);
 			my_toast('<i class="fas fa-spinner fa-spin"></i>&nbsp&nbsp Buscando empresa', 'blue-grey darken-2', 30000);
-			var promesa = proceso_fetch(url, data);
+			var promesa = proceso_fetch(url, data.toString());
 			promesa.then(empresa => {
 				if(empresa.validation){
 					formateo_forms(form[0]);
 					$('#frm_nombre_empresa').val(empresa.empresa);
 					M.updateTextFields();
 					if(remision == 0){
-						my_toast('<i class="fas fa-times"></i>&nbsp&nbsp No se encontro empresa', 'amber darken-2', 3000);
+						my_toast('<i class="fas fa-times"></i>&nbsp No se encontro empresa', 'amber darken-2', 3000);
 					}else{
 						$('#frm_nit').prop('readonly', false);
 				 		$('.input-field.nit').removeClass('l6');
@@ -50,7 +52,7 @@ function buscar_cliente(remision = 0){
 				 		}
 				 		$('#username').focus();
 				 		$('input#empresa_nueva').val(0);
-						my_toast('<i class="fas fa-user-times"></i>&nbsp&nbsp Empresa sin registrar', 'amber darken-2', 3000);
+						my_toast('<i class="fad fa-user-times"></i>&nbsp Empresa sin registrar', 'amber darken-2', 3000);
 					}
 				}else{
 					$('.input-field.username').remove();
@@ -63,7 +65,7 @@ function buscar_cliente(remision = 0){
 					my_toast('<i class="fas fa-user-check"></i>&nbsp&nbsp Empresa cargada', 'blue darken-2', 3000);
 				}
 			});
-		}, 500);
+		}, 1000);
 	}
 }
 function completar_empresa(empresa){
@@ -86,6 +88,30 @@ function completar_empresa(empresa){
  	M.updateTextFields();
 }
 
+
+// Productos
+function producto_blur(buscar){
+	my_toast('<i class="fas fa-spinner fa-spin"></i>&nbsp&nbsp Buscando producto', 'blue-grey darken-2', 30000);
+	setTimeout(function(){
+		var form = $('#frm_form_muestra');
+		if(buscar == 4)
+			var url = $('#myform').attr('action');
+		else
+			var url = form.attr('action');
+		var data = new URLSearchParams(form.serialize());
+		data.set('buscar', buscar);
+		result = proceso_fetch(url, data.toString());
+		result.then(tabla => {
+		 	if(tabla === ''){
+		 		my_toast('<i class="fas fa-times"></i>&nbsp No se encontro producto', 'amber darken-2', 3000);
+		 		return null;
+		 	}
+		 	my_toast('<i class="fas fa-check"></i>&nbsp Tabla de producto cargada', 'blue darken-2', 3000);
+		 	$('.lista_parametros').remove();
+		 	$('#frm_form_muestra .row.finish').after(tabla);
+		});
+	}, 1000)
+};
 function tabla_detalles_muestras(tabla){
 	$('#campo_detalle_muestras_basic').hide();
  	$('#campo_detalle_muestras').remove();
@@ -149,10 +175,11 @@ function js_enviar_agregar_a_detalle(url, create=0){
 	var frm_form 			= $('#frm_form').serialize();
 	var frm_form_muestra 	= $('#frm_form_muestra').serialize();
 	var frm_form_pie 		= $('#frm_form_pie').serialize();
+	// var data = new URLSearchParams(frm_form.serialize(),frm_form_muestra.serialize(),frm_form_pie.serialize());
+	// data.set('buscar', 3);
 	var data = frm_form+'&'+frm_form_muestra+'&'+frm_form_pie+'&buscar=3';
 	var result = proceso_fetch(url, data);
 	result.then(tabla => {
-		M.Toast.dismissAll();
 	 	$('#campo_detalle_muestras_basic').hide();
 	 	$('#campo_detalle_muestras').remove();
 	 	$('#tabla_detalles_muestras').after(tabla.tabla);
@@ -197,6 +224,7 @@ function btn_remision_guardar(){
 		$('#frm_id_remision').val(0);
 		$('.centrar_button.btn_remision').remove();
 		$('.tooltipped').tooltip();
+		$('.lista_parametros').remove();
 	});
 };
 function formateo_forms(frm_form=0, frm_form_muestra=0, frm_form_pie=0){
@@ -208,26 +236,7 @@ function formateo_forms(frm_form=0, frm_form_muestra=0, frm_form_pie=0){
 		frm_form_pie.reset();
 	M.updateTextFields();
 }
-function producto_blur(buscar){
-	// $('#frm_producto').next().focus();
-	setTimeout(function(){
-		var producto = $('#frm_producto').val();
-		var form = $('#frm_form_muestra');
-		if(buscar == 4)
-			var url = $('#myform').attr('action');
-		else
-			var url = form.attr('action');
-		var data = form.serialize();
-		data += "&buscar="+buscar;
-		result = proceso_fetch(url, data);
-		result.then(tabla => {
-		 	if(tabla === '')
-		 		return null;
-		 	$('.tabla-productos').remove();
-		 	$('#frm_form_muestra .row.finish').after(tabla);
-		});
-	}, 500)
-};
+
 function quitar_detalle(certificado, producto, codigo){
 	Swal.fire({
 		position: 'top-end',

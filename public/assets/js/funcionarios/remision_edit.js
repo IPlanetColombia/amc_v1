@@ -90,8 +90,11 @@ $(document).ready(function(){
 		var url = form.attr('action');
 		var tecla = e.which;
 		if(empresa != "" && tecla != 37 && tecla != 38 && tecla != 39 && tecla != 40){
-			var data = "frm_nombre_empresa="+empresa+"&buscar=1";
-			var resultado = proceso_fetch(url, data);
+			var data = new URLSearchParams({
+                frm_nombre_empresa: empresa,
+                buscar: 1,
+            });
+			var resultado = proceso_fetch(url, data.toString());
 			resultado.then(lista => {
 				$('.autocomplete.frm_nombre_empresa').autocomplete('updateData',lista);
 			 	$('.autocomplete.frm_nombre_empresa').autocomplete('open');
@@ -112,7 +115,7 @@ $(document).ready(function(){
 				$('input#'+id).addClass('invalid');
 			});
 		},
-		submitHandler: function(){
+		submitHandler: function(form){
 			var mensaje = '';
 			var select = true;
 			if($('#frm_analisis').val() == ''){
@@ -140,7 +143,7 @@ $(document).ready(function(){
 				boton.prop('disabled', true);
 				boton.addClass('blue-grey darken-3');
 				boton.removeClass('gradient-45deg-purple-deep-orange');
-				my_toast('<i class="fas fa-spinner fa-spin"></i>&nbsp&nbsp Editando detalle','blue-grey darken-2',300000);
+				my_toast('<i class="fas fa-spinner fa-spin"></i>&nbsp&nbsp Editando detalle','blue-grey darken-2',3000);
 				js_enviar_agregar_a_detalle($('#myform').attr('action'));
 			}
 		}
@@ -151,8 +154,11 @@ $(document).ready(function(){
 		var url = form.attr('action');
 		var tecla = e.which;
 		if(producto != "" && tecla != 37 && tecla != 38 && tecla != 39 && tecla != 40){
-			var data = "frm_producto="+producto+"&buscar=1";
-			result = proceso_fetch(url, data);
+			var data = new URLSearchParams({
+                frm_producto: producto,
+                buscar: 1,
+            });
+			result = proceso_fetch(url, data.toString());
 			result.then(lista => {
 				$('.autocomplete.frm_producto').autocomplete('updateData', lista);
 				$('.autocomplete.frm_producto').autocomplete('open');

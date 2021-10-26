@@ -22,7 +22,6 @@
                         <form action="<?= base_url(['funcionario','remisiones','empresa']) ?>" method="POST" id="frm_form" autocomplete="off">
                             <input type='hidden' name='frm_nombre_empresa2' id='frm_nombre_empresa2' class='required'/>
                             <input type="hidden" name="empresa_nueva" id="empresa_nueva" value="1">
-                            <input type="hidden" id="click" value="0">
                             <div class="row empresa_row">
                                 <div class="col s12">
                                     <div class="row">
@@ -277,12 +276,11 @@
 <?= view('layouts/footer') ?>
 <script src="<?= base_url() ?>/assets/js/funcionarios/funciones.js"></script>
 <script src="<?= base_url() ?>/assets/js/funcionarios/remision.js"></script>
-<?php if (isset($muestreo_verifica[0])): ?>
+<?php if (!empty($muestreo_verifica[0])): ?>
     <?php $fila_cliente_verifica = procesar_registro_fetch('usuario', 'id', $muestreo_verifica[0]->id_cliente); ?>
     <script type="text/javascript">
         my_toast('<p><i class="fas fa-tasks"></i>&nbsp Remición en proceso. (Cargando datos)</p>','light-blue darken-2',5000);
         setTimeout(function(){
-            // M.Toast.dismissAll();
             $('#frm_nombre_empresa').val("<?= $fila_cliente_verifica[0]->name ?>");
             buscar_cliente();
             $('#frm_fecha_muestra').val("<?= date('Y/m/d', strtotime($muestreo_verifica[0]->mue_fecha_muestreo)) ?>");
@@ -296,6 +294,6 @@
             $('#campo_detalle_muestras_basic').hide();
             $('#tabla_detalles_muestras').after(tabla.tabla);
             $('.row.boton_guardar_remision').append(tabla.boton);
-        }, 1000);
+        }, 2000);
     </script>
 <?php endif ?>

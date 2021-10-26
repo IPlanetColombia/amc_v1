@@ -11,12 +11,15 @@ $(document).ready(function(){
 		var url = form.attr('action');
 		var tecla = e.which;
 		if(empresa != "" && tecla != 37 && tecla != 38 && tecla != 39 && tecla != 40){
-			var data = "frm_nombre_empresa="+empresa+"&buscar=1";
-			var result = proceso_fetch(url, data);
+			var data = new URLSearchParams({
+                frm_nombre_empresa: empresa,
+                buscar: 1,
+            });
+			var result = proceso_fetch(url, data.toString());
 			result.then(lista => {
 				$('.autocomplete.frm_nombre_empresa').autocomplete('updateData',lista);
 			 	$('.autocomplete.frm_nombre_empresa').autocomplete('open');
-			 });
+			});
 		}
 	});
 	$('#frm_nombre_empresa').blur(function(){buscar_cliente(1)});
@@ -31,14 +34,18 @@ $(document).ready(function(){
 			boton_empresa.html('Guardando empresa <i class="fas fa-spinner fa-spin"></i>');
 			var result = proceso_fetch(url, data);
 			result.then(result => {
+			 	$('.empresa_row small').html('');
 			 	if(result.success){
 			 		$(".empresa_row .frm_hora_muestra label").addClass('active');
-			 		$('.empresa_row small').html('');
 			 		Swal.fire({
 						position: 'top-end',
 					  	icon: 'success',
 					  	text: result.success,
 					});
+					if(result.procedencia == 0){
+						$('input#empresa_nueva').val(1);
+						$('#frm_nombre_empresa2').val(result.id);
+					}
 			 	}else{
 			 		var mensajes = Object.entries(result);
 			 		mensajes.forEach(([key, value])=> {
@@ -60,8 +67,11 @@ $(document).ready(function(){
 		var url = form.attr('action');
 		var tecla = e.which;
 		if(producto != "" && tecla != 37 && tecla != 38 && tecla != 39 && tecla != 40){
-			var data = "frm_producto="+producto+"&buscar=1";
-			result = proceso_fetch(url, data);
+			var data = new URLSearchParams({
+                frm_producto: producto,
+                buscar: 1,
+            });
+			result = proceso_fetch(url, data.toString());
 			result.then(lista => {
 				$('.autocomplete.frm_producto').autocomplete('updateData', lista);
 				$('.autocomplete.frm_producto').autocomplete('open');
@@ -111,7 +121,7 @@ $(document).ready(function(){
 				boton.prop('disabled', true);
 				boton.addClass('blue-grey darken-3');
 				boton.removeClass('gradient-45deg-purple-deep-orange');
-				my_toast('<i class="fas fa-spinner fa-spin"></i>&nbsp&nbsp Agregando detalle', 'blue-grey darken-2', 30000);
+				my_toast('<i class="fas fa-spinner fa-spin"></i>&nbsp Agregando detalle', 'blue-grey darken-2', 30000);
 				js_enviar_agregar_a_detalle($('#frm_form_muestra').attr('action'), 1);
 			}
 		}

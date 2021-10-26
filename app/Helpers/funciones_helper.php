@@ -69,8 +69,6 @@ use App\Models\MuestreoDetalle;
 	        }
 	        return $aux_l;  
 	    }
-	    
-	    
 	}
 	function calcula_mh($valor){
 	    $porciones = explode(";", $valor);
@@ -166,6 +164,8 @@ use App\Models\MuestreoDetalle;
 		$certificados = new Certificacion();
 		$certificados = $certificados->where(['id_muestreo' => $id_muestreo])->get()->getResult();
 		$tabla = 	'<div id="campo_detalle_muestras">
+						<small>Muestra #'.$id_muestreo.' </small>
+						<hr>
 		                <table class="striped centered">
 		                    <thead>
 		                        <tr>

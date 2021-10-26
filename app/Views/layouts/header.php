@@ -36,6 +36,11 @@
     <link rel="stylesheet" href="<?= base_url() ?>/grocery-crud/css/bootstrap/bootstrap.css">
     <link rel="stylesheet" href="<?= base_url() ?>/assets/css/iplanet.css">
     <script src="<?= base_url() ?>/assets/ckeditor/ckeditor.js"></script>
+    <script>
+      setTimeout(function(){
+        document.body.style.cursor = 'wait';
+      }, 500)
+    </script>
 
 </head>
 <body class="vertical-layout page-header-light vertical-menu-collapsible vertical-dark-menu preload-transitions 2-columns   "

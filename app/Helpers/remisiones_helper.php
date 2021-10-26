@@ -16,9 +16,12 @@ use App\Models\MuestreoDetalle;
 			if(!empty($producto_like)){
 				return '';
 			}
-			return '	<div class="tabla-productos">
-							<h1 class="text-center">Norma no encontrada<h1>
-						</div class="tabla-productos">';
+			return '	
+						<div class="lista_parametros">
+							<div class="tabla-productos">
+								<h3 class="text-center">Norma no encontrada<h3>
+							</div class="tabla-productos">
+						</div>';
 		}
 		$tabla = '
 			<div class="lista_parametros">
@@ -434,4 +437,40 @@ use App\Models\MuestreoDetalle;
 			'fecha' 	=> date('Y-m-d'),
 			'hora' 		=> date('H:i:s')
 		];
+	}
+
+	function arreglo_validacion(){
+		$arreglo = [
+                	'frm_nit' => [
+                    'required'      => 'Campo obligatorio.',
+                    'max_length'    => 'La identificación no debe tener mas de 12 caracteres.',
+                    'is_unique'     => 'La identificación ya se encuentra registrada.'
+                ],
+                'frm_nombre_empresa' => [
+                    'required'      => 'Campo obligatorio.',
+                    'max_length'    => 'El nombre de la empresa no debe tener mas de 100 caracteres.',
+                    'is_unique'     => 'La empresa ya se encuentra registrada.'
+                ],
+                'username' => [
+                    'required'      => 'Campo obligatorio.',
+                    'max_length'    => 'El nombre de la empresa no debe tener mas de 100 caracteres.',
+                    'is_unique'     => 'El usuario ya se encuentra registrado.'
+                ],
+                'frm_correo' => [
+                    'required'  => 'Campo obligatorio.',
+                    'is_unique' => 'El correo ya se encuentra registrado.'
+                ],
+                'frm_contacto_cargo' => [
+                    'required' => 'Campo obligatorio.'
+                ],
+                'frm_contacto_nombre'      => [
+                    'required'      => 'Campo obligatorio.',
+                    'max_length'    => 'El nombre del contacto no debe tener mas de 100 caracteres.'
+                ],
+                'frm_telefono' => [
+                    'required'      => 'Campo obligatorio.',
+                    'max_length'    => 'El telefono no debe tener mas de 20 caracteres.'
+                ]
+            ];
+		return $arreglo;
 	}
