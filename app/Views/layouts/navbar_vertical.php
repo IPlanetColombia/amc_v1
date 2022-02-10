@@ -1,6 +1,6 @@
 <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-light navbar-full sidenav-active-rounded">
     <div class="brand-sidebar color_secundario_plantilla">
-        <h1 class="logo-wrapper"><a class="brand-logo darken-1" href="/amc-laboratorio/home" style="vertical-align: center;">
+        <h1 class="logo-wrapper"><a class="brand-logo darken-1" href="<?= base_url() ?>/amc-laboratorio/home" style="vertical-align: center;">
                 <i class="material-icons"><?= isset(configInfo()['icon_app']) ? configInfo()['icon_app'] : '' ?> </i>
                 <span class="logo-text hide-on-med-and-down"
                       style="padding-top: 10px !important; display: block; "><?= isset(configInfo()['name_app']) ? configInfo()['name_app'] : 'IPLANET' ?></span></a><a
@@ -16,7 +16,7 @@
                 <div class="background" style="margin:0px;">
                 <img src="<?= isset(configInfo()['background_img_vertical']) ||  !empty(configInfo()['background_img_vertical'])? base_url().'/assets/img/'.configInfo()['background_img_vertical']: base_url().'/assets/img/logo_background.jpeg' ; ?>" style="width: 100%;">
                 </div>
-                <a href="#" style="margin-right: 0px;"><img class="circle"  style="width: 50px; height:50px;" src="<?= session('user') && session('user')->photo ? base_url().'/assets/upload/images/'.session('user')->photo : base_url().'/assets/img/'.'user.png' ?>"></a>
+                <a href="#" style="margin-right: 0px;"><img class="circle"  style="width: 50px; height:50px;" src="<?= session('user') && session('user')->usr_foto ? base_url().'/assets/img/funcionarios/'.session('user')->usr_foto : base_url().'/assets/img/user.png' ?>"></a>
 
                 <a href="#" style="margin-right: 0px;">
                     <small class="black-text name" style=" font-size: 12px !important; text-shadow: 0 0 1px #000;">

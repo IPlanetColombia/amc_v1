@@ -4,7 +4,8 @@
 namespace App\Controllers;
 
 
-use App\Models\User;
+use App\Models\Cliente;
+use App\Models\Funcionario;
 use Config\Services;
 
 
@@ -19,8 +20,7 @@ class UserController extends BaseController
         //     ->where('users.id', session('user')->id)
         //     ->get()->getResult()[0];
         $data = session('user');
-
-        return view('users/perfile',[ 'data' => $data, 'validation' => $validation]);
+        return view('users/perfile',['data' => $data, 'validation' => $validation]);
     }
 
     public function updateUser()
@@ -43,48 +43,47 @@ class UserController extends BaseController
             ]
 
         ])) {
-            $data = [
-                'name'          => $this->request->getPost('name'),
-                'username'      => $this->request->getPost('username'),
-                'email'         => $this->request->getPost('email'),
-                'phone'         => $this->request->getPost('phone'),
-                'direction'     => $this->request->getPost('direction'),
-                'id'            => session('user')->id,
-            ];
-
-            $url = API('perfile');
-
-            $result = API_POST( $url, $data);
-
-            // var_dump($result->success);
-
-            if($result->success){
-                $session = session();
-                $session->set('user', $result->user);
-                return redirect()->back()->with('success', 'Datos guardado correctamente.');
+            if(session('user')->funcionario){
+                $data = [
+                    'nombre'          => $this->request->getPost('name'),
+                    'usr_usuario'      => $this->request->getPost('username'),
+                    'usr_correo'         => $this->request->getPost('email'),
+                ];
+                session('user')->nombre = $data['nombre'];
+                session('user')->usr_usuario = $data['usr_usuario'];
+                session('user')->usr_correo = $data['usr_correo'];
+                $user = new Funcionario();
             }else{
-                return redirect()->back()->with('error_username', 'El nombre de usuario ya existe.');
+                $data = [
+                    'name'          => $this->request->getPost('name'),
+                    'username'      => $this->request->getPost('username'),
+                    'email'         => $this->request->getPost('email'),
+                ];
+                $user = new Cliente();
+                session('user')->name = $data['name'];
+                session('user')->username = $data['username'];
+                session('user')->email = $data['email'];
             }
-
-            // $user = new User();
-            // $user->set($data)->where(['id' => session('user')->id])->update();
-            // return redirect()->back()->with('success', 'Datos guardado correctamente.');
+            $user->set($data)->where(['id' => session('user')->id])->update();
+            
+            return redirect()->back()->with('success', 'Datos guardado correctamente.');
         } else {
             return redirect()->back()->withInput();
         }
     }
-
-
+    
+    
     public function updatePhoto()
     {
-        $user = new User();
-        if($img = $this->request->getFile('photo')){
+        $user = new Funcionario();
+        $newName = '';
+        $img = $this->request->getFile('photo');
+        if($img->getSize() > 0){
             $newName = $img->getRandomName();
-            $img->move('upload/images', $newName);
+            $img->move('assets/img/funcionarios', $newName);
         }
-        if($user->update(['photo' => $newName], ['id' => session('user')->id])){
-            session('user')->photo = $newName;
-            return redirect()->to('/perfile');
-        }
+        $user->set(['usr_foto' => $newName])->where(['id' => session('user')->id])->update();
+        session('user')->usr_foto = $newName;
+        return redirect()->back()->with('success', 'Foto guardada correctamente.');
     }
 }

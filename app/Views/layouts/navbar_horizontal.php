@@ -12,7 +12,7 @@
                             </i></a></li>
                     <li><a class="waves-effect waves-block waves-light profile-button" href="javascript:void(0);"data-target="profile-dropdown">
                         <span class="avatar-status avatar-online">
-                            <img  style="height: 29px !important;" src="<?= session('user') && session('user')->photo ? base_url().'/assets/upload/images/'.session('user')->photo : base_url().'/assets/img/'.'user.png' ?>" alt="avatar">
+                            <img  style="height: 29px !important;" src="<?= session('user') && session('user')->usr_foto ? base_url().'/assets/img/funcionarios/'.session('user')->usr_foto : base_url().'/assets/img/user.png' ?>" alt="avatar">
                                 <i></i>
                             </span>
                             <small style="float: right; padding-left: 10px; font-size: 16px;"

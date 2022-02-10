@@ -7,14 +7,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta name="description"
-          content="Materialize is a Material Design Admin Template,It's modern, responsive and based on Material Design by Google.">
+          content="<?= isset(configInfo()['meta_description']) ? configInfo()['meta_description'] : 'Name' ?>">
     <meta name="keywords"
-          content="materialize, admin template, dashboard template, flat admin template, responsive admin template, eCommerce dashboard, analytic dashboard">
-    <meta name="author" content="ThemeSelect">
-    <title><?= isset(configInfo()['name_app']) ? configInfo()['name_app'] : '' ?></title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+          content="<?= isset(configInfo()['meta_keywords']) ? configInfo()['meta_keywords'] : 'Name' ?>">
+    <meta name="author" content="IPlanet Colombia S.A.S">
+    <title><?= isset(configInfo()['name_app']) ? configInfo()['name_app'] : 'Name' ?></title>
     <link rel="apple-touch-icon" href="<?= !isset(configInfo()['favicon']) ||  empty(configInfo()['favicon']) ? base_url().'/assets/img/logo.png' :  base_url().'/assets/upload/images/'.configInfo()['favicon']   ?>">
     <link rel="shortcut icon" type="image/x-icon" href="<?= !isset(configInfo()['favicon']) ||  empty(configInfo()['favicon']) ? base_url().'/assets/img/logo.png' :  base_url().'/assets/img/'.configInfo()['favicon']   ?>">
+    <title><?= isset(configInfo()['name_app']) ? configInfo()['name_app'] : '' ?></title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
     <!-- BEGIN: VENDOR CSS-->
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>/assets/css/vendors.min.css">
@@ -71,64 +73,66 @@
                             <div class="row">
 
                                 <div class="col s12" id="account">
-                                    <!-- users edit media object start -->
-                                    <div class="media display-flex align-items-center mb-2">
-                                        <a class="mr-2" href="#">
-                                            <img src="<?= !empty(session('user')->photo) ? base_url() . '/upload/images/' . session('user')->photo : base_url() . '/assets/img/user.png' ?>"
-                                                 alt="users avatar" class="z-depth-4 circle" height="64" width="64">
-                                        </a>
-                                        <div class="media-body">
-                                            <h5 class="media-heading mt-0">Foto</h5>
-                                            <div class="user-edit-btns display-flex">
-                                                <a href="#update-file"
-                                                   class="btn-small indigo  modal-trigger" data-toggle="modal">Cambiar</a>
+                                    <?php if(session('user')->funcionario): ?>
+                                        <!-- users edit media object start -->
+                                        <div class="media display-flex align-items-center mb-2">
+                                            <a class="mr-2" href="#">
+                                                <img src="<?= session('user')->usr_foto ? base_url().'/assets/img/funcionarios/'.session('user')->usr_foto : base_url().'/assets/img/user.png' ?>"
+                                                    alt="users avatar" class="z-depth-4 circle" height="64" width="64">
+                                            </a>
+                                            <div class="media-body">
+                                                <h5 class="media-heading mt-0">Foto</h5>
+                                                <div class="user-edit-btns display-flex">
+                                                    <a href="#update-file"
+                                                    class="btn-small indigo  modal-trigger" data-toggle="modal">Cambiar</a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <form action="/update_photo" method="post" enctype="multipart/form-data">
+                                        <form action="<?= base_url() ?>/amc-laboratorio/update_photo" method="post" enctype="multipart/form-data">
 
-                                        <div id="update-file" class="modal" id="update-file" role="dialog" style="height: 400px;">
-                                            <div class="modal-content">
-                                                <h4>Subir Imagen</h4>
-                                                <div class="col s12">
+                                            <div id="update-file" class="modal" id="update-file" role="dialog" style="height: 400px;">
+                                                <div class="modal-content">
+                                                    <h4>Subir Imagen</h4>
+                                                    <div class="col s12">
 
-                                                    <div class="container">
-                                                        <div class="section">
-                                                            <div class="divider mb-1"></div>
-                                                            <!--file-upload-->
-                                                            <div id="file-upload" class="section">
-                                                                <!--Default version-->
-                                                                <div class="row section">
-                                                                    <div class="col s12 m12 l12">
-                                                                        <input type="file" name="photo"
-                                                                               id="input-file-now" class="dropify"
-                                                                               data-default-file=""/>
+                                                        <div class="container">
+                                                            <div class="section">
+                                                                <div class="divider mb-1"></div>
+                                                                <!--file-upload-->
+                                                                <div id="file-upload" class="section">
+                                                                    <!--Default version-->
+                                                                    <div class="row section">
+                                                                        <div class="col s12 m12 l12">
+                                                                            <input type="file" name="photo"
+                                                                                id="input-file-now" class="dropify"
+                                                                                data-default-file=""/>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="content-overlay"></div>
                                                     </div>
-                                                    <div class="content-overlay"></div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <a href="#!"
+                                                    class="modal-action modal-close waves-effect waves-red btn-flat mb-5 ">Cerrar</a>
+                                                    <button
+                                                    class="modal-action modal-close waves-effect waves-green btn indigo mb-5">Guardar</button>
                                                 </div>
                                             </div>
-                                            <div class="modal-footer">
-                                                <a href="#!"
-                                                   class="modal-action modal-close waves-effect waves-red btn-flat mb-5 ">Cerrar</a>
-                                                <button
-                                                   class="modal-action modal-close waves-effect waves-green btn indigo mb-5">Guardar</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    <!-- users edit media object ends -->
+                                        </form>
+                                        <!-- users edit media object ends -->
+                                    <?php endif ?>
                                     <!-- users edit account form start -->
-                                    <form id="accountForm" action="/update_user" method="post">
+                                    <form id="accountForm" action="<?= base_url() ?>/amc-laboratorio/update_user" method="post">
                                         <div class="row">
                                             <div class="col s12 m6">
                                                 <div class="row">
                                                     <div class="col s12 input-field">
                                                         <input id="name" name="name" type="text"
-                                                               value="<?= $data->name ?>">
+                                                               value="<?= $data->name ? $data->name : $data->nombre ?>">
                                                         <label for="name">Nombre y Apellidos</label>
                                                         <small class=" red-text text-darken-4"><?= $validation->getError('name') ?></small>
 
@@ -136,7 +140,7 @@
                                                     <small class=" red-text text-darken-4"><?= $validation->getError('name') ?></small>
                                                     <div class="col s12 input-field">
                                                         <input id="email" name="email" type="email"
-                                                               value="<?= $data->email ?>">
+                                                               value="<?= $data->email ? $data->email : $data->usr_correo ?>">
                                                         <label for="email">Correo electronico</label>
                                                         <small class=" red-text text-darken-4"><?= $validation->getError('email') ?></small>
                                                     </div>
@@ -147,12 +151,12 @@
                                                 <div class="row">
                                                     <div class="col s12 input-field">
                                                         <input id="username" name="username" type="text"
-                                                               value="<?= $data->username ?>">
+                                                               value="<?= $data->username ? $data->username : $data->usr_usuario ?>">
                                                         <label for="username">Nombre de usuario</label>
                                                         <small class=" red-text text-darken-4"><?= $validation->getError('username') ?></small>
                                                     </div>
                                                     <div class="col s12 input-field  disabled">
-                                                        <input id="role_id" name="rol" value="<?= $data->role_name ?>" type="text" disabled>
+                                                        <input id="role_id" name="rol" value="<?= $data->usertype ? $data->usertype:$data->cms_rol ?>" type="text" disabled>
                                                         <label for="role_id">Rol</label>
                                                     </div>
                                                 </div>

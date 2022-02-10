@@ -26,7 +26,7 @@ class PermissionFilter implements FilterInterface
             $aux_perm = 'permissions_funcionarios';
         }
         else{
-            $permission = new PermissionCliente();
+            $permission = new PermissionCliente();  
             $aux_menu = 'menus_cliente';
             $aux_perm = 'permissions_cliente';
         }
@@ -48,7 +48,7 @@ class PermissionFilter implements FilterInterface
                exit;
             }
         } else {
-            if($method != 'home') {
+            if($url != 'amc-laboratorio') {
                 $permission->select('*')->join($aux_menu, $aux_menu.'.id = '.$aux_perm.'.menu_id');
                 if( session('user')->funcionario )
                     $permission->where([$aux_menu.'.url' => $method, 'usr_rol' => session('user')->usr_rol ]);
